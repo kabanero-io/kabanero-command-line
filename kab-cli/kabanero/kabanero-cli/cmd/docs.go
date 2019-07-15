@@ -62,7 +62,7 @@ func generateDoc(commandDocFile string) error {
 		newbase := strings.ReplaceAll(base, "_", "-")
 		return "#" + newbase
 	}
-	commandArray := []*cobra.Command{rootCmd, loginCmd, logoutCmd, listCollectionsCmd, deployToTestIntegrationCmd, listMyinfoCmd, listOnboardedRepositoriesCmd, refreshCollectionsCmd}
+	commandArray := []*cobra.Command{rootCmd, loginCmd, logoutCmd, listCollectionsCmd, listMyinfoCmd, listOnboardedRepositoriesCmd, refreshCollectionsCmd}
 	for _, cmd := range commandArray {
 
 		markdownGenErr := doc.GenMarkdownCustom(cmd, docFile, linkHandler)
