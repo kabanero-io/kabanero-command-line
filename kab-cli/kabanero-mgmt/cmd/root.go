@@ -116,10 +116,6 @@ func initConfig() {
 	_ = cliConfig.ReadInConfig()
 }
 
-func getDefaultConfigFile() string {
-	return filepath.Join(cliConfig.GetString("home"), ".kabaneromgmt.yaml")
-}
-
 func Execute(version string) {
 	VERSION = version
 
