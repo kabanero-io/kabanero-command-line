@@ -31,7 +31,7 @@ process, the developer must be added to a team, know where information
 is stored in Git,  where their containers are stored,  how to gain access
 to the test integration server.  All this information is returned from this
 command.`,
-	Example: `kabanero listMyinfoo`,
+	Example: `kabanero listMyinfo`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("listMyinfo called")
 	},

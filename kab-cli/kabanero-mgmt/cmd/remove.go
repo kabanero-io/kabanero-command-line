@@ -24,7 +24,7 @@ import (
 // removeCmd represents the remove command
 var removeCmd = &cobra.Command{
 	Use:   "remove collection-name",
-	Short: "Remove the collection from the apphub",
+	Short: "Remove the collection from the apphub.",
 	Long: `
 Remove the collection from the apphub.`,
 	Run: func(cmd *cobra.Command, args []string) {

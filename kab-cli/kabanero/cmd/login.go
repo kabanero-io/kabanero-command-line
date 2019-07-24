@@ -24,7 +24,7 @@ import (
 // loginCmd represents the login command
 var loginCmd = &cobra.Command{
 	Use:   "login userid password [kabanero-url]",
-	Short: "Will authentic you to the Kabanero instance",
+	Short: "Will authenticate you to the Kabanero instance.",
 	Long: `
 The userid and password passed will be used
 to authenticate the user with kabanero instance.
@@ -32,14 +32,14 @@ to authenticate the user with kabanero instance.
 By authenticating with the Kabanero instance, 
 you will be able to use the Apphub 
 which provides the set of collections that your
-oorganization has established for you to use in developing
+organization has established for you to use in developing
 applications.  These collections have an appsody application
-sstack inside them which will be used to create new 
+stack inside them which will be used to create new
 projects.  Login will also enable you to test your code
 on a test integration cluster with other members of your 
 team.`,
 	Example: `
-	kabanero jane janespw https://kabanero1.io
+	kabanero login jane janespw https://kabanero1.io
 	`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("login called")

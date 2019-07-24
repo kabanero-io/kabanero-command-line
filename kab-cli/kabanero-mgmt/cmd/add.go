@@ -23,9 +23,9 @@ import (
 
 // addCmd represents the add command
 var addCmd = &cobra.Command{
-	Use:   "add collectioon-name",
-	Short: "Add a collection to the indeex",
-	Long:  `Add the collection to the indeex`,
+	Use:   "add collection-name",
+	Short: "Add a collection to the index.",
+	Long:  `Add the collection to the index`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("add called")
 	},

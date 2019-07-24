@@ -24,7 +24,7 @@ import (
 // logoutCmd represents the logout command
 var logoutCmd = &cobra.Command{
 	Use:   "logout",
-	Short: "Disconnect from Kabanero instance",
+	Short: "Disconnect from the Kabanero instance.",
 	Long: `
 Disconnect from the instance of Kabanero that you 
 have been interacting with.`,

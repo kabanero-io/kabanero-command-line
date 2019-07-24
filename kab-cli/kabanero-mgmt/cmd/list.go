@@ -24,7 +24,7 @@ import (
 // listCmd represents the list command
 var listCmd = &cobra.Command{
 	Use:   "list [status]",
-	Short: "List all the collections in the apphub, and optionally their status",
+	Short: "List all the collections in the apphub, and optionally their status.",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
 

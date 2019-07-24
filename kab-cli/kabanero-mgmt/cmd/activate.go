@@ -29,7 +29,7 @@ var activateCmd = &cobra.Command{
 A collection can be available to a development team
 to use for building applications or not. Activate
 will cause the collection to be shown to 
-the develoopment team when they list the types of
+the development team when they list the types of
 application they can build.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("activate called")

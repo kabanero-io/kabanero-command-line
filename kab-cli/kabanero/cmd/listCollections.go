@@ -24,12 +24,12 @@ import (
 // listCollectionsCmd represents the listCollections command
 var listCollectionsCmd = &cobra.Command{
 	Use:   "listCollections",
-	Short: "show the list of named collections that can be used to create applications.",
+	Short: "Show the list of named collections that can be used to create applications.",
 	Long: `A Kabanero collection is a governed set of meta-data
 that provides pre-configured application structure, and deployment
 information that allows the developer to focus on developing code. 
 And once the code is stored in the source control system, the 
-meta-data directs out the application is build and deployed into 
+meta-data directs out the application to be built and deployed into
 the develop downstream chain that gets it deployed into production
 eventually. 
 
@@ -38,7 +38,7 @@ Appsody stack. Appsody gives you pre-configured stacks and templates for a
 growing set of popular open source runtimes and frameworks, providing a 
 foundation on which to build applications for Kubernetes and Knative deployments. 
 This allows developers to focus on their code, reducing the learning curve for 
-cloud-native developmentand enabling rapid development for these cloud-native 
+cloud-native development and enabling rapid development for these cloud-native
 applications.`,
 	Example: "listCollectionsCmd",
 	Run: func(cmd *cobra.Command, args []string) {

@@ -24,14 +24,14 @@ import (
 // createCloneCmd represents the createClone command
 var createCloneCmd = &cobra.Command{
 	Use:   "createClone new-collectiom-name collection-name",
-	Short: `Clone an existing collection and build a new collection from it`,
+	Short: `Clone an existing collection and build a new collection from it.`,
 	Long: `
-A collection is a set of meta data and base images that are use by
+A collection is a set of meta data and base images that are used by
 the developer to build a microservice or application.  This meta data includes
 information about the type of appliciation, languages, pipeline definitions,
-management aftifacts to install, and the base container.  
+management aftifacts to install, and the base container.
 	
-In the createClone case, we provide clone the metadata, renaming the collection
+In the createClone case, we clone the metadata, renaming the collection
 in the process. The collection provider can then update the information 
 and containers in the local registry`,
 	Run: func(cmd *cobra.Command, args []string) {

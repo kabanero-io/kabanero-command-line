@@ -24,7 +24,7 @@ import (
 // loginCmd represents the login command
 var loginCmd = &cobra.Command{
 	Use:   "login userid password [kabanero-url]",
-	Short: "Will authentic you to the Kabanero instance",
+	Short: "Will authenticate you to the Kabanero instance.",
 	Long: `
 	The userid and password passed will be used
 	to authenticate the user with kabanero instance.
@@ -32,7 +32,7 @@ var loginCmd = &cobra.Command{
 	By authenticating with the Kabanero instance, 
 	you will be able to manage the instance of kabanero.`,
 	Example: `
-		kabanero jane janespw https://kabanero1.io
+		kabanero login jane janespw https://kabanero1.io
 		`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("login called")

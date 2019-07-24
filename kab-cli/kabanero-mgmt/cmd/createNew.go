@@ -26,10 +26,10 @@ var createNewCmd = &cobra.Command{
 	Use:   "createNew collection-name",
 	Short: "Create a new collection, starting with a template project.",
 	Long: `
-A collection is a set of meta data and base images that are use by
+A collection is a set of meta data and base images that are used by
 the developer to build a microservice or application.  This meta data includes
-information about the type of appliciation, languages, pipeline definitions,
-management aftifacts to install, and the base container.  
+information about the type of application, languages, pipeline definitions,
+management artifacts to install, and the base container.
 
 In the createNew case, we provide a template for the metadata. But the 
 collection provider must provide the information and containers in the 

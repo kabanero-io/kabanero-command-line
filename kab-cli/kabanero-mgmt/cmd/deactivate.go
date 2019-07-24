@@ -27,15 +27,15 @@ var deactivateCmd = &cobra.Command{
 	Short: "Prevent this collection from being shown to the development team, while not deleting it.",
 	Long: `
 A collection can be available to a development team
-to use for building applications or not. deactivate
+to use for building applications or not. Deactivate
 will cause the collection to not be shown to 
-the develoopment team when they list the types of
+the development team when they list the types of
 application they can build.
 
 This would be done in the case where you have cloned the collection
 and made changes for your business.  This keeps the base collection
 in the apphub, and it will continue to be updated, and the 
-updates will be perkolated up to your cloned collection.`,
+updates will be percolated up to your cloned collection.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("deactivate called")
 	},

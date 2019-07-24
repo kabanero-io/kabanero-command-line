@@ -24,8 +24,8 @@ import (
 // logoutCmd represents the logout command
 var logoutCmd = &cobra.Command{
 	Use:   "logout",
-	Short: "logout of the session between the user and the Kabanero server",
-	Long: `Logs out from the session that was previous established between the 
+	Short: "Logout of the session between the user and the Kabanero server.",
+	Long: `Logs out from the session that was previously established between the
 	developer and the Kabanero server.`,
 	Example: `kabanero logout`,
 	Run: func(cmd *cobra.Command, args []string) {
