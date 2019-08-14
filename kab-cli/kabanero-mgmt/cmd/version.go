@@ -24,7 +24,7 @@ var versionCmd = &cobra.Command{
 	Short: "Show Kabanero CLI version",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		print(rootCmd.Use, " ", "0.0.1", "\n")
+		Info.log(rootCmd.Use, " ", VERSION)
 	},
 }
 
