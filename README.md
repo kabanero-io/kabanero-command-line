@@ -1,8 +1,8 @@
----
-title: CLI Reference
-path: /docs/using-kabanero/cli-commands
-section: Using kabanero
----
+
+
+The command Kabanero-mgmt command line is targetted at the enterprise, solution, or application architect who is defining the kabanero collections that are to be used by the developer to develop a governed application for their business.
+
+
 # kabanero CLI
 ## kabanero-mgmt
 
