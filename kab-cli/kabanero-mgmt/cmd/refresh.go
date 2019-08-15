@@ -25,7 +25,7 @@ import (
 var refreshCmd = &cobra.Command{
 	Use:   "refresh",
 	Short: "Refresh the active collections",
-	Long:  ``,
+	Long:  `Refresh the current collection list to be up to date with master`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("refresh called")
 	},

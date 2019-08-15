@@ -63,7 +63,7 @@ func generateDoc(commandDocFile string) error {
 		return "#" + newbase
 	}
 	commandArray := []*cobra.Command{rootCmd, loginCmd, logoutCmd, activateCmd,
-		deactivateCmd, listCmd}
+		deactivateCmd, listCmd, refreshCmd}
 	for _, cmd := range commandArray {
 
 		markdownGenErr := doc.GenMarkdownCustom(cmd, docFile, linkHandler)
