@@ -67,6 +67,7 @@ var loginCmd = &cobra.Command{
 
 		req, err := http.NewRequest("POST", kabURL, bytes.NewBuffer(requestBody))
 		if err != nil {
+			fmt.Print("Problem with the new request")
 			return errors.New(err.Error())
 		}
 
@@ -80,7 +81,7 @@ var loginCmd = &cobra.Command{
 
 		// data, _ := ioutil.ReadAll(resp.Body)
 		var data JWTResponse
-		json.Unmarshal(resp.Body, &data)
+		json.NewDecoder(resp.Body).Decode(&data)
 		defer resp.Body.Close()
 
 		// fmt.Println(string(data))
