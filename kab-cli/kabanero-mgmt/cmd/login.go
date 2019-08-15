@@ -20,17 +20,16 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"time"
 
 	"github.com/spf13/cobra"
 )
 
-// type JWTResponse struct {
-// 	JWT     string
-// 	Message string
-// }
+type JWTResponse struct {
+	JWT     string
+	Message string
+}
 
 // loginCmd represents the login command
 var loginCmd = &cobra.Command{
@@ -79,10 +78,13 @@ var loginCmd = &cobra.Command{
 			return errors.New("Login failed to endpoint: " + kabURL + " \n")
 		}
 
-		data, _ := ioutil.ReadAll(resp.Body)
+		// data, _ := ioutil.ReadAll(resp.Body)
+		var data JWTResponse
+		json.Unmarshal(resp.Body, &data)
 		defer resp.Body.Close()
 
-		fmt.Println(string(data))
+		// fmt.Println(string(data))
+		fmt.Println(data.JWT)
 		fmt.Printf("USERNAME/PWD/KAB" + username + "-- " + password + "____" + kabURL)
 		return nil
 	},
