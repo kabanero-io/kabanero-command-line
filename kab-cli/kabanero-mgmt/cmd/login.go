@@ -27,6 +27,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// type JWTResponse struct {
+// 	JWT     string
+// 	Message string
+// }
+
 // loginCmd represents the login command
 var loginCmd = &cobra.Command{
 	Args:  cobra.MinimumNArgs(2),
@@ -46,6 +51,7 @@ var loginCmd = &cobra.Command{
 
 		username := args[0]
 		password := args[1]
+
 		var kabURL string
 
 		if len(args) > 2 {
@@ -62,7 +68,7 @@ var loginCmd = &cobra.Command{
 
 		req, err := http.NewRequest("POST", kabURL, bytes.NewBuffer(requestBody))
 		if err != nil {
-			return err
+			return errors.New(err.Error())
 		}
 
 		req.Header.Set("Content-Type", "application/json")
@@ -70,7 +76,7 @@ var loginCmd = &cobra.Command{
 		resp, err := client.Do(req)
 
 		if err != nil {
-			fmt.Printf("The HTTP request failed with error %s\n", err)
+			return errors.New("Login failed to endpoint: " + kabURL + " \n")
 		}
 
 		data, _ := ioutil.ReadAll(resp.Body)
