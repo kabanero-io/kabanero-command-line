@@ -21,32 +21,26 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// activateCmd represents the activate command
-var activateCmd = &cobra.Command{
-	Use:    "activate collection-name",
-	Hidden: true,
-	Short:  "Activate a collection for use by the development team",
-	Long: `
-A collection can be available to a development team
-to use for building applications or not. Activate
-will cause the collection to be shown to 
-the develoopment team when they list the types of
-application they can build.`,
+// refreshCmd represents the refresh command
+var refreshCmd = &cobra.Command{
+	Use:   "refresh",
+	Short: "Refresh the active collections",
+	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("activate called")
+		fmt.Println("refresh called")
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(activateCmd)
+	rootCmd.AddCommand(refreshCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// activateCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// refreshCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// activateCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// refreshCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
