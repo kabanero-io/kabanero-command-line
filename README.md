@@ -2,7 +2,6 @@
 
 The command Kabanero-mgmt command line is targetted at the enterprise, solution, or application architect who is defining the kabanero collections that are to be used by the developer to develop a governed application for their business.
 
-
 # kabanero CLI
 ## kabanero-mgmt
 
@@ -49,14 +48,14 @@ Will authentic you to the Kabanero instance
 	you will be able to manage the instance of kabanero.
 
 ```
-kabanero-mgmt login userid password [kabanero-url] [flags]
+kabanero-mgmt login userid password kabanero-url [flags]
 ```
 
 ### Examples
 
 ```
 
-		kabanero jane janespw https://kabanero1.io
+		kabanero-management champ champpassword https://kabanero1.io
 		
 ```
 

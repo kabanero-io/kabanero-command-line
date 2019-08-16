@@ -67,6 +67,7 @@ var loginCmd = &cobra.Command{
 
 		req, err := http.NewRequest("POST", kabURL, bytes.NewBuffer(requestBody))
 		if err != nil {
+			fmt.Print("Problem with the new request")
 			return errors.New(err.Error())
 		}
 
@@ -78,14 +79,12 @@ var loginCmd = &cobra.Command{
 			return errors.New("Login failed to endpoint: " + kabURL + " \n")
 		}
 
-		// data, _ := ioutil.ReadAll(resp.Body)
 		var data JWTResponse
-		json.Unmarshal(resp.Body, &data)
+		json.NewDecoder(resp.Body).Decode(&data)
+
+		fmt.Println(data.JWT)
 		defer resp.Body.Close()
 
-		// fmt.Println(string(data))
-		fmt.Println(data.JWT)
-		fmt.Printf("USERNAME/PWD/KAB" + username + "-- " + password + "____" + kabURL)
 		return nil
 	},
 }
