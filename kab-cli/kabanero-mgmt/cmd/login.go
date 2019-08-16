@@ -79,13 +79,10 @@ var loginCmd = &cobra.Command{
 			return errors.New("Login failed to endpoint: " + kabURL + " \n")
 		}
 
-		// data, _ := ioutil.ReadAll(resp.Body)
 		var data JWTResponse
 		json.NewDecoder(resp.Body).Decode(&data)
 
-		// fmt.Printf("________***********88" + string(data))
 		fmt.Println(data.JWT)
-		// fmt.Printf("USERNAME/PWD/KAB" + username + "-- " + password + "____" + kabURL)
 		defer resp.Body.Close()
 
 		return nil
