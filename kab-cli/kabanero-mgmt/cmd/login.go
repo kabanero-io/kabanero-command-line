@@ -67,8 +67,11 @@ var loginCmd = &cobra.Command{
     viper.AutomaticEnv()
     tom = viper.GetString("tom")
 	fmt.Println("Tom:" + tom)
-	cliConfig.Set("CLAUDIA", "a_JWT_string")
+	cliConfig.Set("CLAUDIA", "some_JWT_string")
 	cliConfig.WriteConfig()
+
+	jwt := cliConfig.GetString("jwt")
+	Debug.log("JWT:" + jwt)
 
 		if len(args) > 2 {
 			kabURL = args[2]
