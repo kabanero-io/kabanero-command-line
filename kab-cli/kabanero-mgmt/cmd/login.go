@@ -23,12 +23,32 @@ import (
 	"net/http"
 	"time"
 
+	"gopkg.in/yaml.v2"
+
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 type JWTResponse struct {
 	JWT     string
 	Message string
+}
+
+type testConfig struct {
+	JWT string
+	url string
+}
+
+func readConfig(filename string, defaults map[string]interface{}) (*viper.Viper, error) {
+	v := viper.New()
+	for key, value := range defaults {
+		v.SetDefault(key, value)
+	}
+	v.SetConfigName(filename)
+	v.AddConfigPath(".")
+	v.AutomaticEnv()
+	err := v.ReadInConfig()
+	return v, err
 }
 
 // loginCmd represents the login command
@@ -53,6 +73,20 @@ var loginCmd = &cobra.Command{
 
 		var kabURL string
 
+		file1, err := readConfig("kab-config", map[string]interface{}{"url": kabURL})
+		if err != nil {
+			panic(fmt.Errorf("Error when reading config: %v", err))
+		}
+
+		var tempstruct tempstruct
+		yaml.Unmarshal(value, &tempstruct)
+
+		readConfig("kab-config", map[string]interface{}{"url": kabURL, "jwt": "MYJWT1i2746632747587384762378"})
+
+		value := file1.GetString("jwt")
+		fmt.Println("VALUEEEEEE? ------->" + value)
+		fmt.Println("URL?????------>" + file1.GetString("url"))
+		file1.Set("url", "NEW AWESOME URL")
 		if len(args) > 2 {
 			kabURL = args[2]
 		} else {
