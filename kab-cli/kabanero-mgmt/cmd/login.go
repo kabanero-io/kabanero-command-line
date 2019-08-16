@@ -52,9 +52,30 @@ var loginCmd = &cobra.Command{
 		password := args[1]
 
 		var kabURL string
+    var tom string
+		KabEnvVar := "KABURL"
+
+
+    viper.SetEnvPrefix("KABANERO")
+    os.Setenv("KABANERO_TOM", "who")
+    viper.AutomaticEnv()
+    tom = viper.GetString("tom")
+	fmt.Println("Tom:" + tom)
+	cliConfig.Set("CLAUDIA", "some_JWT_string")
+	cliConfig.WriteConfig()
+
+	jwt := cliConfig.GetString("jwt")
+	Debug.log("JWT:" + jwt)
 
 		if len(args) > 2 {
 			kabURL = args[2]
+			os.Setenv(KabEnvVar, kabURL)
+			//urlAccess(kabURL)
+			fmt.Printf("kabURL "+ os.Getenv(KabEnvVar))
+			fmt.Printf("SET VAR?----" + os.Getenv(KabEnvVar))
+			// cliConfig.SetDefault(KabEnvVar, kabURL)
+			// fmt.Printf("\n VIPER ACCESS ------" + cliConfig.GetString(KabEnvVar))
+
 		} else {
 			return errors.New("No Kabanero instance url specified")
 		}

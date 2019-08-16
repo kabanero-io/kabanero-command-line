@@ -93,32 +93,87 @@ func isHelpCommand() bool {
 }
 
 func initConfig() {
-	Debug.log("Running with command line args: kabanero-mgmt ", strings.Join(os.Args[1:], " "))
+	Debug.log("Running with command line args: kabanero ", strings.Join(os.Args[1:], " "))
+	// handle user supplied config file:
+	if cfgFile != "" {
+	  if _, err := os.Stat(cfgFile); os.IsNotExist(err) {
+		Info.log("user supplied --config file does not exist.  Creating: " + cfgFile)
+		_, err := os.OpenFile(cfgFile, os.O_RDWR|os.O_CREATE, 0755)
+        if err != nil {
+	      Error.log("ERROR opening user supplied config file: " + cfgFile, err)
+	      os.Exit(1)
+        }
+	  } else {
+		  Debug.log("using --config file: " + cfgFile)
+	  }
+	}
+	
+	// verify the config directory and file:
+	cfgDir := filepath.Join(homeDir(), ".kabanero")
+    Debug.log("Kabanero config directory: " + cfgDir )
+    if _, err := os.Stat(cfgDir); os.IsNotExist(err) {
+	  if err := os.Mkdir(cfgDir, os.ModePerm); err != nil {
+		  Error.log("failed to create config dir: " + cfgDir)
+		  os.Exit(1)
+	  }
+	}
+	
+	// setup Viper  and some defaults
 	cliConfig = viper.New()
-
-	cliConfig.SetDefault("home", filepath.Join(homeDir(), ".kabaneromgmt"))
+	cliConfig.SetDefault("home", cfgDir)
 	cliConfig.SetDefault("images", "index.docker.io")
 	cliConfig.SetDefault("tektonserver", "")
-	if cfgFile != "" {
-		// Use config file from the flag.
-		cliConfig.SetConfigFile(cfgFile)
-	} else {
-		// Search config in home directory with name ".hello-cobra" (without extension).
-		cliConfig.AddConfigPath(cliConfig.GetString("home"))
-		cliConfig.SetConfigName(".kabaneromgmt")
+  
+    if cfgFile == "" {
+		//viper needs cfgFile to NOT include the file type
+		cfgFile := filepath.Join(cfgDir, "kabanero")
+        f, err := os.OpenFile(cfgFile + ".yaml", os.O_RDWR|os.O_CREATE, 0755)
+        if err != nil {
+	      Error.log("ERROR creating config file kabanero.yaml", err)
+	      os.Exit(1)
+		}
+		Debug.log("Using config file: " + cfgFile + ".yaml")
+		f.Close()
 	}
+	cliConfig.SetConfigName("kabanero")
+	cliConfig.AddConfigPath(cfgDir)
+	//if cfgFile != "" {
+		// Use config file from the flag.
+	//	cliConfig.SetConfigFile(cfgFile)
+	//} else {
+		// Search config in home directory with name ".hello-cobra" (without extension).
+	//	cliConfig.AddConfigPath(cliConfig.GetString("home"))
+	//	cliConfig.SetConfigName(".kabaneromgmt")
+	//}
 
-	cliConfig.SetEnvPrefix("kabaneromgmt")
+	cliConfig.SetEnvPrefix("KABANERO")
 	cliConfig.AutomaticEnv() // read in environment variables that match
 
 	// If a config file is found, read it in.
-	// Ignore errors, if the config isn't found, we will create a default later
-	_ = cliConfig.ReadInConfig()
+	cliConfig.SetConfigType("yaml")
+	if err := cliConfig.ReadInConfig(); err != nil {
+		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
+			// no config file
+			Debug.log("No viper config file found: " + cfgFile)
+		} else {
+			Error.log("ERROR: config file error: ", err)
+		}
+	}
+	Debug.log("config file used: " + cliConfig.ConfigFileUsed() )
+
+	cliConfig.Set("JWT", "a_JWT_string")
+    cliConfig.WriteConfig()
+	tom := cliConfig.GetString("TOM")
+	Debug.log("tom:" + tom)
+	
+	os.Setenv("KABANERO_FOO","bar")
+	bar := cliConfig.GetString("FOO")
+	Debug.log("KABANERO_FOO:" + bar)
 }
 
-func getDefaultConfigFile() string {
-	return filepath.Join(cliConfig.GetString("home"), ".kabaneromgmt.yaml")
-}
+//func getDefaultConfigFile() string {
+//	return filepath.Join(cliConfig.GetString("home"), ".kabaneromgmt.yaml")
+//}
 
 func Execute(version string) {
 	VERSION = version
