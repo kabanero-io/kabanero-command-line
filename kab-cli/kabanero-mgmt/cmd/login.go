@@ -16,27 +16,19 @@ limitations under the License.
 package cmd
 
 import (
+	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
-	"os"
-
-	"github.com/spf13/viper"
+	"net/http"
+	"time"
 
 	"github.com/spf13/cobra"
 )
 
-var kabConfig *viper.Viper
-
-func urlAccess(url string) {
-	if url == "" {
-		fmt.Printf("URLLLLLLLLLL?>>>>>>>> + " + kabConfig.GetString("KABURL"))
-	} else {
-		kabConfig.SetDefault("KABURL", url)
-	}
-}
-
-func initKab() {
-
+type JWTResponse struct {
+	JWT     string
+	Message string
 }
 
 // loginCmd represents the login command
@@ -58,9 +50,11 @@ var loginCmd = &cobra.Command{
 
 		username := args[0]
 		password := args[1]
+
 		var kabURL string
     var tom string
 		KabEnvVar := "KABURL"
+
 
     viper.SetEnvPrefix("KABANERO")
     os.Setenv("KABANERO_TOM", "who")
@@ -83,42 +77,35 @@ var loginCmd = &cobra.Command{
 			// fmt.Printf("\n VIPER ACCESS ------" + cliConfig.GetString(KabEnvVar))
 
 		} else {
-			// cliConfig.AutomaticEnv()
-
-			val := kabConfig.GetString(KabEnvVar)
-			// val, present := os.LookupEnv("KABURL_MANAGEMENTCLI")
-			urlAccess("")
-			if val == "" {
-				return errors.New("No Kabanero instance url specified")
-			}
-			kabURL = val
+			return errors.New("No Kabanero instance url specified")
 		}
 
-		// client := &http.Client{
-		// 	Timeout: time.Second * 30,
-		// }
+		client := &http.Client{
+			Timeout: time.Second * 30,
+		}
 
-		// requestBody, _ := json.Marshal(map[string]string{"gituser": username, "gitpat": password})
+		requestBody, _ := json.Marshal(map[string]string{"gituser": username, "gitpat": password})
 
-		// req, err := http.NewRequest("POST", kabURL, bytes.NewBuffer(requestBody))
-		// if err != nil {
-		// 	return err
-		// }
+		req, err := http.NewRequest("POST", kabURL, bytes.NewBuffer(requestBody))
+		if err != nil {
+			fmt.Print("Problem with the new request")
+			return errors.New(err.Error())
+		}
 
-		// req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("Content-Type", "application/json")
 
-		// resp, err := client.Do(req)
+		resp, err := client.Do(req)
 
-		// if err != nil {
-		// 	fmt.Printf("The HTTP request failed with error %s\n", err)
-		// }
+		if err != nil {
+			return errors.New("Login failed to endpoint: " + kabURL + " \n")
+		}
 
-		// defer resp.Body.Close()
+		var data JWTResponse
+		json.NewDecoder(resp.Body).Decode(&data)
 
-		// data := json.Decode(resp.Body)
+		fmt.Println(data.JWT)
+		defer resp.Body.Close()
 
-		// fmt.Println(string(data))
-		fmt.Printf("USERNAME/PWD/KAB" + username + "-- " + password + "____" + kabURL)
 		return nil
 	},
 }
