@@ -59,13 +59,23 @@ var loginCmd = &cobra.Command{
 		username := args[0]
 		password := args[1]
 		var kabURL string
+    var tom string
 		KabEnvVar := "KABURL"
+
+    viper.SetEnvPrefix("KABANERO")
+    os.Setenv("KABANERO_TOM", "who")
+    viper.AutomaticEnv()
+    tom = viper.GetString("tom")
+	fmt.Println("Tom:" + tom)
+	cliConfig.Set("CLAUDIA", "a_JWT_string")
+	cliConfig.WriteConfig()
 
 		if len(args) > 2 {
 			kabURL = args[2]
 			os.Setenv(KabEnvVar, kabURL)
-			urlAccess(kabURL)
-			// fmt.Printf("SET VAR?----" + os.Getenv(KabEnvVar))
+			//urlAccess(kabURL)
+			fmt.Printf("kabURL "+ os.Getenv(KabEnvVar))
+			fmt.Printf("SET VAR?----" + os.Getenv(KabEnvVar))
 			// cliConfig.SetDefault(KabEnvVar, kabURL)
 			// fmt.Printf("\n VIPER ACCESS ------" + cliConfig.GetString(KabEnvVar))
 
