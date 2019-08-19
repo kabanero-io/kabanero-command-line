@@ -47,7 +47,7 @@ var loginCmd = &cobra.Command{
 		kabanero-management champ champpassword https://kabanero1.io
 		`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Println("login called")
+		// fmt.Println("login called")
 
 		username := args[0]
 		password := args[1]
@@ -93,6 +93,7 @@ var loginCmd = &cobra.Command{
 		cliConfig.Set("jwt", data.JWT)
 		cliConfig.WriteConfig()
 		// fmt.Println(data.JWT)
+		fmt.Println("Logged into kabanero instace: " + cliConfig.GetString(KabEnvKey))
 		defer resp.Body.Close()
 
 		return nil
