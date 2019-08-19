@@ -23,8 +23,6 @@ import (
 	"net/http"
 	"time"
 
-	"gopkg.in/yaml.v2"
-
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -32,23 +30,6 @@ import (
 type JWTResponse struct {
 	JWT     string
 	Message string
-}
-
-type testConfig struct {
-	JWT string
-	url string
-}
-
-func readConfig(filename string, defaults map[string]interface{}) (*viper.Viper, error) {
-	v := viper.New()
-	for key, value := range defaults {
-		v.SetDefault(key, value)
-	}
-	v.SetConfigName(filename)
-	v.AddConfigPath(".")
-	v.AutomaticEnv()
-	err := v.ReadInConfig()
-	return v, err
 }
 
 // loginCmd represents the login command
@@ -72,46 +53,19 @@ var loginCmd = &cobra.Command{
 		password := args[1]
 
 		var kabURL string
-    var tom string
-		KabEnvVar := "KABURL"
+		KabEnvKey := "KABURL"
 
+		viper.SetEnvPrefix("KABANERO")
 
-    viper.SetEnvPrefix("KABANERO")
-    os.Setenv("KABANERO_TOM", "who")
-    viper.AutomaticEnv()
-    tom = viper.GetString("tom")
-	fmt.Println("Tom:" + tom)
-	cliConfig.Set("CLAUDIA", "some_JWT_string")
-	cliConfig.WriteConfig()
-
-	jwt := cliConfig.GetString("jwt")
-	Debug.log("JWT:" + jwt)
-
-		file1, err := readConfig("kab-config", map[string]interface{}{"url": kabURL})
-		if err != nil {
-			panic(fmt.Errorf("Error when reading config: %v", err))
-		}
-
-		var tempstruct tempstruct
-		yaml.Unmarshal(value, &tempstruct)
-
-		readConfig("kab-config", map[string]interface{}{"url": kabURL, "jwt": "MYJWT1i2746632747587384762378"})
-
-		value := file1.GetString("jwt")
-		fmt.Println("VALUEEEEEE? ------->" + value)
-		fmt.Println("URL?????------>" + file1.GetString("url"))
-		file1.Set("url", "NEW AWESOME URL")
 		if len(args) > 2 {
 			kabURL = args[2]
-			os.Setenv(KabEnvVar, kabURL)
-			//urlAccess(kabURL)
-			fmt.Printf("kabURL "+ os.Getenv(KabEnvVar))
-			fmt.Printf("SET VAR?----" + os.Getenv(KabEnvVar))
-			// cliConfig.SetDefault(KabEnvVar, kabURL)
-			// fmt.Printf("\n VIPER ACCESS ------" + cliConfig.GetString(KabEnvVar))
-
+			cliConfig.Set(KabEnvKey, kabURL)
+			cliConfig.WriteConfig()
 		} else {
-			return errors.New("No Kabanero instance url specified")
+			if cliConfig.GetString(KabEnvKey) == "" {
+				return errors.New("No Kabanero instance url specified")
+			}
+			kabURL = cliConfig.GetString(KabEnvKey)
 		}
 
 		client := &http.Client{
@@ -136,8 +90,9 @@ var loginCmd = &cobra.Command{
 
 		var data JWTResponse
 		json.NewDecoder(resp.Body).Decode(&data)
-
-		fmt.Println(data.JWT)
+		cliConfig.Set("jwt", data.JWT)
+		cliConfig.WriteConfig()
+		// fmt.Println(data.JWT)
 		defer resp.Body.Close()
 
 		return nil
