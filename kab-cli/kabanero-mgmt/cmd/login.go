@@ -24,6 +24,7 @@ import (
 	"time"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 type JWTResponse struct {
@@ -46,38 +47,25 @@ var loginCmd = &cobra.Command{
 		kabanero-management champ champpassword https://kabanero1.io
 		`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Println("login called")
+		// fmt.Println("login called")
 
 		username := args[0]
 		password := args[1]
 
 		var kabURL string
-    var tom string
-		KabEnvVar := "KABURL"
+		KabEnvKey := "KABURL"
 
-
-    viper.SetEnvPrefix("KABANERO")
-    os.Setenv("KABANERO_TOM", "who")
-    viper.AutomaticEnv()
-    tom = viper.GetString("tom")
-	fmt.Println("Tom:" + tom)
-	cliConfig.Set("CLAUDIA", "some_JWT_string")
-	cliConfig.WriteConfig()
-
-	jwt := cliConfig.GetString("jwt")
-	Debug.log("JWT:" + jwt)
+		viper.SetEnvPrefix("KABANERO")
 
 		if len(args) > 2 {
 			kabURL = args[2]
-			os.Setenv(KabEnvVar, kabURL)
-			//urlAccess(kabURL)
-			fmt.Printf("kabURL "+ os.Getenv(KabEnvVar))
-			fmt.Printf("SET VAR?----" + os.Getenv(KabEnvVar))
-			// cliConfig.SetDefault(KabEnvVar, kabURL)
-			// fmt.Printf("\n VIPER ACCESS ------" + cliConfig.GetString(KabEnvVar))
-
+			cliConfig.Set(KabEnvKey, kabURL)
+			cliConfig.WriteConfig()
 		} else {
-			return errors.New("No Kabanero instance url specified")
+			if cliConfig.GetString(KabEnvKey) == "" {
+				return errors.New("No Kabanero instance url specified")
+			}
+			kabURL = cliConfig.GetString(KabEnvKey)
 		}
 
 		client := &http.Client{
@@ -102,8 +90,10 @@ var loginCmd = &cobra.Command{
 
 		var data JWTResponse
 		json.NewDecoder(resp.Body).Decode(&data)
-
-		fmt.Println(data.JWT)
+		cliConfig.Set("jwt", data.JWT)
+		cliConfig.WriteConfig()
+		// fmt.Println(data.JWT)
+		fmt.Println("Logged into kabanero instace: " + cliConfig.GetString(KabEnvKey))
 		defer resp.Body.Close()
 
 		return nil
