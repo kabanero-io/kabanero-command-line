@@ -30,6 +30,8 @@ Disconnect from the instance of Kabanero that you
 have been interacting with.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("logout called")
+		cliConfig.Set(KabEnvKey, "")
+		cliConfig.Set("jwt", "")
 	},
 }
 
