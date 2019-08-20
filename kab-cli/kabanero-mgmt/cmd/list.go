@@ -16,6 +16,7 @@ limitations under the License.
 package cmd
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -26,19 +27,17 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type collStruct struct {
-	name      string
-	version   string
-	status    string
-	exception string
+type CollStruct struct {
+	Name    string
+	Version string
 }
 
-type collectionsResponse struct {
-	newColl      []map[string][]string `json:"new collections"`
-	kabColl      string                `json:"kabanero collection"`
-	obsoleteColl string                `json:"obsolete collections"`
-	masterColl   string                `json:"master collection"`
-	vChangeColl  string                `json:"version change collection"`
+type CollectionsResponse struct {
+	NewColl      []CollStruct `json:"new collections"`
+	KabColl      []CollStruct `json:"kabanero collection"`
+	ObsoleteColl []CollStruct `json:"obsolete collections"`
+	MasterColl   []CollStruct `json:"master collection"`
+	VChangeColl  []CollStruct `json:"version change collections"`
 }
 
 // listCmd represents the list command
@@ -52,7 +51,7 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		url := "http://10.211.54.244:31000/KabCollections-1.0-SNAPSHOT/v1/collections"
+		url := "http://10.211.54.243:31000/KabCollections-1.0-SNAPSHOT/v1/collections"
 		fmt.Println("list called")
 		client := &http.Client{
 			Timeout: time.Second * 30,
@@ -76,12 +75,24 @@ to quickly create a Cobra application.`,
 		defer resp.Body.Close()
 
 		somedata, _ := ioutil.ReadAll(resp.Body)
-		fmt.Println(string(somedata))
+		Debug.log(string(somedata))
 
-		var data collectionsResponse
+		var data CollectionsResponse
+		var testBuffer bytes.Buffer
+		json.Indent(&testBuffer, somedata, "", "\t")
+		// fmt.Println("TEST", string(testBuffer.Bytes()))
+		Debug.log(string(testBuffer.Bytes()))
 		json.NewDecoder(resp.Body).Decode(&data)
+		err = json.Unmarshal(somedata, &data)
+		if err == nil {
+			return errors.New("Made unmarshalling")
+		}
 		fmt.Println("**********************************")
-		fmt.Println(data.kabColl)
+		// fmt.Println(data.newColl)
+		// fmt.Println(data.kabColl)
+		// fmt.Println(data.obsoleteColl)
+		// fmt.Println(data.masterColl)
+		fmt.Println(data)
 
 		return nil
 	},
