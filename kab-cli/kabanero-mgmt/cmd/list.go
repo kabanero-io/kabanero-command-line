@@ -16,10 +16,30 @@ limitations under the License.
 package cmd
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
+	"io/ioutil"
+	"net/http"
+	"time"
 
 	"github.com/spf13/cobra"
 )
+
+type collStruct struct {
+	name      string
+	version   string
+	status    string
+	exception string
+}
+
+type collectionsResponse struct {
+	newColl      []map[string][]string `json:"new collections"`
+	kabColl      string                `json:"kabanero collection"`
+	obsoleteColl string                `json:"obsolete collections"`
+	masterColl   string                `json:"master collection"`
+	vChangeColl  string                `json:"version change collection"`
+}
 
 // listCmd represents the list command
 var listCmd = &cobra.Command{
@@ -31,8 +51,36 @@ and usage of using your command. For example:
 Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
+		url := "http://10.211.54.244:31000/KabCollections-1.0-SNAPSHOT/v1/collections"
 		fmt.Println("list called")
+		client := &http.Client{
+			Timeout: time.Second * 30,
+		}
+
+		req, err := http.NewRequest("GET", url, nil)
+		if err != nil {
+			fmt.Print("Problem with the new request")
+			return errors.New(err.Error())
+		}
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("Authorization", string(cliConfig.GetString("jwt")))
+		resp, err := client.Do(req)
+		if err != nil {
+			fmt.Print("Unable to retrieve collections")
+			return errors.New(err.Error())
+		}
+		defer resp.Body.Close()
+
+		somedata, _ := ioutil.ReadAll(resp.Body)
+		fmt.Println(string(somedata))
+
+		var data collectionsResponse
+		json.NewDecoder(resp.Body).Decode(&data)
+		fmt.Println("**********************************")
+		fmt.Println(data.kabColl)
+
+		return nil
 	},
 }
 
