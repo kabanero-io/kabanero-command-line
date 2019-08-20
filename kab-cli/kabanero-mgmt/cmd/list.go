@@ -65,6 +65,9 @@ to quickly create a Cobra application.`,
 		}
 		req.Header.Set("Content-Type", "application/json")
 		req.Header.Set("Authorization", string(cliConfig.GetString("jwt")))
+		if cliConfig.GetString("jwt") == "" {
+			return errors.New("Login to your kabanero instance")
+		}
 		resp, err := client.Do(req)
 		if err != nil {
 			fmt.Print("Unable to retrieve collections")
