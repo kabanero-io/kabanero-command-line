@@ -16,10 +16,29 @@ limitations under the License.
 package cmd
 
 import (
+	"bytes"
+	"encoding/json"
+	"errors"
 	"fmt"
+	"io/ioutil"
+	"net/http"
+	"time"
 
 	"github.com/spf13/cobra"
 )
+
+type CollStruct struct {
+	Name    string
+	Version string
+}
+
+type CollectionsResponse struct {
+	NewColl      []CollStruct `json:"new collections"`
+	KabColl      []CollStruct `json:"kabanero collection"`
+	ObsoleteColl []CollStruct `json:"obsolete collections"`
+	MasterColl   []CollStruct `json:"master collection"`
+	VChangeColl  []CollStruct `json:"version change collections"`
+}
 
 // listCmd represents the list command
 var listCmd = &cobra.Command{
@@ -31,8 +50,51 @@ and usage of using your command. For example:
 Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
+		url := "http://10.211.54.243:31000/KabCollections-1.0-SNAPSHOT/v1/collections"
 		fmt.Println("list called")
+		client := &http.Client{
+			Timeout: time.Second * 30,
+		}
+
+		req, err := http.NewRequest("GET", url, nil)
+		if err != nil {
+			fmt.Print("Problem with the new request")
+			return errors.New(err.Error())
+		}
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("Authorization", string(cliConfig.GetString("jwt")))
+		if cliConfig.GetString("jwt") == "" {
+			return errors.New("Login to your kabanero instance")
+		}
+		resp, err := client.Do(req)
+		if err != nil {
+			fmt.Print("Unable to retrieve collections")
+			return errors.New(err.Error())
+		}
+		defer resp.Body.Close()
+
+		somedata, _ := ioutil.ReadAll(resp.Body)
+		Debug.log(string(somedata))
+
+		var data CollectionsResponse
+		var testBuffer bytes.Buffer
+		json.Indent(&testBuffer, somedata, "", "\t")
+		// fmt.Println("TEST", string(testBuffer.Bytes()))
+		Debug.log(string(testBuffer.Bytes()))
+		json.NewDecoder(resp.Body).Decode(&data)
+		err = json.Unmarshal(somedata, &data)
+		if err == nil {
+			return errors.New("Made unmarshalling")
+		}
+		fmt.Println("**********************************")
+		// fmt.Println(data.newColl)
+		// fmt.Println(data.kabColl)
+		// fmt.Println(data.obsoleteColl)
+		// fmt.Println(data.masterColl)
+		fmt.Println(data)
+
+		return nil
 	},
 }
 
