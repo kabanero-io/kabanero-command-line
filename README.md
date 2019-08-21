@@ -1,6 +1,6 @@
 
 
-The command Kabanero-mgmt command line is targetted at the enterprise, solution, or application architect who is defining the kabanero collections that are to be used by the developer to develop a governed application for their business.
+The command Kabanero-mgmt command line is targeted at the enterprise, solution, or application architect who is defining the kabanero collections that are to be used by the developer to develop a governed application for their business.
 
 # kabanero CLI
 ## kabanero-mgmt
