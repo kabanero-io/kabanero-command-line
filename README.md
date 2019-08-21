@@ -29,7 +29,7 @@ Complete documentation is available at https://kabanero.io
 * [kabanero-mgmt list](#kabanero-mgmt-list)	 - List all the collections in the apphub, and optionally their status
 * [kabanero-mgmt login](#kabanero-mgmt-login)	 - Will authentic you to the Kabanero instance
 * [kabanero-mgmt logout](#kabanero-mgmt-logout)	 - Disconnect from Kabanero instance
-* [kabanero-mgmt onboard](#kabanero-mgmt-onboard)	 - Command to onbboard a developer to the Kabanero infrastructure
+* [kabanero-mgmt onboard](#kabanero-mgmt-onboard)	 - Command to onboard a developer to the Kabanero infrastructure
 * [kabanero-mgmt refresh](#kabanero-mgmt-refresh)	 - Refresh the collections list
 * [kabanero-mgmt version](#kabanero-mgmt-version)	 - Show Kabanero CLI version
 
