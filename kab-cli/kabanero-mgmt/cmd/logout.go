@@ -36,8 +36,6 @@ have been interacting with.`,
 		client := &http.Client{
 			Timeout: time.Second * 30,
 		}
-		fmt.Println("GET STRING_----------" + url)
-		fmt.Println("JWT>>>>?>>>>>>>> " + cliConfig.GetString("jwt"))
 		req, err := http.NewRequest("POST", url, nil)
 		if err != nil {
 			fmt.Print("Problem with the new request")
@@ -56,7 +54,6 @@ have been interacting with.`,
 		cliConfig.Set("jwt", "")
 		cliConfig.WriteConfig()
 		Debug.log("Logged out of kab instance: " + url)
-		Debug.log("JWT: " + cliConfig.GetString("jwt"))
 		return nil
 	},
 }
