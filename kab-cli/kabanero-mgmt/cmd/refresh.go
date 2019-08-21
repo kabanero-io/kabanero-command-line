@@ -25,6 +25,31 @@ import (
 	"github.com/spf13/cobra"
 )
 
+func sendHTTPRequest(method string, url string) (*http.Response, error) {
+	client := &http.Client{
+		Timeout: time.Second * 30,
+	}
+
+	var resp *http.Response
+
+	req, err := http.NewRequest(method, url, nil)
+	if err != nil {
+		fmt.Print("Problem with the new request")
+		return resp, errors.New(err.Error())
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", string(cliConfig.GetString("jwt")))
+	if cliConfig.GetString("jwt") == "" {
+		return resp, errors.New("Login to your kabanero instance")
+	}
+	resp, err = client.Do(req)
+	if err != nil {
+		fmt.Print("Unable to retrieve collections")
+		return resp, errors.New(err.Error())
+	}
+	return resp, nil
+}
+
 // refreshCmd represents the refresh command
 var refreshCmd = &cobra.Command{
 	Use:   "refresh",
@@ -32,23 +57,8 @@ var refreshCmd = &cobra.Command{
 	Long:  `Refresh reconciles the list of collections from master to make them current with the activated collections across all namespace in the kabanero instance`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		url := cliConfig.GetString(KabURLKey) + "/v1/collections"
-		client := &http.Client{
-			Timeout: time.Second * 30,
-		}
-
-		req, err := http.NewRequest("PUT", url, nil)
+		resp, err := sendHTTPRequest("PUT", url)
 		if err != nil {
-			fmt.Print("Problem with the new request")
-			return errors.New(err.Error())
-		}
-		req.Header.Set("Content-Type", "application/json")
-		req.Header.Set("Authorization", string(cliConfig.GetString("jwt")))
-		if cliConfig.GetString("jwt") == "" {
-			return errors.New("Login to your kabanero instance")
-		}
-		resp, err := client.Do(req)
-		if err != nil {
-			fmt.Print("Unable to retrieve collections")
 			return errors.New(err.Error())
 		}
 		defer resp.Body.Close()
