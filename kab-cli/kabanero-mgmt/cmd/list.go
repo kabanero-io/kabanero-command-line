@@ -51,12 +51,13 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		url := cliConfig.GetString(KabURLKey) + "/collections"
+		url := cliConfig.GetString(KabURLKey) + "/v1/collections"
 		fmt.Println("list called")
 		client := &http.Client{
 			Timeout: time.Second * 30,
 		}
-
+		Debug.log("ENDPOINT---> " + url)
+		Debug.log("JWT----> " + cliConfig.GetString("jwt"))
 		req, err := http.NewRequest("GET", url, nil)
 		if err != nil {
 			fmt.Print("Problem with the new request")
@@ -75,7 +76,7 @@ to quickly create a Cobra application.`,
 		defer resp.Body.Close()
 
 		somedata, _ := ioutil.ReadAll(resp.Body)
-		Debug.log(string(somedata))
+		Debug.log(resp.StatusCode, http.StatusText(resp.StatusCode))
 
 		var data CollectionsResponse
 		var testBuffer bytes.Buffer

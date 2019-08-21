@@ -54,6 +54,7 @@ have been interacting with.`,
 		}
 		defer resp.Body.Close()
 		cliConfig.Set("jwt", "")
+		cliConfig.WriteConfig()
 		Debug.log("Logged out of kab instance: " + url)
 		Debug.log("JWT: " + cliConfig.GetString("jwt"))
 		return nil

@@ -16,7 +16,11 @@ limitations under the License.
 package cmd
 
 import (
+	"errors"
 	"fmt"
+	"io/ioutil"
+	"net/http"
+	"time"
 
 	"github.com/spf13/cobra"
 )
@@ -26,8 +30,32 @@ var refreshCmd = &cobra.Command{
 	Use:   "refresh",
 	Short: "Refresh the collections list",
 	Long:  `Refresh reconciles the list of collections from master to make them current with the activated collections across all namespace in the kabanero instance`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("refresh called")
+	RunE: func(cmd *cobra.Command, args []string) error {
+		url := cliConfig.GetString(KabURLKey) + "/v1/collections"
+		client := &http.Client{
+			Timeout: time.Second * 30,
+		}
+
+		req, err := http.NewRequest("PUT", url, nil)
+		if err != nil {
+			fmt.Print("Problem with the new request")
+			return errors.New(err.Error())
+		}
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("Authorization", string(cliConfig.GetString("jwt")))
+		if cliConfig.GetString("jwt") == "" {
+			return errors.New("Login to your kabanero instance")
+		}
+		resp, err := client.Do(req)
+		if err != nil {
+			fmt.Print("Unable to retrieve collections")
+			return errors.New(err.Error())
+		}
+		defer resp.Body.Close()
+
+		somedata, _ := ioutil.ReadAll(resp.Body)
+		Debug.log(string(somedata))
+		return nil
 	},
 }
 
