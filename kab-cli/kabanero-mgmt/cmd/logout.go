@@ -16,7 +16,10 @@ limitations under the License.
 package cmd
 
 import (
+	"errors"
 	"fmt"
+	"net/http"
+	"time"
 
 	"github.com/spf13/cobra"
 )
@@ -28,10 +31,32 @@ var logoutCmd = &cobra.Command{
 	Long: `
 Disconnect from the instance of Kabanero that you 
 have been interacting with.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("logout called")
-		cliConfig.Set(KabEnvKey, "")
+	RunE: func(cmd *cobra.Command, args []string) error {
+		url := cliConfig.GetString(KabURLKey) + "/logout"
+		client := &http.Client{
+			Timeout: time.Second * 30,
+		}
+		fmt.Println("GET STRING_----------" + url)
+		fmt.Println("JWT>>>>?>>>>>>>> " + cliConfig.GetString("jwt"))
+		req, err := http.NewRequest("POST", url, nil)
+		if err != nil {
+			fmt.Print("Problem with the new request")
+			return errors.New(err.Error())
+		}
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("Authorization", string(cliConfig.GetString("jwt")))
+		if cliConfig.GetString("jwt") == "" {
+			return errors.New("Not logged into kabanero instance")
+		}
+		resp, err := client.Do(req)
+		if err != nil {
+			return errors.New(err.Error())
+		}
+		defer resp.Body.Close()
 		cliConfig.Set("jwt", "")
+		Debug.log("Logged out of kab instance: " + url)
+		Debug.log("JWT: " + cliConfig.GetString("jwt"))
+		return nil
 	},
 }
 
