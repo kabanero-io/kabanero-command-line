@@ -52,20 +52,19 @@ var loginCmd = &cobra.Command{
 		username := args[0]
 		password := args[1]
 
-		var kabURL string
-		KabEnvKey := "KABURL"
+		var kabLoginURL string
 
 		viper.SetEnvPrefix("KABANERO")
 
 		if len(args) > 2 {
-			kabURL = args[2]
-			cliConfig.Set(KabEnvKey, kabURL)
+			kabLoginURL = args[2] + "/login"
+			cliConfig.Set(KabURLKey, args[2])
 			cliConfig.WriteConfig()
 		} else {
-			if cliConfig.GetString(KabEnvKey) == "" {
+			if cliConfig.GetString(KabURLKey) == "" {
 				return errors.New("No Kabanero instance url specified")
 			}
-			kabURL = cliConfig.GetString(KabEnvKey)
+			kabLoginURL = cliConfig.GetString(KabURLKey) + "/login"
 		}
 
 		client := &http.Client{
@@ -74,9 +73,8 @@ var loginCmd = &cobra.Command{
 
 		requestBody, _ := json.Marshal(map[string]string{"gituser": username, "gitpat": password})
 
-		req, err := http.NewRequest("POST", kabURL, bytes.NewBuffer(requestBody))
+		req, err := http.NewRequest("POST", kabLoginURL, bytes.NewBuffer(requestBody))
 		if err != nil {
-			fmt.Print("Problem with the new request")
 			return errors.New(err.Error())
 		}
 
@@ -85,15 +83,18 @@ var loginCmd = &cobra.Command{
 		resp, err := client.Do(req)
 
 		if err != nil {
-			return errors.New("Login failed to endpoint: " + kabURL + " \n")
+			return errors.New("Login failed to endpoint: " + kabLoginURL + " \n")
 		}
 
 		var data JWTResponse
 		json.NewDecoder(resp.Body).Decode(&data)
 		cliConfig.Set("jwt", data.JWT)
 		cliConfig.WriteConfig()
-		// fmt.Println(data.JWT)
-		fmt.Println("Logged into kabanero instace: " + cliConfig.GetString(KabEnvKey))
+		if cliConfig.GetString("jwt") == "" {
+			return errors.New("Unable to validate user:  " + username + " to " + cliConfig.GetString(KabURLKey))
+		}
+		// fmt.Println(cliConfig.GetString("jwt"))
+		fmt.Println("Logged into kabanero instace: " + cliConfig.GetString(KabURLKey))
 		defer resp.Body.Close()
 
 		return nil

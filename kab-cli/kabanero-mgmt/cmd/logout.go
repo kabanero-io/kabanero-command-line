@@ -32,12 +32,13 @@ var logoutCmd = &cobra.Command{
 Disconnect from the instance of Kabanero that you 
 have been interacting with.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		url := "http://10.211.54.243:31000/KabCollections-1.0-SNAPSHOT/v1/logout"
+		url := cliConfig.GetString(KabURLKey) + "/logout"
 		client := &http.Client{
 			Timeout: time.Second * 30,
 		}
-
-		req, err := http.NewRequest("GET", url, nil)
+		fmt.Println("GET STRING_----------" + url)
+		fmt.Println("JWT>>>>?>>>>>>>> " + cliConfig.GetString("jwt"))
+		req, err := http.NewRequest("POST", url, nil)
 		if err != nil {
 			fmt.Print("Problem with the new request")
 			return errors.New(err.Error())
@@ -53,6 +54,8 @@ have been interacting with.`,
 		}
 		defer resp.Body.Close()
 		cliConfig.Set("jwt", "")
+		Debug.log("Logged out of kab instance: " + url)
+		Debug.log("JWT: " + cliConfig.GetString("jwt"))
 		return nil
 	},
 }

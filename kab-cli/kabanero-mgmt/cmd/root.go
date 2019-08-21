@@ -30,7 +30,7 @@ var (
 	dryrun          bool
 	verbose         bool
 	klogInitialized = false
-	KabEnvKey       string
+	KabURLKey       = "KABURL"
 )
 
 func homeDir() string {
@@ -124,7 +124,7 @@ func initConfig() {
 	cliConfig.SetDefault("home", cfgDir)
 	cliConfig.SetDefault("images", "index.docker.io")
 	cliConfig.SetDefault("tektonserver", "")
-	KabEnvKey = ""
+	KabURLKey = ""
 
 	if cfgFile == "" {
 		//viper needs cfgFile to NOT include the file type
