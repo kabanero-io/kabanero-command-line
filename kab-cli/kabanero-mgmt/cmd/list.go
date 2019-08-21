@@ -22,7 +22,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"time"
 
 	"github.com/spf13/cobra"
 )
@@ -52,28 +51,10 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		url := cliConfig.GetString(KabURLKey) + "/v1/collections"
-		fmt.Println("list called")
-		client := &http.Client{
-			Timeout: time.Second * 30,
-		}
-		Debug.log("ENDPOINT---> " + url)
-		Debug.log("JWT----> " + cliConfig.GetString("jwt"))
-		req, err := http.NewRequest("GET", url, nil)
+		resp, err := sendHTTPRequest("GET", url)
 		if err != nil {
-			fmt.Print("Problem with the new request")
 			return errors.New(err.Error())
 		}
-		req.Header.Set("Content-Type", "application/json")
-		req.Header.Set("Authorization", string(cliConfig.GetString("jwt")))
-		if cliConfig.GetString("jwt") == "" {
-			return errors.New("Login to your kabanero instance")
-		}
-		resp, err := client.Do(req)
-		if err != nil {
-			fmt.Print("Unable to retrieve collections")
-			return errors.New(err.Error())
-		}
-		defer resp.Body.Close()
 
 		somedata, _ := ioutil.ReadAll(resp.Body)
 		Debug.log(resp.StatusCode, http.StatusText(resp.StatusCode))
