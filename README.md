@@ -10,7 +10,7 @@ A command line interface that can be used to manage the environment
 ### Synopsis
 
 A command line interface that can be used to manage the collections that 
-the environment prosents, as well as on-board the people and clusters that will be 
+the environment presents, as well as on-board the people and clusters that will be 
 used in the environment to build applications.
 
 Complete documentation is available at https://kabanero.io
