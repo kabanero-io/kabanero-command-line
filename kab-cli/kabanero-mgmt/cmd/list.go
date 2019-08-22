@@ -20,15 +20,17 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"net/http"
+	"os"
+	"text/tabwriter"
 
 	"github.com/spf13/cobra"
 )
 
 type CollStruct struct {
-	Name    string
-	Version string
+	OriginalName string
+	Name         string
+	Version      string
 }
 
 type CollectionsResponse struct {
@@ -63,25 +65,30 @@ to quickly create a Cobra application.`,
 			return errors.New(err.Error())
 		}
 
-		somedata, _ := ioutil.ReadAll(resp.Body)
-		Debug.log(resp.StatusCode, http.StatusText(resp.StatusCode))
-		printPrettyJSON(somedata)
+		Debug.log("RESPONSE ", url, resp.StatusCode, http.StatusText(resp.StatusCode))
+
+		//Decode the response into data
+		decoder := json.NewDecoder(resp.Body)
 		var data CollectionsResponse
-		// var testBuffer bytes.Buffer
-		// json.Indent(&testBuffer, somedata, "", "\t")
-		// // fmt.Println("TEST", string(testBuffer.Bytes()))
-		// Debug.log(string(testBuffer.Bytes()))
-		// json.NewDecoder(resp.Body).Decode(&data)
-		err = json.Unmarshal(somedata, &data)
-		// if err == nil {
-		// 	return errors.New("Made unmarshalling")
-		// }
-		// fmt.Println("**********************************")
-		// // fmt.Println(data.newColl)
-		// // fmt.Println(data.kabColl)
-		// // fmt.Println(data.obsoleteColl)
-		// // fmt.Println(data.masterColl)
-		// fmt.Println(data)
+		err = decoder.Decode(&data)
+		if err != nil {
+			return err
+		}
+		//
+		Debug.log(data)
+		tWriter := new(tabwriter.Writer)
+		tWriter.Init(os.Stdout, 0, 8, 0, '\t', 0)
+		fmt.Println("Masters Collections")
+		fmt.Fprintf(tWriter, "\n%s\t%s\t", "Name", "Version")
+		fmt.Fprintf(tWriter, "\n%s\t%s\t", "----", "----")
+
+		for i := 0; i < len(data.MasterColl); i++ {
+			fmt.Fprintf(tWriter, "\n %s\t%s", data.MasterColl[i].Name, data.MasterColl[i].Version)
+		}
+		tWriter.Flush()
+		fmt.Println("")
+
+		// fmt.Println(data.KabColl[0].OriginalName)
 
 		return nil
 	},
