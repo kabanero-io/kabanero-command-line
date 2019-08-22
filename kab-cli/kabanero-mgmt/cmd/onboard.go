@@ -23,7 +23,7 @@ import (
 
 // onboardCmd represents the onboard command
 var onboardCmd = &cobra.Command{
-	Use:   "onboard user-id",
+	Use:   "onboard github-id repo-name",
 	Short: "Command to onbboard a developer to the Kabanero infrastructure",
 	Long: `This command causes an email to be sent to the user associated
 	with the user-id providing the information necessary to get started using 

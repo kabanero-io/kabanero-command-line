@@ -23,9 +23,8 @@ import (
 
 // deactivateCmd represents the deactivate command
 var deactivateCmd = &cobra.Command{
-	Use:    "deactivate collection-name",
-	Hidden: true,
-	Short:  "Prevent this collection from being shown to the development team, while not deleting it.",
+	Use:   "deactivate collection-name",
+	Short: "Prevent this collection from being shown to the development team, while not deleting it.",
 	Long: `
 A collection can be available to a development team
 to use for building applications or not. deactivate
