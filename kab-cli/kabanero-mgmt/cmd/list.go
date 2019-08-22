@@ -21,6 +21,8 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"os"
+	"text/tabwriter"
 
 	"github.com/spf13/cobra"
 )
@@ -46,15 +48,6 @@ func printPrettyJSON(jsonData []byte) {
 
 }
 
-type MyResponseWriter struct {
-	http.ResponseWriter
-	buf *bytes.Buffer
-}
-
-func (mrw *MyResponseWriter) Write(p []byte) (int, error) {
-	return mrw.buf.Write(p)
-}
-
 // listCmd represents the list command
 var listCmd = &cobra.Command{
 	Use:   "list [status]",
@@ -72,32 +65,30 @@ to quickly create a Cobra application.`,
 			return errors.New(err.Error())
 		}
 
-		// somedata, _ := ioutil.ReadAll(resp.Body)
-		// defer resp.Body.Close()
+		Debug.log("RESPONSE ", url, resp.StatusCode, http.StatusText(resp.StatusCode))
 
-		// buffer := bytes.NewBuffer(make([]byte, 0, resp.ContentLength))
-		// _, err = buffer.ReadFrom(resp.Body)
-
-		// Debug.log(resp.StatusCode, http.StatusText(resp.StatusCode))
-		// printPrettyJSON(somedata)
+		//Decode the response into data
 		decoder := json.NewDecoder(resp.Body)
 		var data CollectionsResponse
 		err = decoder.Decode(&data)
-		// var testBuffer bytes.Buffer
-		// json.Indent(&testBuffer, somedata, "", "\t")
-		// fmt.Println("TEST", string(testBuffer.Bytes()))
-		// Debug.log(string(testBuffer.Bytes()))
-		// json.NewDecoder(bytes.NewReader(buffer.Bytes())).Decode(&data)
-		// err = json.Unmarshal(ioutil.ReadAll(resp.Body), &data)
 		if err != nil {
 			return err
 		}
-		// fmt.Println("**********************************")
-		fmt.Println(data.KabColl[0].OriginalName)
-		// // fmt.Println(data.kabColl)
-		// // fmt.Println(data.obsoleteColl)
-		// // fmt.Println(data.masterColl)
-		// fmt.Println(data)
+		//
+		Debug.log(data)
+		tWriter := new(tabwriter.Writer)
+		tWriter.Init(os.Stdout, 0, 8, 0, '\t', 0)
+		fmt.Println("Masters Collections")
+		fmt.Fprintf(tWriter, "\n%s\t%s\t", "Name", "Version")
+		fmt.Fprintf(tWriter, "\n%s\t%s\t", "----", "----")
+
+		for i := 0; i < len(data.MasterColl); i++ {
+			fmt.Fprintf(tWriter, "\n %s\t%s", data.MasterColl[i].Name, data.MasterColl[i].Version)
+		}
+		tWriter.Flush()
+		fmt.Println("")
+
+		// fmt.Println(data.KabColl[0].OriginalName)
 
 		return nil
 	},
