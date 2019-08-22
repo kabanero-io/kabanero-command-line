@@ -16,6 +16,7 @@ limitations under the License.
 package cmd
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -25,14 +26,18 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func sendHTTPRequest(method string, url string) (*http.Response, error) {
+func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response, error) {
 	client := &http.Client{
 		Timeout: time.Second * 30,
 	}
 
 	var resp *http.Response
+	var requestBody *bytes.Buffer // default initialized with nil?
+	if jsonBody != nil {
+		requestBody = bytes.NewBuffer(jsonBody)
+	}
+	req, err := http.NewRequest(method, url, requestBody)
 
-	req, err := http.NewRequest(method, url, nil)
 	if err != nil {
 		fmt.Print("Problem with the new request")
 		return resp, errors.New(err.Error())
@@ -42,6 +47,7 @@ func sendHTTPRequest(method string, url string) (*http.Response, error) {
 	if cliConfig.GetString("jwt") == "" {
 		return resp, errors.New("Login to your kabanero instance")
 	}
+
 	resp, err = client.Do(req)
 	if err != nil {
 		fmt.Print("Unable to retrieve collections")
@@ -57,7 +63,7 @@ var refreshCmd = &cobra.Command{
 	Long:  `Refresh reconciles the list of collections from master to make them current with the activated collections across all namespace in the kabanero instance`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		url := cliConfig.GetString(KabURLKey) + "/v1/collections"
-		resp, err := sendHTTPRequest("PUT", url)
+		resp, err := sendHTTPRequest("PUT", url, nil)
 		if err != nil {
 			return errors.New(err.Error())
 		}
