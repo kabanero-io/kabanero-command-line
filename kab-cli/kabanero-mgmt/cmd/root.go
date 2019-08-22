@@ -27,7 +27,7 @@ var (
 	cfgFile         string
 	cliConfig       *viper.Viper
 	APIVersionV1    = "v1"
-	dryrun          bool
+	//dryrun          bool
 	verbose         bool
 	klogInitialized = false
 	KabURLKey       = "KABURL"
@@ -43,10 +43,10 @@ func homeDir() string {
 }
 
 var rootCmd = &cobra.Command{
-	Use:   "kabanero-mgmt",
-	Short: "A command line interface that can be used to manage the environment",
-	Long: `A command line interface that can be used to manage the collections that 
-the environment prosents, as well as on-board the people and clusters that will be 
+	Use:   "kabanero",
+	Short: "A command line interface to manage a Kabanero environment",
+	Long: `A command line interface for managing the collections in a Kabanero 
+environment, as well as on-board the people that will be 
 used in the environment to build applications.
 
 Complete documentation is available at https://kabanero.io`,
@@ -61,11 +61,12 @@ func init() {
 		//	cobra.OnInitialize(ensureConfig)
 	}
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.kabaneromgmt.yaml)")
+	// we will only allow default config file name/location for now.  
+	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.kabaneromgmt.yaml)")
 	// Added for logging
-	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "Turns on debug output and logging to a file in $HOME/.kabaneromgmt/logs")
+	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "Turns on debug output and logging to a file in $HOME/.kabanero/logs")
 
-	rootCmd.PersistentFlags().BoolVar(&dryrun, "dryrun", false, "Turns on dry run mode")
+	// not implemented: rootCmd.PersistentFlags().BoolVar(&dryrun, "dryrun", false, "Turns on dry run mode")
 
 	// The subbcommand processor for commands to manage the apphub
 	//	var apphubCmd = cobra.Command(collections.GetCollectionsCLI())
@@ -96,18 +97,18 @@ func isHelpCommand() bool {
 func initConfig() {
 	Debug.log("Running with command line args: kabanero ", strings.Join(os.Args[1:], " "))
 	// handle user supplied config file:
-	if cfgFile != "" {
-		if _, err := os.Stat(cfgFile); os.IsNotExist(err) {
-			Info.log("user supplied --config file does not exist.  Creating: " + cfgFile)
-			_, err := os.OpenFile(cfgFile, os.O_RDWR|os.O_CREATE, 0755)
-			if err != nil {
-				Error.log("ERROR opening user supplied config file: "+cfgFile, err)
-				os.Exit(1)
-			}
-		} else {
-			Debug.log("using --config file: " + cfgFile)
-		}
-	}
+	//if cfgFile != "" {
+	//	if _, err := os.Stat(cfgFile); os.IsNotExist(err) {
+	//		Info.log("user supplied --config file does not exist.  Creating: " + cfgFile)
+	//		_, err := os.OpenFile(cfgFile, os.O_RDWR|os.O_CREATE, 0755)
+	//		if err != nil {
+	//			Error.log("ERROR opening user supplied config file: "+cfgFile, err)
+	//			os.Exit(1)
+	//		}
+	//	} else {
+	//		Debug.log("using --config file: " + cfgFile)
+	//	}
+	//}
 
 	// verify the config directory and file:
 	cfgDir := filepath.Join(homeDir(), ".kabanero")
@@ -124,45 +125,35 @@ func initConfig() {
 	cliConfig.SetDefault("home", cfgDir)
 	cliConfig.SetDefault("images", "index.docker.io")
 	cliConfig.SetDefault("tektonserver", "")
-	KabURLKey = ""
 
 	if cfgFile == "" {
 		//viper needs cfgFile to NOT include the file type
-		cfgFile := filepath.Join(cfgDir, "kabanero")
+		cfgFile := filepath.Join(cfgDir, "config")
 		f, err := os.OpenFile(cfgFile+".yaml", os.O_RDWR|os.O_CREATE, 0755)
 		if err != nil {
-			Error.log("ERROR creating config file kabanero.yaml", err)
+			Error.log("ERROR creating config file config.yaml", err)
 			os.Exit(1)
 		}
-		Debug.log("Using config file: " + cfgFile + ".yaml")
+		Debug.log("Config file name: " + cfgFile + ".yaml")
 		f.Close()
 	}
-	cliConfig.SetConfigName("kabanero")
+	cliConfig.SetConfigName("config")   // name of config file without extension
 	cliConfig.AddConfigPath(cfgDir)
-	//if cfgFile != "" {
-	// Use config file from the flag.
-	//	cliConfig.SetConfigFile(cfgFile)
-	//} else {
-	// Search config in home directory with name ".hello-cobra" (without extension).
-	//	cliConfig.AddConfigPath(cliConfig.GetString("home"))
-	//	cliConfig.SetConfigName(".kabaneromgmt")
-	//}
 
-	cliConfig.SetEnvPrefix("KABANERO")
+	cliConfig.SetEnvPrefix("KABANERO")   // will expect all env vars to be prefixed with "KABANERO_"
 	cliConfig.AutomaticEnv() // read in environment variables that match
-
-	// If a config file is found, read it in.
+	
 	cliConfig.SetConfigType("yaml")
+	// If a config file is found, read it in.
 	if err := cliConfig.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
 			// no config file
-			Debug.log("No viper config file found: " + cfgFile)
+			Debug.log("Config file not found: " + cfgFile)
 		} else {
 			Error.log("ERROR: config file error: ", err)
 		}
 	}
 	Debug.log("config file used: " + cliConfig.ConfigFileUsed())
-
 }
 
 //func getDefaultConfigFile() string {
@@ -178,29 +169,29 @@ func Execute(version string) {
 	}
 }
 
-type kabaneromgmtlogger string
+type kabanerologger string
 
 // define the logging levels
 var (
-	Info       kabaneromgmtlogger = "Info"
-	Warning    kabaneromgmtlogger = "Warning"
-	Error      kabaneromgmtlogger = "Error"
-	Debug      kabaneromgmtlogger = "Debug"
-	Container  kabaneromgmtlogger = "Container"
-	InitScript kabaneromgmtlogger = "InitScript"
+	Info       kabanerologger = "Info"
+	Warning    kabanerologger = "Warning"
+	Error      kabanerologger = "Error"
+	Debug      kabanerologger = "Debug"
+	Container  kabanerologger = "Container"
+	InitScript kabanerologger = "InitScript"
 )
 
-func (l kabaneromgmtlogger) log(args ...interface{}) {
+func (l kabanerologger) log(args ...interface{}) {
 	msgString := fmt.Sprint(args...)
 	l.internalLog(msgString)
 }
 
-func (l kabaneromgmtlogger) logf(fmtString string, args ...interface{}) {
+func (l kabanerologger) logf(fmtString string, args ...interface{}) {
 	msgString := fmt.Sprintf(fmtString, args...)
 	l.internalLog(msgString)
 }
 
-func (l kabaneromgmtlogger) internalLog(msgString string) {
+func (l kabanerologger) internalLog(msgString string) {
 	if l == Debug && !verbose {
 		return
 	}
@@ -227,7 +218,7 @@ func initLogging() {
 
 	if verbose {
 
-		logDir := filepath.Join(homeDir(), ".kabaneromgmt", "logs")
+		logDir := filepath.Join(homeDir(), ".kabanero", "logs")
 
 		_, errPath := os.Stat(logDir)
 		if errPath != nil {
@@ -238,8 +229,8 @@ func initLogging() {
 		}
 
 		currentTimeValues := strings.Split(time.Now().Local().String(), " ")
-		fileName := strings.ReplaceAll("kabaneromgmt"+currentTimeValues[0]+"T"+currentTimeValues[1]+".log", ":", "-")
-		pathString := filepath.Join(homeDir(), ".kabaneromgmt", "logs", fileName)
+		fileName := strings.ReplaceAll("kabanero"+currentTimeValues[0]+"T"+currentTimeValues[1]+".log", ":", "-")
+		pathString := filepath.Join(homeDir(), ".kabanero", "logs", fileName)
 		klogFlags := flag.NewFlagSet("klog", flag.ExitOnError)
 		klog.InitFlags(klogFlags)
 		_ = klogFlags.Set("v", "4")
