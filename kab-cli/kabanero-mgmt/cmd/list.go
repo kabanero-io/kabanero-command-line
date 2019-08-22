@@ -66,13 +66,13 @@ to quickly create a Cobra application.`,
 		somedata, _ := ioutil.ReadAll(resp.Body)
 		Debug.log(resp.StatusCode, http.StatusText(resp.StatusCode))
 		printPrettyJSON(somedata)
-		// var data CollectionsResponse
+		var data CollectionsResponse
 		// var testBuffer bytes.Buffer
 		// json.Indent(&testBuffer, somedata, "", "\t")
 		// // fmt.Println("TEST", string(testBuffer.Bytes()))
 		// Debug.log(string(testBuffer.Bytes()))
 		// json.NewDecoder(resp.Body).Decode(&data)
-		// err = json.Unmarshal(somedata, &data)
+		err = json.Unmarshal(somedata, &data)
 		// if err == nil {
 		// 	return errors.New("Made unmarshalling")
 		// }
