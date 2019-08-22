@@ -33,11 +33,15 @@ func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response
 
 	var resp *http.Response
 	var requestBody *bytes.Buffer // default initialized with nil?
+	var req *http.Request
+	var err error
 	if jsonBody != nil {
 		requestBody = bytes.NewBuffer(jsonBody)
-	}
-	req, err := http.NewRequest(method, url, requestBody)
+		req, err = http.NewRequest(method, url, requestBody)
 
+	} else {
+		req, err = http.NewRequest(method, url, nil)
+	}
 	if err != nil {
 		fmt.Print("Problem with the new request")
 		return resp, errors.New(err.Error())
@@ -70,7 +74,7 @@ var refreshCmd = &cobra.Command{
 		defer resp.Body.Close()
 
 		somedata, _ := ioutil.ReadAll(resp.Body)
-		Debug.log(string(somedata))
+		printPrettyJSON(somedata)
 		return nil
 	},
 }
