@@ -39,6 +39,13 @@ type CollectionsResponse struct {
 	VChangeColl  []CollStruct `json:"version change collections"`
 }
 
+func printPrettyJSON(jsonData []byte) {
+	var testBuffer bytes.Buffer
+	json.Indent(&testBuffer, jsonData, "", "\t")
+	fmt.Println(string(testBuffer.Bytes()))
+
+}
+
 // listCmd represents the list command
 var listCmd = &cobra.Command{
 	Use:   "list [status]",
@@ -51,30 +58,30 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		url := cliConfig.GetString(KabURLKey) + "/v1/collections"
-		resp, err := sendHTTPRequest("GET", url)
+		resp, err := sendHTTPRequest("GET", url, nil)
 		if err != nil {
 			return errors.New(err.Error())
 		}
 
 		somedata, _ := ioutil.ReadAll(resp.Body)
 		Debug.log(resp.StatusCode, http.StatusText(resp.StatusCode))
-
+		printPrettyJSON(somedata)
 		var data CollectionsResponse
-		var testBuffer bytes.Buffer
-		json.Indent(&testBuffer, somedata, "", "\t")
-		// fmt.Println("TEST", string(testBuffer.Bytes()))
-		Debug.log(string(testBuffer.Bytes()))
-		json.NewDecoder(resp.Body).Decode(&data)
+		// var testBuffer bytes.Buffer
+		// json.Indent(&testBuffer, somedata, "", "\t")
+		// // fmt.Println("TEST", string(testBuffer.Bytes()))
+		// Debug.log(string(testBuffer.Bytes()))
+		// json.NewDecoder(resp.Body).Decode(&data)
 		err = json.Unmarshal(somedata, &data)
-		if err == nil {
-			return errors.New("Made unmarshalling")
-		}
-		fmt.Println("**********************************")
-		// fmt.Println(data.newColl)
-		// fmt.Println(data.kabColl)
-		// fmt.Println(data.obsoleteColl)
-		// fmt.Println(data.masterColl)
-		fmt.Println(data)
+		// if err == nil {
+		// 	return errors.New("Made unmarshalling")
+		// }
+		// fmt.Println("**********************************")
+		// // fmt.Println(data.newColl)
+		// // fmt.Println(data.kabColl)
+		// // fmt.Println(data.obsoleteColl)
+		// // fmt.Println(data.masterColl)
+		// fmt.Println(data)
 
 		return nil
 	},

@@ -30,31 +30,15 @@ Disconnect from the instance of Kabanero that you
 have been interacting with.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		url := cliConfig.GetString(KabURLKey) + "/logout"
-		resp, err := sendHTTPRequest("POST", url)
+		resp, err := sendHTTPRequest("POST", url, nil)
 		if err != nil {
 			return errors.New(err.Error())
 		}
-		// client := &http.Client{
-		// 	Timeout: time.Second * 30,
-		// }
-		// req, err := http.NewRequest("POST", url, nil)
-		// if err != nil {
-		// 	fmt.Print("Problem with the new request")
-		// 	return errors.New(err.Error())
-		// }
-		// req.Header.Set("Content-Type", "application/json")
-		// req.Header.Set("Authorization", string(cliConfig.GetString("jwt")))
-		// if cliConfig.GetString("jwt") == "" {
-		// 	return errors.New("Not logged into kabanero instance")
-		// }
-		// resp, err := client.Do(req)
-		// if err != nil {
-		// 	return errors.New(err.Error())
-		// }
+
 		defer resp.Body.Close()
 		cliConfig.Set("jwt", "")
 		cliConfig.WriteConfig()
-		Debug.log("Logged out of kab instance: " + url)
+		println("Logged out of kab instance: " + url)
 		return nil
 	},
 }

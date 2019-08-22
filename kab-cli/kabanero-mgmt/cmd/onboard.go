@@ -16,7 +16,9 @@ limitations under the License.
 package cmd
 
 import (
-	"fmt"
+	"encoding/json"
+	"errors"
+	"io/ioutil"
 
 	"github.com/spf13/cobra"
 )
@@ -28,8 +30,19 @@ var onboardCmd = &cobra.Command{
 	Long: `This command causes an email to be sent to the user associated
 	with the user-id providing the information necessary to get started using 
 	Kabanero.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("onboard called")
+	RunE: func(cmd *cobra.Command, args []string) error {
+		gituser := args[0]
+		repoName := args[1]
+		url := cliConfig.GetString(KabURLKey) + "/v1/onboard"
+		requestBody, _ := json.Marshal(map[string]string{"gituser": gituser, "repoName": repoName})
+		resp, err := sendHTTPRequest("POST", url, requestBody)
+		if err != nil {
+			return errors.New(err.Error())
+		}
+		somedata, _ := ioutil.ReadAll(resp.Body)
+		printPrettyJSON(somedata)
+		// fmt.Println(somedata)
+		return nil
 	},
 }
 

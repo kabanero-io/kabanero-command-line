@@ -35,7 +35,7 @@ type JWTResponse struct {
 // loginCmd represents the login command
 var loginCmd = &cobra.Command{
 	Args:  cobra.MinimumNArgs(2),
-	Use:   "login userid password kabanero-url",
+	Use:   "login userid PAT/git-password kabanero-url",
 	Short: "Will authentic you to the Kabanero instance",
 	Long: `
 	The userid and password passed will be used
@@ -94,7 +94,7 @@ var loginCmd = &cobra.Command{
 			return errors.New("Unable to validate user:  " + username + " to " + cliConfig.GetString(KabURLKey))
 		}
 		// fmt.Println(cliConfig.GetString("jwt"))
-		fmt.Println("Logged into kabanero instace: " + cliConfig.GetString(KabURLKey))
+		fmt.Println("Logged into kabanero instance: " + cliConfig.GetString(KabURLKey))
 		defer resp.Body.Close()
 
 		return nil
