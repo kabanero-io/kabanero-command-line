@@ -95,7 +95,7 @@ func isHelpCommand() bool {
 }
 
 func initConfig() {
-	Debug.log("Running with command line args: kabanero ", strings.Join(os.Args[1:], " "))
+	//unsafe to do this cause we might log pw:  Debug.log("Running with command line args: kabanero ", strings.Join(os.Args[1:], " "))
 	// handle user supplied config file:
 	//if cfgFile != "" {
 	//	if _, err := os.Stat(cfgFile); os.IsNotExist(err) {

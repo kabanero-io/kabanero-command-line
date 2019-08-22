@@ -35,19 +35,22 @@ type JWTResponse struct {
 // loginCmd represents the login command
 var loginCmd = &cobra.Command{
 	Args:  cobra.MinimumNArgs(2),
-	Use:   "login userid PAT/git-password kabanero-url",
-	Short: "Will authentic you to the Kabanero instance",
+	Use:   "login userid Github-PAT|Github-password kabanero-url",
+	Short: "Will authentic you to a Kabanero instance",
 	Long: `
-	The userid and password passed will be used
-	to authenticate the user with kabanero instance.
-	
-	By authenticating with the Kabanero instance, 
-	you will be able to manage the instance of kabanero.`,
+	Login to a Kabanero instance using github credentials, and store a temporary access token for subsequent command line calls.
+	The temporary authentication token will be stored in your-home-directory/.kabanero/config.yaml.
+	Use your github userid and either password or Personal Access Token (PAT).
+	`,
 	Example: `
-		kabanero-management champ champpassword https://kabanero1.io
-		`,
+	# login with Github userid and password:
+	kabanero-management myGithubID myGithubPassword https://my.kabaneroInstance.io
+
+	# login with Github userid and PAT:
+	kabanero-management myGithubID myGithubPAT https://my.kabaneroInstance.io
+	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		// fmt.Println("login called")
+		Debug.log("login called")
 
 		username := args[0]
 		password := args[1]
@@ -75,6 +78,7 @@ var loginCmd = &cobra.Command{
 
 		req, err := http.NewRequest("POST", kabLoginURL, bytes.NewBuffer(requestBody))
 		if err != nil {
+			Debug.log("login failed: " +  err.Error())
 			return errors.New(err.Error())
 		}
 
@@ -83,6 +87,7 @@ var loginCmd = &cobra.Command{
 		resp, err := client.Do(req)
 
 		if err != nil {
+			Debug.log        ("Login failed to endpoint: " + kabLoginURL)
 			return errors.New("Login failed to endpoint: " + kabLoginURL + " \n")
 		}
 
@@ -91,10 +96,12 @@ var loginCmd = &cobra.Command{
 		cliConfig.Set("jwt", data.JWT)
 		cliConfig.WriteConfig()
 		if cliConfig.GetString("jwt") == "" {
-			return errors.New("Unable to validate user:  " + username + " to " + cliConfig.GetString(KabURLKey))
+			Debug.log        ("Unable to validate user: " + username + " to " + cliConfig.GetString(KabURLKey))
+			return errors.New("Unable to validate user: " + username + " to " + cliConfig.GetString(KabURLKey))
 		}
 		// fmt.Println(cliConfig.GetString("jwt"))
-		fmt.Println("Logged into kabanero instance: " + cliConfig.GetString(KabURLKey))
+		fmt.Println("Logged in to Kabanero instance: " + cliConfig.GetString(KabURLKey))
+		Debug.log  ("Logged in to Kabanero instance: " + cliConfig.GetString(KabURLKey))
 		defer resp.Body.Close()
 
 		return nil
