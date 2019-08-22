@@ -17,7 +17,6 @@ package cmd
 
 import (
 	"encoding/json"
-	"errors"
 	"io/ioutil"
 
 	"github.com/spf13/cobra"
@@ -37,7 +36,7 @@ var onboardCmd = &cobra.Command{
 		requestBody, _ := json.Marshal(map[string]string{"gituser": gituser, "repoName": repoName})
 		resp, err := sendHTTPRequest("POST", url, requestBody)
 		if err != nil {
-			return errors.New(err.Error())
+			return err
 		}
 		somedata, _ := ioutil.ReadAll(resp.Body)
 		printPrettyJSON(somedata)

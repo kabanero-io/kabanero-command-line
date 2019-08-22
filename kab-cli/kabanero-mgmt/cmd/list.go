@@ -20,15 +20,15 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 
 	"github.com/spf13/cobra"
 )
 
 type CollStruct struct {
-	Name    string
-	Version string
+	OriginalName string
+	Name         string
+	Version      string
 }
 
 type CollectionsResponse struct {
@@ -44,6 +44,15 @@ func printPrettyJSON(jsonData []byte) {
 	json.Indent(&testBuffer, jsonData, "", "\t")
 	fmt.Println(string(testBuffer.Bytes()))
 
+}
+
+type MyResponseWriter struct {
+	http.ResponseWriter
+	buf *bytes.Buffer
+}
+
+func (mrw *MyResponseWriter) Write(p []byte) (int, error) {
+	return mrw.buf.Write(p)
 }
 
 // listCmd represents the list command
@@ -63,21 +72,28 @@ to quickly create a Cobra application.`,
 			return errors.New(err.Error())
 		}
 
-		somedata, _ := ioutil.ReadAll(resp.Body)
-		Debug.log(resp.StatusCode, http.StatusText(resp.StatusCode))
-		printPrettyJSON(somedata)
+		// somedata, _ := ioutil.ReadAll(resp.Body)
+		// defer resp.Body.Close()
+
+		// buffer := bytes.NewBuffer(make([]byte, 0, resp.ContentLength))
+		// _, err = buffer.ReadFrom(resp.Body)
+
+		// Debug.log(resp.StatusCode, http.StatusText(resp.StatusCode))
+		// printPrettyJSON(somedata)
+		decoder := json.NewDecoder(resp.Body)
 		var data CollectionsResponse
+		err = decoder.Decode(&data)
 		// var testBuffer bytes.Buffer
 		// json.Indent(&testBuffer, somedata, "", "\t")
-		// // fmt.Println("TEST", string(testBuffer.Bytes()))
+		// fmt.Println("TEST", string(testBuffer.Bytes()))
 		// Debug.log(string(testBuffer.Bytes()))
-		// json.NewDecoder(resp.Body).Decode(&data)
-		err = json.Unmarshal(somedata, &data)
-		// if err == nil {
-		// 	return errors.New("Made unmarshalling")
-		// }
+		// json.NewDecoder(bytes.NewReader(buffer.Bytes())).Decode(&data)
+		// err = json.Unmarshal(ioutil.ReadAll(resp.Body), &data)
+		if err != nil {
+			return err
+		}
 		// fmt.Println("**********************************")
-		// // fmt.Println(data.newColl)
+		fmt.Println(data.KabColl[0].OriginalName)
 		// // fmt.Println(data.kabColl)
 		// // fmt.Println(data.obsoleteColl)
 		// // fmt.Println(data.masterColl)
