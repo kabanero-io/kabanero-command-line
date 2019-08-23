@@ -44,10 +44,10 @@ func homeDir() string {
 
 var rootCmd = &cobra.Command{
 	Use:   "kabanero",
-	Short: "A command line interface to manage a Kabanero environment",
-	Long: `A command line interface for managing the collections in a Kabanero 
-environment, as well as on-board the people that will be 
-used in the environment to build applications.
+	Short: "This repo defines a command line interface used by the enterprise, solution, or application architect who defines and manages the kabanero collections that are used by developers to create governed applications for their business.",
+	Long: `**kabanero** is a command line interface for managing the collections in a Kabanero 
+environment, as well as to on-board the people that will use 
+the environment to build applications.
 
 Complete documentation is available at https://kabanero.io`,
 }
@@ -62,7 +62,7 @@ func init() {
 	}
 
 	// we will only allow default config file name/location for now.  
-	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.kabaneromgmt.yaml)")
+	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.kabanero.yaml)")
 	// Added for logging
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "Turns on debug output and logging to a file in $HOME/.kabanero/logs")
 
@@ -157,7 +157,7 @@ func initConfig() {
 }
 
 //func getDefaultConfigFile() string {
-//	return filepath.Join(cliConfig.GetString("home"), ".kabaneromgmt.yaml")
+//	return filepath.Join(cliConfig.GetString("home"), ".kabanero.yaml")
 //}
 
 func Execute(version string) {
