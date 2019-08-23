@@ -15,10 +15,14 @@
 package cmd
 
 import (
-	"io/ioutil"
+	"encoding/json"
 
 	"github.com/spf13/cobra"
 )
+
+type VersionJSON struct {
+	Version string
+}
 
 // versionCmd represents the version command
 var versionCmd = &cobra.Command{
@@ -32,8 +36,9 @@ var versionCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		body, err := ioutil.ReadAll(resp.Body)
-		Info.log(string(body))
+		var versionJSON VersionJSON
+		json.NewDecoder(resp.Body).Decode(&versionJSON)
+		Info.log("version: ", versionJSON.Version)
 		return nil
 	},
 }
