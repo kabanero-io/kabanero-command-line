@@ -17,11 +17,13 @@ package cmd
 
 import (
 	"bytes"
+	"crypto/tls"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
 	"os"
+	"strings"
 	"text/tabwriter"
 	"time"
 
@@ -29,8 +31,12 @@ import (
 )
 
 func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response, error) {
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
 	client := &http.Client{
-		Timeout: time.Second * 30,
+		Timeout:   time.Second * 30,
+		Transport: tr,
 	}
 
 	var resp *http.Response
@@ -48,10 +54,13 @@ func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response
 		fmt.Print("Problem with the new request")
 		return resp, errors.New(err.Error())
 	}
+
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", string(cliConfig.GetString("jwt")))
-	if cliConfig.GetString("jwt") == "" {
-		return resp, errors.New("Login to your kabanero instance")
+	if !strings.Contains(url, "login") {
+		req.Header.Set("Authorization", string(cliConfig.GetString("jwt")))
+		if cliConfig.GetString("jwt") == "" {
+			return resp, errors.New("Login to your kabanero instance")
+		}
 	}
 
 	resp, err = client.Do(req)
@@ -73,6 +82,7 @@ var refreshCmd = &cobra.Command{
 		if err != nil {
 			return errors.New(err.Error())
 		}
+		Debug.log("RESPONSE ", url, resp.StatusCode, http.StatusText(resp.StatusCode))
 		defer resp.Body.Close()
 		//Decode the response into data
 		decoder := json.NewDecoder(resp.Body)
@@ -83,7 +93,7 @@ var refreshCmd = &cobra.Command{
 		Debug.log(data)
 		tWriter := new(tabwriter.Writer)
 		tWriter.Init(os.Stdout, 0, 8, 0, '\t', 0)
-		if len(data.NewColl) == 0 && (len(data.KabColl) == 0) && len(data.ObsoleteColl) == 0 && len(data.MasterColl) == 0 && len(data.VChangeColl) == 0 {
+		if len(data.NewColl) == 0 && (len(data.ActiveColl) == 0) && len(data.ObsoleteColl) == 0 && len(data.MasterColl) == 0 && len(data.VChangeColl) == 0 {
 			fmt.Println("active collections synchronized with master")
 		} else {
 			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", "Name", "Version", "Collection")
@@ -91,8 +101,8 @@ var refreshCmd = &cobra.Command{
 			for i := 0; i < len(data.NewColl); i++ {
 				fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.NewColl[i].Name, data.NewColl[i].Version, "new collection")
 			}
-			for i := 0; i < len(data.KabColl); i++ {
-				fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.KabColl[i].Name, data.KabColl[i].Version, "active collections")
+			for i := 0; i < len(data.ActiveColl); i++ {
+				fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.ActiveColl[i].Name, data.ActiveColl[i].Version, "active collections")
 			}
 			for i := 0; i < len(data.ObsoleteColl); i++ {
 				fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.ObsoleteColl[i].Name, data.ObsoleteColl[i].Version, "obsolete collections")

@@ -35,9 +35,9 @@ type CollStruct struct {
 
 type CollectionsResponse struct {
 	NewColl      []CollStruct `json:"new collections"`
-	KabColl      []CollStruct `json:"kabanero collection"`
+	ActiveColl   []CollStruct `json:"active collections"`
 	ObsoleteColl []CollStruct `json:"obsolete collections"`
-	MasterColl   []CollStruct `json:"master collection"`
+	MasterColl   []CollStruct `json:"master collections"`
 	VChangeColl  []CollStruct `json:"version change collections"`
 }
 
@@ -80,8 +80,8 @@ to quickly create a Cobra application.`,
 		for i := 0; i < len(data.NewColl); i++ {
 			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.NewColl[i].Name, data.NewColl[i].Version, "new collection")
 		}
-		for i := 0; i < len(data.KabColl); i++ {
-			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.KabColl[i].Name, data.KabColl[i].Version, "kab collections")
+		for i := 0; i < len(data.ActiveColl); i++ {
+			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.ActiveColl[i].Name, data.ActiveColl[i].Version, "active collections")
 		}
 		for i := 0; i < len(data.ObsoleteColl); i++ {
 			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.ObsoleteColl[i].Name, data.ObsoleteColl[i].Version, "obsolete collections")

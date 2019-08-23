@@ -16,12 +16,10 @@ limitations under the License.
 package cmd
 
 import (
-	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -70,26 +68,35 @@ var loginCmd = &cobra.Command{
 			kabLoginURL = cliConfig.GetString(KabURLKey) + "/login"
 		}
 
-		client := &http.Client{
-			Timeout: time.Second * 30,
-		}
+		// tr := &http.Transport{
+		// 	TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		// }
+		// client := &http.Client{
+		// 	Timeout:   time.Second * 30,
+		// 	Transport: tr,
+		// }
 
 		requestBody, _ := json.Marshal(map[string]string{"gituser": username, "gitpat": password})
 
-		req, err := http.NewRequest("POST", kabLoginURL, bytes.NewBuffer(requestBody))
+		resp, err := sendHTTPRequest("POST", kabLoginURL, requestBody)
 		if err != nil {
-			Debug.log("login failed: " + err.Error())
-			return errors.New(err.Error())
+			return err
 		}
+		Debug.log("RESPONSE ", kabLoginURL, resp.StatusCode, http.StatusText(resp.StatusCode))
+		// req, err := http.NewRequest("POST", kabLoginURL, bytes.NewBuffer(requestBody))
+		// if err != nil {
+		// 	Debug.log("login failed: " + err.Error())
+		// 	return errors.New(err.Error())
+		// }
 
-		req.Header.Set("Content-Type", "application/json")
+		// req.Header.Set("Content-Type", "application/json")
 
-		resp, err := client.Do(req)
+		// resp, err := client.Do(req)
 
-		if err != nil {
-			Debug.log("Login failed to endpoint: " + kabLoginURL)
-			return errors.New("Login failed to endpoint: " + kabLoginURL + " \n")
-		}
+		// if err != nil {
+		// 	Debug.log("Login failed to endpoint: " + kabLoginURL)
+		// 	return errors.New("Login failed to endpoint: " + kabLoginURL + " \n")
+		// }
 
 		var data JWTResponse
 		json.NewDecoder(resp.Body).Decode(&data)
