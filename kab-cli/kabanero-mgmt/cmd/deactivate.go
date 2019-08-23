@@ -16,14 +16,19 @@ limitations under the License.
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
-	"io/ioutil"
 
 	"github.com/spf13/cobra"
 )
 
+type DeactivateJSON struct {
+	status string
+}
+
 // deactivateCmd represents the deactivate command
 var deactivateCmd = &cobra.Command{
+	Args:  cobra.MinimumNArgs(1),
 	Use:   "deactivate collection-name",
 	Short: "Prevent this collection from being shown to the development team, while not deleting it.",
 	Long: `
@@ -45,12 +50,13 @@ updates will be perkolated up to your cloned collection.`,
 		if err != nil {
 			return err
 		}
-		body, err := ioutil.ReadAll(resp.Body)
+		var deactivateJSON DeactivateJSON
+		err = json.NewDecoder(resp.Body).Decode(&deactivateJSON)
 		if err != nil {
 			return err
 		}
-		Debug.log(string(body))
-		fmt.Println("Deactivated " + collectionName)
+		Debug.log(deactivateJSON)
+		fmt.Println(deactivateJSON.status)
 		return nil
 	},
 }

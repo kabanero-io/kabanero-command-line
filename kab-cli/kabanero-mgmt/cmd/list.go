@@ -75,7 +75,6 @@ to quickly create a Cobra application.`,
 		tWriter := new(tabwriter.Writer)
 		tWriter.Init(os.Stdout, 0, 8, 0, '\t', 0)
 
-		fmt.Fprintf(tWriter, "Masters Collections\n")
 		fmt.Fprintf(tWriter, "\n%s\t%s\t%s", "Name", "Version", "Collection")
 		fmt.Fprintf(tWriter, "\n%s\t%s\t%s", "----", "----", "----")
 		for i := 0; i < len(data.NewColl); i++ {

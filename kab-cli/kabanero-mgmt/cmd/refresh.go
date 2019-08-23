@@ -78,33 +78,34 @@ var refreshCmd = &cobra.Command{
 		decoder := json.NewDecoder(resp.Body)
 		var data CollectionsResponse
 		err = decoder.Decode(&data)
-
 		//
+
 		Debug.log(data)
 		tWriter := new(tabwriter.Writer)
 		tWriter.Init(os.Stdout, 0, 8, 0, '\t', 0)
-
-		fmt.Fprintf(tWriter, "Masters Collections\n")
-		fmt.Fprintf(tWriter, "\n%s\t%s\t%s", "Name", "Version", "Collection")
-		fmt.Fprintf(tWriter, "\n%s\t%s\t%s", "----", "----", "----")
-		for i := 0; i < len(data.NewColl); i++ {
-			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.NewColl[i].Name, data.NewColl[i].Version, "new collection")
+		if len(data.NewColl) == 0 && (len(data.KabColl) == 0) && len(data.ObsoleteColl) == 0 && len(data.MasterColl) == 0 && len(data.VChangeColl) == 0 {
+			fmt.Println("active collections synchronized with master")
+		} else {
+			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", "Name", "Version", "Collection")
+			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", "----", "----", "----")
+			for i := 0; i < len(data.NewColl); i++ {
+				fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.NewColl[i].Name, data.NewColl[i].Version, "new collection")
+			}
+			for i := 0; i < len(data.KabColl); i++ {
+				fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.KabColl[i].Name, data.KabColl[i].Version, "active collections")
+			}
+			for i := 0; i < len(data.ObsoleteColl); i++ {
+				fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.ObsoleteColl[i].Name, data.ObsoleteColl[i].Version, "obsolete collections")
+			}
+			for i := 0; i < len(data.MasterColl); i++ {
+				fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.MasterColl[i].Name, data.MasterColl[i].Version, "master collection")
+			}
+			for i := 0; i < len(data.VChangeColl); i++ {
+				fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.VChangeColl[i].Name, data.VChangeColl[i].Version, "changed collection")
+			}
+			fmt.Fprintln(tWriter)
+			tWriter.Flush()
 		}
-		for i := 0; i < len(data.KabColl); i++ {
-			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.KabColl[i].Name, data.KabColl[i].Version, "kab collections")
-		}
-		for i := 0; i < len(data.ObsoleteColl); i++ {
-			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.ObsoleteColl[i].Name, data.ObsoleteColl[i].Version, "obsolete collections")
-		}
-		for i := 0; i < len(data.MasterColl); i++ {
-			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.MasterColl[i].Name, data.MasterColl[i].Version, "master collection")
-		}
-		for i := 0; i < len(data.VChangeColl); i++ {
-			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.VChangeColl[i].Name, data.VChangeColl[i].Version, "changed collection")
-		}
-
-		// somedata, _ := ioutil.ReadAll(resp.Body)
-		// printPrettyJSON(somedata)
 		return nil
 	},
 }
