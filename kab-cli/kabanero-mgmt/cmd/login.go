@@ -68,14 +68,6 @@ var loginCmd = &cobra.Command{
 			kabLoginURL = cliConfig.GetString(KabURLKey) + "/login"
 		}
 
-		// tr := &http.Transport{
-		// 	TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-		// }
-		// client := &http.Client{
-		// 	Timeout:   time.Second * 30,
-		// 	Transport: tr,
-		// }
-
 		requestBody, _ := json.Marshal(map[string]string{"gituser": username, "gitpat": password})
 
 		resp, err := sendHTTPRequest("POST", kabLoginURL, requestBody)
@@ -83,20 +75,6 @@ var loginCmd = &cobra.Command{
 			return err
 		}
 		Debug.log("RESPONSE ", kabLoginURL, resp.StatusCode, http.StatusText(resp.StatusCode))
-		// req, err := http.NewRequest("POST", kabLoginURL, bytes.NewBuffer(requestBody))
-		// if err != nil {
-		// 	Debug.log("login failed: " + err.Error())
-		// 	return errors.New(err.Error())
-		// }
-
-		// req.Header.Set("Content-Type", "application/json")
-
-		// resp, err := client.Do(req)
-
-		// if err != nil {
-		// 	Debug.log("Login failed to endpoint: " + kabLoginURL)
-		// 	return errors.New("Login failed to endpoint: " + kabLoginURL + " \n")
-		// }
 
 		var data JWTResponse
 		json.NewDecoder(resp.Body).Decode(&data)
