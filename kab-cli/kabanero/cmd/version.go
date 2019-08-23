@@ -38,7 +38,8 @@ var versionCmd = &cobra.Command{
 		}
 		var versionJSON VersionJSON
 		json.NewDecoder(resp.Body).Decode(&versionJSON)
-    Info.log("kabanero command version: 0.1.0")
+		// Info.log("kabanero command version: 0.1.0")
+		Info.log("kabanero cli version: ", VERSION)
 		Info.log("kabanero command line service version: ", versionJSON.Version)
 		return nil
 	},

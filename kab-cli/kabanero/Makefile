@@ -2,7 +2,7 @@
 
 #### Constant variables
 # Set a default VERSION only if it is not already set
-VERSION ?= 0.0.1
+VERSION ?= 0.1.0
 COMMAND := kabanero
 BUILD_PATH := $(PWD)/build
 PACKAGE_PATH := $(PWD)/package
