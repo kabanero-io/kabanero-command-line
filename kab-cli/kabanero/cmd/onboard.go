@@ -27,7 +27,7 @@ var onboardCmd = &cobra.Command{
 	Args:  cobra.MinimumNArgs(2),
 	Use:   "onboard github-id repo-name",
 	Short: "Command to onbboard a developer to the Kabanero infrastructure",
-	Long: `This command causes an email to be sent to the user associated
+	Long: `Under development.  In the future this command causes an email to be sent to the user associated
 	with the user-id providing the information necessary to get started using 
 	Kabanero.`,
 	RunE: func(cmd *cobra.Command, args []string) error {

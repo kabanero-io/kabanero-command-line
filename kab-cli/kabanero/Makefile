@@ -3,7 +3,7 @@
 #### Constant variables
 # Set a default VERSION only if it is not already set
 VERSION ?= 0.0.1
-COMMAND := kabanero-mgmt
+COMMAND := kabanero
 BUILD_PATH := $(PWD)/build
 PACKAGE_PATH := $(PWD)/package
 GO_PATH := $(shell go env GOPATH)
@@ -22,7 +22,8 @@ CONTROLLER_BASE_URL := https://github.com/${GH_ORG}/controller/releases/download
 #          For example, these are all good: build-linux, tar-darwin, tar-darwin-new
 os = $(word 2,$(subst -, ,$@))
 build_name = $(COMMAND)-$(VERSION)-$(os)-amd64
-build_binary = $(build_name)$(BINARY_EXT_$(os))
+build_binary = $(COMMAND)
+# build_binary = $(build_name)$(BINARY_EXT_$(os))
 package_binary = $(COMMAND)$(BINARY_EXT_$(os))
 
 .PHONY: all

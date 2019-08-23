@@ -50,13 +50,8 @@ func printPrettyJSON(jsonData []byte) {
 // listCmd represents the list command
 var listCmd = &cobra.Command{
 	Use:   "list [status]",
-	Short: "List all the collections in the apphub, and optionally their status",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "List all the collections in the kabanero instance, and their status",
+	Long: `List all the collections in the kabanero instance, and their status`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		url := cliConfig.GetString(KabURLKey) + "/v1/collections"
 		resp, err := sendHTTPRequest("GET", url, nil)
