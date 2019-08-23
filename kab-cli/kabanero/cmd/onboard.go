@@ -18,7 +18,6 @@ package cmd
 import (
 	"encoding/json"
 	"io/ioutil"
-	"net/http"
 
 	"github.com/spf13/cobra"
 )
@@ -40,7 +39,6 @@ var onboardCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		Debug.log("RESPONSE ", url, resp.StatusCode, http.StatusText(resp.StatusCode))
 		somedata, _ := ioutil.ReadAll(resp.Body)
 		printPrettyJSON(somedata)
 		return nil

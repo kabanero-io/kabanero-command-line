@@ -68,6 +68,7 @@ func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response
 		fmt.Print("Unable to retrieve collections")
 		return resp, errors.New(err.Error())
 	}
+	Debug.log("RESPONSE ", url, resp.StatusCode, http.StatusText(resp.StatusCode))
 	return resp, nil
 }
 
