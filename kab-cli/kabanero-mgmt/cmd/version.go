@@ -15,6 +15,8 @@
 package cmd
 
 import (
+	"io/ioutil"
+
 	"github.com/spf13/cobra"
 )
 
@@ -23,8 +25,16 @@ var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Show Kabanero CLI version",
 	Long:  ``,
-	Run: func(cmd *cobra.Command, args []string) {
-		Info.log(rootCmd.Use, " ", VERSION)
+	RunE: func(cmd *cobra.Command, args []string) error {
+		// Info.log(rootCmd.Use, " ", VERSION) not using this version
+		url := cliConfig.GetString(KabURLKey) + "/v1/version"
+		resp, err := sendHTTPRequest("GET", url, nil)
+		if err != nil {
+			return err
+		}
+		body, err := ioutil.ReadAll(resp.Body)
+		Info.log(string(body))
+		return nil
 	},
 }
 

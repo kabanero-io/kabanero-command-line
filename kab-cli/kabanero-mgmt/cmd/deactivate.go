@@ -17,6 +17,7 @@ package cmd
 
 import (
 	"fmt"
+	"io/ioutil"
 
 	"github.com/spf13/cobra"
 )
@@ -36,14 +37,26 @@ This would be done in the case where you have cloned the collection
 and made changes for your business.  This keeps the base collection
 in the apphub, and it will continue to be updated, and the 
 updates will be perkolated up to your cloned collection.`,
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		fmt.Println("deactivate called")
+		collectionName := args[0]
+		url := cliConfig.GetString(KabURLKey) + "/v1/collections/" + collectionName
+		resp, err := sendHTTPRequest("DELETE", url, nil)
+		if err != nil {
+			return err
+		}
+		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return err
+		}
+		Debug.log(string(body))
+		fmt.Println("Deactivated " + collectionName)
+		return nil
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(deactivateCmd)
-
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command

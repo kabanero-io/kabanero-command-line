@@ -17,10 +17,12 @@ package cmd
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"net/http"
+	"os"
+	"text/tabwriter"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -72,9 +74,37 @@ var refreshCmd = &cobra.Command{
 			return errors.New(err.Error())
 		}
 		defer resp.Body.Close()
+		//Decode the response into data
+		decoder := json.NewDecoder(resp.Body)
+		var data CollectionsResponse
+		err = decoder.Decode(&data)
 
-		somedata, _ := ioutil.ReadAll(resp.Body)
-		printPrettyJSON(somedata)
+		//
+		Debug.log(data)
+		tWriter := new(tabwriter.Writer)
+		tWriter.Init(os.Stdout, 0, 8, 0, '\t', 0)
+
+		fmt.Fprintf(tWriter, "Masters Collections\n")
+		fmt.Fprintf(tWriter, "\n%s\t%s\t%s", "Name", "Version", "Collection")
+		fmt.Fprintf(tWriter, "\n%s\t%s\t%s", "----", "----", "----")
+		for i := 0; i < len(data.NewColl); i++ {
+			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.NewColl[i].Name, data.NewColl[i].Version, "new collection")
+		}
+		for i := 0; i < len(data.KabColl); i++ {
+			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.KabColl[i].Name, data.KabColl[i].Version, "kab collections")
+		}
+		for i := 0; i < len(data.ObsoleteColl); i++ {
+			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.ObsoleteColl[i].Name, data.ObsoleteColl[i].Version, "obsolete collections")
+		}
+		for i := 0; i < len(data.MasterColl); i++ {
+			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.MasterColl[i].Name, data.MasterColl[i].Version, "master collection")
+		}
+		for i := 0; i < len(data.VChangeColl); i++ {
+			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.VChangeColl[i].Name, data.VChangeColl[i].Version, "changed collection")
+		}
+
+		// somedata, _ := ioutil.ReadAll(resp.Body)
+		// printPrettyJSON(somedata)
 		return nil
 	},
 }
