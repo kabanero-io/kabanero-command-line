@@ -34,7 +34,7 @@ func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response
 	}
 
 	var resp *http.Response
-	var requestBody *bytes.Buffer // default initialized with nil?
+	var requestBody *bytes.Buffer
 	var req *http.Request
 	var err error
 	if jsonBody != nil {

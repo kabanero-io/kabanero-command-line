@@ -78,7 +78,7 @@ var loginCmd = &cobra.Command{
 
 		req, err := http.NewRequest("POST", kabLoginURL, bytes.NewBuffer(requestBody))
 		if err != nil {
-			Debug.log("login failed: " +  err.Error())
+			Debug.log("login failed: " + err.Error())
 			return errors.New(err.Error())
 		}
 
@@ -87,7 +87,7 @@ var loginCmd = &cobra.Command{
 		resp, err := client.Do(req)
 
 		if err != nil {
-			Debug.log        ("Login failed to endpoint: " + kabLoginURL)
+			Debug.log("Login failed to endpoint: " + kabLoginURL)
 			return errors.New("Login failed to endpoint: " + kabLoginURL + " \n")
 		}
 
@@ -96,12 +96,11 @@ var loginCmd = &cobra.Command{
 		cliConfig.Set("jwt", data.JWT)
 		cliConfig.WriteConfig()
 		if cliConfig.GetString("jwt") == "" {
-			Debug.log        ("Unable to validate user: " + username + " to " + cliConfig.GetString(KabURLKey))
+			Debug.log("Unable to validate user: " + username + " to " + cliConfig.GetString(KabURLKey))
 			return errors.New("Unable to validate user: " + username + " to " + cliConfig.GetString(KabURLKey))
 		}
-		// fmt.Println(cliConfig.GetString("jwt"))
 		fmt.Println("Logged in to Kabanero instance: " + cliConfig.GetString(KabURLKey))
-		Debug.log  ("Logged in to Kabanero instance: " + cliConfig.GetString(KabURLKey))
+		Debug.log("Logged in to Kabanero instance: " + cliConfig.GetString(KabURLKey))
 		defer resp.Body.Close()
 
 		return nil

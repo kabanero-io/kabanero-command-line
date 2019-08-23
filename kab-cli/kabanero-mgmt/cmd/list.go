@@ -69,8 +69,8 @@ to quickly create a Cobra application.`,
 		decoder := json.NewDecoder(resp.Body)
 		var data CollectionsResponse
 		err = decoder.Decode(&data)
-
 		//
+
 		Debug.log(data)
 		tWriter := new(tabwriter.Writer)
 		tWriter.Init(os.Stdout, 0, 8, 0, '\t', 0)
@@ -95,10 +95,6 @@ to quickly create a Cobra application.`,
 		fmt.Fprintln(tWriter)
 
 		tWriter.Flush()
-
-		// fmt.Println("")
-
-		// fmt.Println(data.KabColl[0].OriginalName)
 
 		return nil
 	},

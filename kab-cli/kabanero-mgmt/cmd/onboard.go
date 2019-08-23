@@ -41,7 +41,6 @@ var onboardCmd = &cobra.Command{
 		}
 		somedata, _ := ioutil.ReadAll(resp.Body)
 		printPrettyJSON(somedata)
-		// fmt.Println(somedata)
 		return nil
 	},
 }
