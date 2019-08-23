@@ -15,16 +15,31 @@
 package cmd
 
 import (
+	"encoding/json"
+
 	"github.com/spf13/cobra"
 )
+
+type VersionJSON struct {
+	Version string
+}
 
 // versionCmd represents the version command
 var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Show Kabanero CLI version",
 	Long:  ``,
-	Run: func(cmd *cobra.Command, args []string) {
-		Info.log(rootCmd.Use, " ", VERSION)
+	RunE: func(cmd *cobra.Command, args []string) error {
+		// Info.log(rootCmd.Use, " ", VERSION) not using this version
+		url := cliConfig.GetString(KabURLKey) + "/v1/version"
+		resp, err := sendHTTPRequest("GET", url, nil)
+		if err != nil {
+			return err
+		}
+		var versionJSON VersionJSON
+		json.NewDecoder(resp.Body).Decode(&versionJSON)
+		Info.log("version: ", versionJSON.Version)
+		return nil
 	},
 }
 

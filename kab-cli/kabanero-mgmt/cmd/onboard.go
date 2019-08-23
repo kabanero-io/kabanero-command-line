@@ -18,12 +18,14 @@ package cmd
 import (
 	"encoding/json"
 	"io/ioutil"
+	"net/http"
 
 	"github.com/spf13/cobra"
 )
 
 // onboardCmd represents the onboard command
 var onboardCmd = &cobra.Command{
+	Args:  cobra.MinimumNArgs(2),
 	Use:   "onboard github-id repo-name",
 	Short: "Command to onbboard a developer to the Kabanero infrastructure",
 	Long: `This command causes an email to be sent to the user associated
@@ -38,9 +40,9 @@ var onboardCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		Debug.log("RESPONSE ", url, resp.StatusCode, http.StatusText(resp.StatusCode))
 		somedata, _ := ioutil.ReadAll(resp.Body)
 		printPrettyJSON(somedata)
-		// fmt.Println(somedata)
 		return nil
 	},
 }

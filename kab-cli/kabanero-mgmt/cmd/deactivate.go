@@ -16,13 +16,19 @@ limitations under the License.
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/spf13/cobra"
 )
 
+type DeactivateJSON struct {
+	status string
+}
+
 // deactivateCmd represents the deactivate command
 var deactivateCmd = &cobra.Command{
+	Args:  cobra.MinimumNArgs(1),
 	Use:   "deactivate collection-name",
 	Short: "Prevent this collection from being shown to the development team, while not deleting it.",
 	Long: `
@@ -36,14 +42,27 @@ This would be done in the case where you have cloned the collection
 and made changes for your business.  This keeps the base collection
 in the apphub, and it will continue to be updated, and the 
 updates will be perkolated up to your cloned collection.`,
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		fmt.Println("deactivate called")
+		collectionName := args[0]
+		url := cliConfig.GetString(KabURLKey) + "/v1/collections/" + collectionName
+		resp, err := sendHTTPRequest("DELETE", url, nil)
+		if err != nil {
+			return err
+		}
+		var deactivateJSON DeactivateJSON
+		err = json.NewDecoder(resp.Body).Decode(&deactivateJSON)
+		if err != nil {
+			return err
+		}
+		Debug.log(deactivateJSON)
+		fmt.Println(deactivateJSON.status)
+		return nil
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(deactivateCmd)
-
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command

@@ -16,12 +16,10 @@ limitations under the License.
 package cmd
 
 import (
-	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -70,38 +68,24 @@ var loginCmd = &cobra.Command{
 			kabLoginURL = cliConfig.GetString(KabURLKey) + "/login"
 		}
 
-		client := &http.Client{
-			Timeout: time.Second * 30,
-		}
-
 		requestBody, _ := json.Marshal(map[string]string{"gituser": username, "gitpat": password})
 
-		req, err := http.NewRequest("POST", kabLoginURL, bytes.NewBuffer(requestBody))
+		resp, err := sendHTTPRequest("POST", kabLoginURL, requestBody)
 		if err != nil {
-			Debug.log("login failed: " +  err.Error())
-			return errors.New(err.Error())
+			return err
 		}
-
-		req.Header.Set("Content-Type", "application/json")
-
-		resp, err := client.Do(req)
-
-		if err != nil {
-			Debug.log        ("Login failed to endpoint: " + kabLoginURL)
-			return errors.New("Login failed to endpoint: " + kabLoginURL + " \n")
-		}
+		Debug.log("RESPONSE ", kabLoginURL, resp.StatusCode, http.StatusText(resp.StatusCode))
 
 		var data JWTResponse
 		json.NewDecoder(resp.Body).Decode(&data)
 		cliConfig.Set("jwt", data.JWT)
 		cliConfig.WriteConfig()
 		if cliConfig.GetString("jwt") == "" {
-			Debug.log        ("Unable to validate user: " + username + " to " + cliConfig.GetString(KabURLKey))
+			Debug.log("Unable to validate user: " + username + " to " + cliConfig.GetString(KabURLKey))
 			return errors.New("Unable to validate user: " + username + " to " + cliConfig.GetString(KabURLKey))
 		}
-		// fmt.Println(cliConfig.GetString("jwt"))
 		fmt.Println("Logged in to Kabanero instance: " + cliConfig.GetString(KabURLKey))
-		Debug.log  ("Logged in to Kabanero instance: " + cliConfig.GetString(KabURLKey))
+		Debug.log("Logged in to Kabanero instance: " + cliConfig.GetString(KabURLKey))
 		defer resp.Body.Close()
 
 		return nil

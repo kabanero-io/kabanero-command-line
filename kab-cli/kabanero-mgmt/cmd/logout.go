@@ -38,7 +38,7 @@ have been interacting with.`,
 		defer resp.Body.Close()
 		cliConfig.Set("jwt", "")
 		cliConfig.WriteConfig()
-		println("Logged out of kab instance: " + url)
+		println("Logged out of kab instance: " + cliConfig.GetString(KabURLKey))
 		return nil
 	},
 }
