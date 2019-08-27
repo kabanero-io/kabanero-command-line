@@ -43,9 +43,10 @@ and made changes for your business.  This keeps the base collection
 in the apphub, and it will continue to be updated, and the 
 updates will be perkolated up to your cloned collection.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Println("deactivate called")
+		// fmt.Println("deactivate called")
 		collectionName := args[0]
-		url := cliConfig.GetString(KabURLKey) + "/v1/collections/" + collectionName
+		// url := cliConfig.GetString(KabURLKey) + "/v1/collections/" + collectionName
+		url := getRESTEndpoint("v1/collections/" + collectionName)
 		resp, err := sendHTTPRequest("DELETE", url, nil)
 		if err != nil {
 			return err
@@ -57,6 +58,7 @@ updates will be perkolated up to your cloned collection.`,
 		}
 		Debug.log(deactivateJSON)
 		fmt.Println(deactivateJSON.status)
+		fmt.Println(collectionName + " deactivated")
 		return nil
 	},
 }

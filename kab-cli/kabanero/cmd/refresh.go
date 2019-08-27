@@ -30,6 +30,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
+func getRESTEndpoint(appendValue string) string {
+	return cliConfig.GetString(KabURLKey) + "/" + KabURLContext + "/" + appendValue
+}
+
 func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response, error) {
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
@@ -78,7 +82,8 @@ var refreshCmd = &cobra.Command{
 	Short: "Refresh the collections list",
 	Long:  `Refresh reconciles the list of collections from master to make them current with the activated collections across all namespace in the kabanero instance`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		url := cliConfig.GetString(KabURLKey) + "/v1/collections"
+		// url := cliConfig.GetString(KabURLKey) + "/v1/collections"
+		url := getRESTEndpoint("v1/collections")
 		resp, err := sendHTTPRequest("PUT", url, nil)
 		if err != nil {
 			return errors.New(err.Error())

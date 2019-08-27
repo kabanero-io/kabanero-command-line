@@ -23,14 +23,15 @@ import (
 
 var (
 	// VERSION is set during build
-	VERSION         string
-	cfgFile         string
-	cliConfig       *viper.Viper
-	APIVersionV1    = "v1"
+	VERSION      string
+	cfgFile      string
+	cliConfig    *viper.Viper
+	APIVersionV1 = "v1"
 	//dryrun          bool
 	verbose         bool
 	klogInitialized = false
 	KabURLKey       = "KABURL"
+	KabURLContext   = "KabCollections-1.0-SNAPSHOT"
 )
 
 func homeDir() string {
@@ -61,7 +62,7 @@ func init() {
 		//	cobra.OnInitialize(ensureConfig)
 	}
 
-	// we will only allow default config file name/location for now.  
+	// we will only allow default config file name/location for now.
 	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.kabanero.yaml)")
 	// Added for logging
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "Turns on debug output and logging to a file in $HOME/.kabanero/logs")
@@ -137,12 +138,12 @@ func initConfig() {
 		Debug.log("Config file name: " + cfgFile + ".yaml")
 		f.Close()
 	}
-	cliConfig.SetConfigName("config")   // name of config file without extension
+	cliConfig.SetConfigName("config") // name of config file without extension
 	cliConfig.AddConfigPath(cfgDir)
 
-	cliConfig.SetEnvPrefix("KABANERO")   // will expect all env vars to be prefixed with "KABANERO_"
-	cliConfig.AutomaticEnv() // read in environment variables that match
-	
+	cliConfig.SetEnvPrefix("KABANERO") // will expect all env vars to be prefixed with "KABANERO_"
+	cliConfig.AutomaticEnv()           // read in environment variables that match
+
 	cliConfig.SetConfigType("yaml")
 	// If a config file is found, read it in.
 	if err := cliConfig.ReadInConfig(); err != nil {
