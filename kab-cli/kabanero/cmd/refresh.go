@@ -31,7 +31,7 @@ import (
 )
 
 func getRESTEndpoint(appendValue string) string {
-	return cliConfig.GetString(KabURLKey) + "/" + KabURLContext + "/" + appendValue
+	return "https://" + cliConfig.GetString(KabURLKey) + "/" + appendValue
 }
 
 func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response, error) {
