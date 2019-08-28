@@ -29,7 +29,6 @@ var logoutCmd = &cobra.Command{
 Disconnect from the instance of Kabanero that you 
 have been interacting with.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		// url := cliConfig.GetString(KabURLKey) + "/logout"
 		url := getRESTEndpoint("logout")
 		resp, err := sendHTTPRequest("POST", url, nil)
 		if err != nil {

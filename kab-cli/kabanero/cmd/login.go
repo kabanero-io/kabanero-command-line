@@ -20,6 +20,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -28,6 +29,12 @@ import (
 type JWTResponse struct {
 	JWT     string
 	Message string
+}
+
+func parseKabURL(url string) string {
+	url = strings.TrimPrefix(url, "https://")
+	url = strings.TrimSuffix(url, "/")
+	return url
 }
 
 // loginCmd represents the login command
@@ -58,8 +65,7 @@ var loginCmd = &cobra.Command{
 		viper.SetEnvPrefix("KABANERO")
 
 		if len(args) > 2 {
-			// kabLoginURL = args[2] + "/login"
-			cliConfig.Set(KabURLKey, args[2])
+			cliConfig.Set(KabURLKey, parseKabURL(args[2]))
 			cliConfig.WriteConfig()
 		} else {
 			if cliConfig.GetString(KabURLKey) == "" {

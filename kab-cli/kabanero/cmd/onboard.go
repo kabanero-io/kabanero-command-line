@@ -33,7 +33,6 @@ var onboardCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		gituser := args[0]
 		repoName := args[1]
-		// url := cliConfig.GetString(KabURLKey) + "/v1/onboard"
 		url := getRESTEndpoint("v1/onboard")
 		requestBody, _ := json.Marshal(map[string]string{"gituser": gituser, "repoName": repoName})
 		resp, err := sendHTTPRequest("POST", url, requestBody)

@@ -31,7 +31,7 @@ import (
 )
 
 func getRESTEndpoint(appendValue string) string {
-	return cliConfig.GetString(KabURLKey) + "/" + KabURLContext + "/" + appendValue
+	return "https://" + cliConfig.GetString(KabURLKey) + "/" + appendValue
 }
 
 func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response, error) {
@@ -82,7 +82,6 @@ var refreshCmd = &cobra.Command{
 	Short: "Refresh the collections list",
 	Long:  `Refresh reconciles the list of collections from master to make them current with the activated collections across all namespace in the kabanero instance`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		// url := cliConfig.GetString(KabURLKey) + "/v1/collections"
 		url := getRESTEndpoint("v1/collections")
 		resp, err := sendHTTPRequest("PUT", url, nil)
 		if err != nil {

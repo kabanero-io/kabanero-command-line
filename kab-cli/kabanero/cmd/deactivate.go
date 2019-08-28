@@ -45,7 +45,6 @@ updates will be perkolated up to your cloned collection.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// fmt.Println("deactivate called")
 		collectionName := args[0]
-		// url := cliConfig.GetString(KabURLKey) + "/v1/collections/" + collectionName
 		url := getRESTEndpoint("v1/collections/" + collectionName)
 		resp, err := sendHTTPRequest("DELETE", url, nil)
 		if err != nil {
