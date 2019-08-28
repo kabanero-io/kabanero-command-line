@@ -1,46 +1,6 @@
 # Installation
 ## Mac OSX
-Download https://github.com/appsody/appsody/releases/download/0.0.6/appsody.rb  
-Download https://github.com/appsody/appsody/releases/download/0.0.6/appsody-homebrew-0.0.6.tar.gz
-```
-mv ~/Downloads/appsody-homebrew-0.0.6.tar.gz /tmp
-brew install -f ~/Downloads/appsody.rb
-```
-To uninstall `brew uninstall appsody` then `rm -r ~/.appsody`
-## Debian Linux
-Download https://github.com/appsody/appsody/releases/download/0.0.6/appsody_0.0.6_amd64.deb
-```
-sudo apt install -f ~/Downloads/appsody_0.0.6_amd64.deb
-```
-To uninstall `sudo apt remove appsody` then `rm -r ~/.appsody`
-## Redhat Linux
-Download https://github.com/appsody/appsody/releases/download/0.0.6/appsody-0.0.6-1.x86_64.rpm
-```
-sudo yum install ~/Downloads/appsody-0.0.6-1.x86_64.rpm
-```
-To uninstall `sudo yum remove appsody` then `rm -r ~/.appsody`
-
-## Windows
-Download https://github.com/appsody/appsody/releases/download/0.0.6/appsody-0.0.6-windows.tar
-```
-tar -xvf appsody-0.0.6-windows.tar
-appsody-setup.bat
-```
-
-# Basic Usage
-The appsody cli supports the `help` command or `-h` for basic help and usage information.
-
-Run `appsody list` to see the available stacks. To start a new project from a stack, create a directory and run `appsody init <stack>`.
-
-```
-mkdir myproject
-cd myproject
-appsody init nodejs-express
-appsody run
-```
-
-`appsody run` will run the project in a development container linked to your local source code. With this running, you can edit code with your local IDE and watch appsody update the container automatically.
-
+https://github.com/kabanero-io/kabanero-command-line/releases
 
 # Building from Source
 
@@ -78,6 +38,8 @@ Here's a description of the various artifacts as you would see them in a release
 
 ** for OS/X
 
+* The binary to run
+
 ** for Linux
 
 ** for Windows
@@ -89,12 +51,4 @@ Here's a description of the various artifacts as you would see them in a release
 * Some other stuff that's always there
 
 ### Running the CLI
-So, you built from source and you would like to run it. 
-
-* The first thing you need to do is to extract the binary for your OS from the `./package` directory. Un-tar the file that matches your OS.
-
-* Next, you need to copy that file to some place that's in your $PATH (for example, /usr/bin or /usr/local/bin) or %PATH% (any Win folder, then add it to the %PATH%). You may also want to call it `appsody`, so that you can run the CLI just by typing `appsody <command>`.
-
-* Next, you need to build the `appsody-controller` (sorry). It's here: https://github.com/appsody/appsody-controller. Just build the binary, and move it to the *same directory where you put `appsody`*. Call it `appsody-controller` (mandatory!) and make sure that it has +x permissions (also mandatory).
-
-* If you are replacing an old installation, you may want to delete the appsody home directory (`$HOME/.appsody`).
+`./kabanero`
