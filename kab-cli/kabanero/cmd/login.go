@@ -58,7 +58,6 @@ var loginCmd = &cobra.Command{
 		viper.SetEnvPrefix("KABANERO")
 
 		if len(args) > 2 {
-			// kabLoginURL = args[2] + "/login"
 			cliConfig.Set(KabURLKey, args[2])
 			cliConfig.WriteConfig()
 		} else {

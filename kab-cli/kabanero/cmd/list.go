@@ -53,7 +53,6 @@ var listCmd = &cobra.Command{
 	Short: "List all the collections in the kabanero instance, and their status",
 	Long:  `List all the collections in the kabanero instance, and their status`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		// url := cliConfig.GetString(KabURLKey) + "/v1/collections"
 		url := getRESTEndpoint("v1/collections")
 		resp, err := sendHTTPRequest("GET", url, nil)
 		if err != nil {
