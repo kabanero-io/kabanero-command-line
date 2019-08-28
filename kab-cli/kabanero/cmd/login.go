@@ -49,10 +49,10 @@ var loginCmd = &cobra.Command{
 	`,
 	Example: `
 	# login with Github userid and password:
-	kabanero-management myGithubID myGithubPassword https://my.kabaneroInstance.io
+	kabanero myGithubID myGithubPassword https://my.kabaneroInstance.io
 
 	# login with Github userid and PAT:
-	kabanero-management myGithubID myGithubPAT https://my.kabaneroInstance.io
+	kabanero myGithubID myGithubPAT https://my.kabaneroInstance.io
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		Debug.log("login called")
