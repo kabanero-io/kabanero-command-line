@@ -1,5 +1,6 @@
 # Installation
 ## Mac OSX
+You can download the binary `kabanero` command from here:
 https://github.com/kabanero-io/kabanero-command-line/releases
 
 # Building from Source
