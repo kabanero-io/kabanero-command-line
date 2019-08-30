@@ -1,0 +1,79 @@
+language: go
+
+go:
+  - 1.12.x
+
+go_import_path: github.com/kabanero-io/kabanero-command-line
+
+services:
+  - docker
+
+# skip the default language's install and script steps, we implement job stages instead
+install: skip
+script: skip
+
+stages:
+  - name: lint
+  - name: test
+  - name: deploy
+    if: tag IS present
+
+install-controller: &install-controller
+  install:
+      - if [ "$TRAVIS_OS_NAME" = "windows" ]; then choco install make; fi
+      - make install-controller
+      # manually set the list of stacks to test
+      # the stacks repo will generate their own list of stacks that have changed and should be tested
+      - export STACKSLIST=incubator/nodejs
+      
+test-template: &test-template
+  stage: test
+  <<: *install-controller
+  script: make test
+
+jobs:
+  include:
+    - name: Lint
+      stage: lint
+      os: linux
+      script: make lint
+    - <<: *test-template
+      name: Full Test on Linux
+      os: linux
+    - <<: *test-template
+      name: Unit Test on MacOS
+      os: osx
+      script: make unittest
+    - <<: *test-template
+      name: Unit Test on Windows
+      os: windows
+      script: make unittest
+    - name: Deploy Release
+      stage: deploy
+      os: linux
+      script:
+        - make VERSION=${TRAVIS_TAG}  package
+        - make deploy
+      deploy:
+        provider: releases
+        skip_cleanup: true
+        api_key:
+          secure: someapikey
+        file: package/*
+        file_glob: true
+        on:
+          branch: master
+          tags: true
+© 2019 GitHub, Inc.
+Terms
+Privacy
+Security
+Status
+Help
+Contact GitHub
+Pricing
+API
+Training
+Blog
+About
+
