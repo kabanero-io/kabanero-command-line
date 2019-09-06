@@ -49,7 +49,7 @@ func printPrettyJSON(jsonData []byte) {
 
 // listCmd represents the list command
 var listCmd = &cobra.Command{
-	Use:   "kabanero list ",
+	Use:   "list ",
 	Short: "List all the collections in the kabanero instance, and their status",
 	Long:  `List all the collections in the kabanero instance, and their status`,
 	RunE: func(cmd *cobra.Command, args []string) error {
