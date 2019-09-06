@@ -41,7 +41,7 @@ func parseKabURL(url string) string {
 var loginCmd = &cobra.Command{
 	Args:  cobra.MinimumNArgs(2),
 	Use:   "login userid Github-PAT|Github-password kabanero-url",
-	Short: "Will authentic you to a Kabanero instance",
+	Short: "Will authenticate you to a Kabanero instance",
 	Long: `
 	Login to a Kabanero instance using github credentials, and store a temporary access token for subsequent command line calls.
 	The temporary authentication token will be stored in your-home-directory/.kabanero/config.yaml.
