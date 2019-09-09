@@ -39,8 +39,7 @@ func parseKabURL(url string) string {
 
 // loginCmd represents the login command
 var loginCmd = &cobra.Command{
-	// Args:  cobra.MinimumNArgs(2),
-	Use:   "login userid Github-PAT|Github-password kabanero-url",
+	Use:   "login kabanero-url userid Github-PAT|Github-password ",
 	Short: "Will authenticate you to a Kabanero instance",
 	Long: `
 	Login to a Kabanero instance using github credentials, and store a temporary access token for subsequent command line calls.
@@ -49,18 +48,14 @@ var loginCmd = &cobra.Command{
 	`,
 	Example: `
 	# login with Github userid and password:
-	kabanero login myGithubID myGithubPassword my.kabaneroInstance.io
+	kabanero login my.kabaneroInstance.io -u myGithubID -p myGithubPassword/myGithubPAT 
 
-	# login with Github userid and PAT:
-	kabanero login myGithubID myGithubPAT my.kabaneroInstance.io
-
-	# You can also include https.   If you omit it as above, the command will add it automatically
-	kabanero login myGithubID myGithubPassword https://my.kabaneroInstance.io
+	# login with previously used url Github userid and PAT:
+	kabanero login -u myGithubID -p myGithubPAT
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		Debug.log("login called")
 
-		// username := args[0]
 		username, _ := cmd.Flags().GetString("username")
 		if username == "" {
 			fmt.Println("EMPTY USERNAME")
@@ -69,14 +64,12 @@ var loginCmd = &cobra.Command{
 		if password == "" {
 			fmt.Println("EMPTY PASSWORD")
 		}
-		// password := args[1]
-
 		var kabLoginURL string
 
 		viper.SetEnvPrefix("KABANERO")
 
 		if len(args) > 0 {
-			cliConfig.Set(KabURLKey, parseKabURL(args[1]))
+			cliConfig.Set(KabURLKey, parseKabURL(args[0]))
 			cliConfig.WriteConfig()
 		} else {
 			if cliConfig.GetString(KabURLKey) == "" {
@@ -111,10 +104,10 @@ var loginCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(loginCmd)
-	loginCmd.Flags().StringP("username", "u", "", "github username")
 	loginCmd.Flags().StringP("password", "p", "", "github password/PAT")
-	loginCmd.MarkFlagRequired("username")
+	loginCmd.Flags().StringP("username", "u", "", "github username")
 	loginCmd.MarkFlagRequired("password")
+	loginCmd.MarkFlagRequired("username")
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
