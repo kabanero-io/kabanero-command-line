@@ -3,6 +3,10 @@
 You can download the binary `kabanero` command from here:
 https://github.com/kabanero-io/kabanero-command-line/releases
 
+# Generating the README.md
+The project uses Cobra's built in mechanism to generate the CLI README.md.  Run the following command to generate the README:
+    ` ./build/kabanero docs --docFile ./README.md`
+
 # Building from Source
 
 ## Travis build

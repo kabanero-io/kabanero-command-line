@@ -80,7 +80,7 @@ func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response
 var refreshCmd = &cobra.Command{
 	Use:   "refresh",
 	Short: "Refresh the collections list",
-	Long:  `Refresh reconciles the list of collections from master to make them current with the activated collections across all namespace in the kabanero instance`,
+	Long:  `Run the kabanero refresh command to refresh the list of collections from master, making these collections current with the activated collections across all namespaces in the Kabanero instance. This command can also be used to restore deactivated collections. See kabanero deactivate.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		url := getRESTEndpoint("v1/collections")
 		resp, err := sendHTTPRequest("PUT", url, nil)
