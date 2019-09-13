@@ -30,18 +30,11 @@ type DeactivateJSON struct {
 var deactivateCmd = &cobra.Command{
 	Args:  cobra.MinimumNArgs(1),
 	Use:   "deactivate collection-name",
-	Short: "Prevent this collection from being shown to the development team, while not deleting it.",
+	Short: "Remove the specified collection from the list of available application types, without deleting it from the Kabanero instance.",
 	Long: `
-A collection can be available to a development team
-to use for building applications or not. deactivate
-will cause the collection to not be shown to 
-the develoopment team when they list the types of
-application they can build.
+Run the deactivate command to remove the specified collection from the list of available application types, without deleting it from the Kabanero instance.
 
-This would be done in the case where you have cloned the collection
-and made changes for your business.  This keeps the base collection
-in the apphub, and it will continue to be updated, and the 
-updates will be perkolated up to your cloned collection.`,
+This command is useful in a case where you have cloned a collection and customized it for your business needs. Deactivation keeps the base collection in the app hub. The base collection continues to be updated and the updates percolate up to your cloned collection. To restore a deactivated collection, run the kabanero refresh command.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// fmt.Println("deactivate called")
 		collectionName := args[0]
