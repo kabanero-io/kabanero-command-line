@@ -50,14 +50,20 @@ updates will be perkolated up to your cloned collection.`,
 		if err != nil {
 			return err
 		}
-		var deactivateJSON DeactivateJSON
-		err = json.NewDecoder(resp.Body).Decode(&deactivateJSON)
+		data := make(map[string]interface{})
+		// err = json.Unmarshal(resp.Body, &data)
+
+		// var deactivateJSON DeactivateJSON
+		err = json.NewDecoder(resp.Body).Decode(&data)
 		if err != nil {
 			return err
 		}
-		Debug.log(deactivateJSON)
-		fmt.Println(deactivateJSON.status)
-		fmt.Println(collectionName + " deactivated")
+		value := data["status"]
+		fmt.Println("STATUS PRINT - ", value)
+		// Debug.log(deactivateJSON)
+
+		// fmt.Println(deactivateJSON.status)
+		// fmt.Println(collectionName + " deactivated")
 		return nil
 	},
 }
