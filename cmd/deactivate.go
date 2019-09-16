@@ -22,10 +22,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type DeactivateJSON struct {
-	status string
-}
-
 // deactivateCmd represents the deactivate command
 var deactivateCmd = &cobra.Command{
 	Args:  cobra.MinimumNArgs(1),
@@ -51,19 +47,15 @@ updates will be perkolated up to your cloned collection.`,
 			return err
 		}
 		data := make(map[string]interface{})
-		// err = json.Unmarshal(resp.Body, &data)
 
-		// var deactivateJSON DeactivateJSON
 		err = json.NewDecoder(resp.Body).Decode(&data)
 		if err != nil {
 			return err
 		}
-		value := data["status"]
-		fmt.Println("STATUS PRINT - ", value)
-		// Debug.log(deactivateJSON)
+		deactivateResponse := data["status"]
+		fmt.Println(deactivateResponse)
+		Debug.log(deactivateResponse)
 
-		// fmt.Println(deactivateJSON.status)
-		// fmt.Println(collectionName + " deactivated")
 		return nil
 	},
 }
