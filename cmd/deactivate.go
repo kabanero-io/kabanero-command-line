@@ -22,10 +22,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type DeactivateJSON struct {
-	status string
-}
-
 // deactivateCmd represents the deactivate command
 var deactivateCmd = &cobra.Command{
 	Args:  cobra.MinimumNArgs(1),
@@ -43,14 +39,16 @@ This command is useful in a case where you have cloned a collection and customiz
 		if err != nil {
 			return err
 		}
-		var deactivateJSON DeactivateJSON
-		err = json.NewDecoder(resp.Body).Decode(&deactivateJSON)
+		data := make(map[string]interface{})
+
+		err = json.NewDecoder(resp.Body).Decode(&data)
 		if err != nil {
 			return err
 		}
-		Debug.log(deactivateJSON)
-		fmt.Println(deactivateJSON.status)
-		fmt.Println(collectionName + " deactivated")
+		deactivateResponse := data["status"]
+		fmt.Println(deactivateResponse)
+		Debug.log(deactivateResponse)
+
 		return nil
 	},
 }
