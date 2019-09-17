@@ -33,6 +33,7 @@ var onboardCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		gituser := args[0]
 		repoName := args[1]
+		var err error
 		url := getRESTEndpoint("v1/onboard")
 		requestBody, _ := json.Marshal(map[string]string{"gituser": gituser, "repoName": repoName})
 		resp, err := sendHTTPRequest("POST", url, requestBody)
@@ -40,7 +41,10 @@ var onboardCmd = &cobra.Command{
 			return err
 		}
 		somedata, _ := ioutil.ReadAll(resp.Body)
-		printPrettyJSON(somedata)
+		err = printPrettyJSON(somedata)
+		if err != nil {
+			return err
+		}
 		return nil
 	},
 }

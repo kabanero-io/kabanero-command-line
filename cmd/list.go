@@ -18,7 +18,6 @@ package cmd
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
 	"os"
@@ -41,10 +40,14 @@ type CollectionsResponse struct {
 	VChangeColl  []CollStruct `json:"version change collections"`
 }
 
-func printPrettyJSON(jsonData []byte) {
+func printPrettyJSON(jsonData []byte) error {
 	var testBuffer bytes.Buffer
-	json.Indent(&testBuffer, jsonData, "", "\t")
-	fmt.Println(string(testBuffer.Bytes()))
+	err := json.Indent(&testBuffer, jsonData, "", "\t")
+	if err != nil {
+		return err
+	}
+	fmt.Println(testBuffer.String())
+	return nil
 }
 
 // listCmd represents the list command
@@ -56,7 +59,7 @@ var listCmd = &cobra.Command{
 		url := getRESTEndpoint("v1/collections")
 		resp, err := sendHTTPRequest("GET", url, nil)
 		if err != nil {
-			return errors.New(err.Error())
+			return err
 		}
 
 		Debug.log("RESPONSE ", url, resp.StatusCode, http.StatusText(resp.StatusCode))
@@ -64,7 +67,9 @@ var listCmd = &cobra.Command{
 		decoder := json.NewDecoder(resp.Body)
 		var data CollectionsResponse
 		err = decoder.Decode(&data)
-		//
+		if err != nil {
+			return err
+		}
 
 		Debug.log(data)
 		tWriter := new(tabwriter.Writer)
