@@ -92,7 +92,9 @@ var refreshCmd = &cobra.Command{
 		decoder := json.NewDecoder(resp.Body)
 		var data CollectionsResponse
 		err = decoder.Decode(&data)
-		//
+		if err != nil {
+			return err
+		}
 
 		Debug.log(data)
 		tWriter := new(tabwriter.Writer)

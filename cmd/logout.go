@@ -16,8 +16,6 @@ limitations under the License.
 package cmd
 
 import (
-	"errors"
-
 	"github.com/spf13/cobra"
 )
 
@@ -29,15 +27,19 @@ var logoutCmd = &cobra.Command{
 Disconnect from the instance of Kabanero that you 
 have been interacting with.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		var err error
 		url := getRESTEndpoint("logout")
 		resp, err := sendHTTPRequest("POST", url, nil)
 		if err != nil {
-			return errors.New(err.Error())
+			return err
 		}
 
 		defer resp.Body.Close()
 		cliConfig.Set("jwt", "")
-		cliConfig.WriteConfig()
+		err = cliConfig.WriteConfig()
+		if err != nil {
+			return err
+		}
 		println("Logged out of kab instance: " + cliConfig.GetString(KabURLKey))
 		return nil
 	},

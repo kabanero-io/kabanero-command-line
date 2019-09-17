@@ -55,6 +55,7 @@ var loginCmd = &cobra.Command{
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		Debug.log("login called")
+		var err error
 
 		username, _ := cmd.Flags().GetString("username")
 		if username == "" {
@@ -70,7 +71,10 @@ var loginCmd = &cobra.Command{
 
 		if len(args) > 0 {
 			cliConfig.Set(KabURLKey, parseKabURL(args[0]))
-			cliConfig.WriteConfig()
+			err = cliConfig.WriteConfig()
+			if err != nil {
+				return err
+			}
 		} else {
 			if cliConfig.GetString(KabURLKey) == "" {
 				return errors.New("No Kabanero instance url specified")
@@ -87,9 +91,15 @@ var loginCmd = &cobra.Command{
 		Debug.log("RESPONSE ", kabLoginURL, resp.StatusCode, http.StatusText(resp.StatusCode))
 
 		var data JWTResponse
-		json.NewDecoder(resp.Body).Decode(&data)
+		err = json.NewDecoder(resp.Body).Decode(&data)
+		if err != nil {
+			return err
+		}
 		cliConfig.Set("jwt", data.JWT)
-		cliConfig.WriteConfig()
+		err = cliConfig.WriteConfig()
+		if err != nil {
+			return err
+		}
 		if cliConfig.GetString("jwt") == "" {
 			Debug.log("Unable to validate user: " + username + " to " + cliConfig.GetString(KabURLKey))
 			return errors.New("Unable to validate user: " + username + " to " + cliConfig.GetString(KabURLKey))
@@ -106,8 +116,8 @@ func init() {
 	rootCmd.AddCommand(loginCmd)
 	loginCmd.Flags().StringP("password", "p", "", "github password/PAT")
 	loginCmd.Flags().StringP("username", "u", "", "github username")
-	loginCmd.MarkFlagRequired("password")
-	loginCmd.MarkFlagRequired("username")
+	_ = loginCmd.MarkFlagRequired("password")
+	_ = loginCmd.MarkFlagRequired("username")
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
