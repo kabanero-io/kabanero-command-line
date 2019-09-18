@@ -34,8 +34,6 @@ test: ## Run the automated tests
 # use -count=1 to disable cache
 	go test -v -count=1 ./cmd
 
-.PHONY: download-controller
-
 .PHONY: lint
 lint: $(GOLANGCI_LINT_BINARY) ## Run the static code analyzers
 # Configure the linter here. Helpful commands include `golangci-lint linters` and `golangci-lint run -h`
