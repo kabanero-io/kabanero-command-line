@@ -3,7 +3,7 @@ language: go
 go:
   - 1.12.x
 
-go_import_path: github.com/tseelbach/kabanero-command-line
+go_import_path: github.com/kabanero-io/kabanero-command-line
 
 services:
   - docker
