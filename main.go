@@ -15,7 +15,7 @@
 package main
 
 import (
-	"github.com/kabanero-command-line/cmd"
+	"github.com/kabanero-io/kabanero-command-line/cmd"
 )
 
 var (

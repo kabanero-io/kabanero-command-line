@@ -18,18 +18,6 @@
   version = "v1.4.7"
 
 [[projects]]
-  branch = "master"
-  digest = "1:4e08dc2383a46b3107f0b34ca338c4459e8fc8ee90e46a60e728aa8a2b21d558"
-  name = "github.com/gosuri/uitable"
-  packages = [
-    ".",
-    "util/strutil",
-    "util/wordwrap",
-  ]
-  pruneopts = "UT"
-  revision = "36ee7e946282a3fb1cfecd476ddc9b35d8847e42"
-
-[[projects]]
   digest = "1:c0d19ab64b32ce9fe5cf4ddceba78d5bc9807f0016db6b1183599da3dcc24d10"
   name = "github.com/hashicorp/hcl"
   packages = [
@@ -63,14 +51,6 @@
   pruneopts = "UT"
   revision = "c2353362d570a7bfa228149c62842019201cfb71"
   version = "v1.8.0"
-
-[[projects]]
-  digest = "1:0356f3312c9bd1cbeda81505b7fd437501d8e778ab66998ef69f00d7f9b3a0d7"
-  name = "github.com/mattn/go-runewidth"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "3ee7d812e62a0804a7d0a324e0249ca2db3476d3"
-  version = "v0.0.4"
 
 [[projects]]
   digest = "1:5d231480e1c64a726869bc4142d270184c419749d34f167646baa21008eb0a79"
@@ -201,14 +181,11 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
-    "github.com/gosuri/uitable",
     "github.com/mitchellh/go-homedir",
-    "github.com/russross/blackfriday",
     "github.com/spf13/cobra",
     "github.com/spf13/cobra/doc",
     "github.com/spf13/pflag",
     "github.com/spf13/viper",
-    "gopkg.in/yaml.v2",
     "k8s.io/klog",
   ]
   solver-name = "gps-cdcl"
