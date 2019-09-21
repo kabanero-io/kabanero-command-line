@@ -20,4 +20,4 @@ setx PATH "%UserPath%%~dp0
 set PATH=%PATH%%~dp0
 :done
 
-@echo Done - enjoy appsody!
+@echo Done - enjoy kabanero!
