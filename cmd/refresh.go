@@ -100,24 +100,24 @@ var refreshCmd = &cobra.Command{
 		tWriter := new(tabwriter.Writer)
 		tWriter.Init(os.Stdout, 0, 8, 0, '\t', 0)
 		if len(data.NewColl) == 0 && (len(data.ActiveColl) == 0) && len(data.ObsoleteColl) == 0 && len(data.MasterColl) == 0 && len(data.VChangeColl) == 0 {
-			fmt.Println("active collections synchronized with master")
+			fmt.Println("active collection is already synchronized with master")
 		} else {
-			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", "Name", "Version", "Collection")
+			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", "Collection Name", "Version", "Status")
 			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", "----", "----", "----")
 			for i := 0; i < len(data.NewColl); i++ {
-				fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.NewColl[i].Name, data.NewColl[i].Version, "new collection")
+				fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.NewColl[i].Name, data.NewColl[i].Version, "new ==> active")
 			}
 			for i := 0; i < len(data.ActiveColl); i++ {
-				fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.ActiveColl[i].Name, data.ActiveColl[i].Version, "active collections")
+				fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.ActiveColl[i].Name, data.ActiveColl[i].Version, "active")
 			}
 			for i := 0; i < len(data.ObsoleteColl); i++ {
-				fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.ObsoleteColl[i].Name, data.ObsoleteColl[i].Version, "obsolete collections")
+				fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.ObsoleteColl[i].Name, data.ObsoleteColl[i].Version, "obsolete")
 			}
 			for i := 0; i < len(data.MasterColl); i++ {
-				fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.MasterColl[i].Name, data.MasterColl[i].Version, "master collection")
+				fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.MasterColl[i].Name, data.MasterColl[i].Version, "master")
 			}
 			for i := 0; i < len(data.VChangeColl); i++ {
-				fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.VChangeColl[i].Name, data.VChangeColl[i].Version, "changed collection")
+				fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.VChangeColl[i].Name, data.VChangeColl[i].Version, "version changed")
 			}
 			fmt.Fprintln(tWriter)
 			tWriter.Flush()
