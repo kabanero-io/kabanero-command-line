@@ -56,7 +56,7 @@ func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response
 	}
 	if err != nil {
 		fmt.Print("Problem with the new request")
-		return resp, errors.New(err.Error())
+		return resp, err
 	}
 
 	req.Header.Set("Content-Type", "application/json")
@@ -70,6 +70,15 @@ func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response
 	resp, err = client.Do(req)
 	if err != nil {
 		return resp, errors.New(err.Error())
+	}
+	if resp.StatusCode == 401 {
+		data := make(map[string]interface{})
+		err = json.NewDecoder(resp.Body).Decode(&data)
+		if err != nil {
+			return nil, err
+		}
+		expJWTResp := data["message"].(string)
+		return nil, errors.New(expJWTResp)
 	}
 	Debug.log("RESPONSE ", url, resp.StatusCode, http.StatusText(resp.StatusCode))
 	return resp, nil
