@@ -121,7 +121,7 @@ rpm-linux: build-linux ## Build the linux binary and package it as a .rpm for Re
 
 .PHONY: deploy
 deploy: ## Publishes the formula
-	./deploy-build/deploy.sh
+	# ./deploy-build/deploy.sh
 
 
 

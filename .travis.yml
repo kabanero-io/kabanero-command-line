@@ -57,8 +57,7 @@ jobs:
       deploy:
         provider: releases
         skip_cleanup: true
-        api_key:
-          secure: someapikey
+        api_key: "$GITHUB_OAUTH_TOKEN"
         file: package/*
         file_glob: true
         on:
