@@ -128,14 +128,6 @@ var refreshCmd = &cobra.Command{
 			fmt.Fprintln(tWriter)
 			tWriter.Flush()
 
-			fmt.Fprintf(tWriter, "\n%s\t%s", "Curated Collection", "Version")
-			fmt.Fprintf(tWriter, "\n%s\t%s", "----", "----")
-
-			for i := 0; i < len(data.MasterColl); i++ {
-				fmt.Fprintf(tWriter, "\n%s\t%s", data.MasterColl[i].Name, data.MasterColl[i].Version)
-			}
-			fmt.Fprintln(tWriter)
-			tWriter.Flush()
 		}
 		return nil
 	},
