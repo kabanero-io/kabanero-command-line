@@ -80,7 +80,7 @@ build-linux build-darwin build-windows: ## Build the binary of the respective op
 	GOOS=$(os) GOARCH=amd64 go build -o $(BUILD_PATH)/$(build_binary) -ldflags "-X main.VERSION=$(VERSION)"
 
 .PHONY: package
-package: tar-linux tar-darwin tar-windows ## Creates packages for all operating systems and store them in package/ dir
+package: tar-linux tar-darwin tar-windows brew-darwin deb-linux rpm-linux ## Creates packages for all operating systems and store them in package/ dir
 # package: tar-linux deb-linux rpm-linux tar-darwin brew-darwin tar-windows ## Creates packages for all operating systems and store them in package/ dir
 
 .PHONY: tar-linux
