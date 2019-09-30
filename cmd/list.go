@@ -78,16 +78,13 @@ var listCmd = &cobra.Command{
 		fmt.Fprintf(tWriter, "\n%s\t%s\t%s", "Collection Name", "Version", "Status")
 		fmt.Fprintf(tWriter, "\n%s\t%s\t%s", "----", "----", "----")
 		for i := 0; i < len(data.NewColl); i++ {
-			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.NewColl[i].Name, data.NewColl[i].Version, "new")
+			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.NewColl[i].Name, data.NewColl[i].Version, "inactive")
 		}
 		for i := 0; i < len(data.ActiveColl); i++ {
 			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.ActiveColl[i].Name, data.ActiveColl[i].Version, "active")
 		}
 		for i := 0; i < len(data.ObsoleteColl); i++ {
 			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.ObsoleteColl[i].Name, data.ObsoleteColl[i].Version, "obsolete")
-		}
-		for i := 0; i < len(data.MasterColl); i++ {
-			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.MasterColl[i].Name, data.MasterColl[i].Version, "master")
 		}
 		for i := 0; i < len(data.VChangeColl); i++ {
 			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.VChangeColl[i].Name, data.VChangeColl[i].Version, "version changed")
@@ -96,6 +93,13 @@ var listCmd = &cobra.Command{
 
 		tWriter.Flush()
 
+		fmt.Fprintf(tWriter, "\n%s\t%s", "Curated Collection", "Version")
+		fmt.Fprintf(tWriter, "\n%s\t%s", "----", "----")
+		for i := 0; i < len(data.MasterColl); i++ {
+			fmt.Fprintf(tWriter, "\n%s\t%s", data.MasterColl[i].Name, data.MasterColl[i].Version)
+		}
+		fmt.Fprintln(tWriter)
+		tWriter.Flush()
 		return nil
 	},
 }
