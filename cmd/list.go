@@ -93,7 +93,7 @@ var listCmd = &cobra.Command{
 
 		tWriter.Flush()
 
-		fmt.Fprintf(tWriter, "\n%s\t%s", "Curated Collection", "Version")
+		fmt.Fprintf(tWriter, "\n%s\t%s", "Curated Collections", "Version")
 		fmt.Fprintf(tWriter, "\n%s\t%s", "----", "----")
 		for i := 0; i < len(data.MasterColl); i++ {
 			fmt.Fprintf(tWriter, "\n%s\t%s", data.MasterColl[i].Name, data.MasterColl[i].Version)
