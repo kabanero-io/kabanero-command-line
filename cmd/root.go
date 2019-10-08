@@ -130,7 +130,7 @@ func initConfig() {
 	if cfgFile == "" {
 		//viper needs cfgFile to NOT include the file type
 		cfgFile := filepath.Join(cfgDir, "config")
-		f, err := os.OpenFile(cfgFile+".yaml", os.O_RDWR|os.O_CREATE, 0755)
+		f, err := os.OpenFile(cfgFile+".yaml", os.O_RDWR|os.O_CREATE, 0700)
 		if err != nil {
 			Error.log("ERROR creating config file config.yaml", err)
 			os.Exit(1)

@@ -5,7 +5,7 @@ path: /cmd/docs.go
 # kabanero CLI
 ## kabanero
 
-This repo defines a command line interface used by the enterprise, solution, or application architect who defines and manages the kabanero collections that are used by developers to create governed applications for their business.
+The Kabanero CLI is a command line interface used by the enterprise, solution, or application architect who defines and manages the kabanero collections that are used by developers to create governed applications for their business.
 
 ### Synopsis
 
@@ -87,8 +87,7 @@ Disconnect from Kabanero instance
 ### Synopsis
 
 
-Disconnect from the instance of Kabanero that you 
-have been interacting with.
+Disconnect from the Kabanero instance.
 
 ```
 kabanero logout [flags]
