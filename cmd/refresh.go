@@ -71,7 +71,7 @@ func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response
 	if err != nil {
 		return resp, errors.New(err.Error())
 	}
-	if resp.StatusCode == 401 {
+	if resp.StatusCode == 401 || resp.StatusCode == 503 {
 		data := make(map[string]interface{})
 		err = json.NewDecoder(resp.Body).Decode(&data)
 		if err != nil {
