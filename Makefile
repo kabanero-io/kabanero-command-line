@@ -80,7 +80,7 @@ build-linux build-darwin build-windows: ## Build the binary of the respective op
 	GOOS=$(os) GOARCH=amd64 go build -o $(BUILD_PATH)/$(build_binary) -ldflags "-X main.VERSION=$(VERSION)"
 
 .PHONY: package
-package: tar-linux tar-darwin tar-windows brew-darwin deb-linux rpm-linux ## Creates packages for all operating systems and store them in package/ dir
+package: tar-linux tar-darwin tar-windows ## Creates packages for all operating systems and store them in package/ dir
 # package: tar-linux deb-linux rpm-linux tar-darwin brew-darwin tar-windows ## Creates packages for all operating systems and store them in package/ dir
 
 .PHONY: tar-linux
@@ -102,22 +102,22 @@ tar-windows: build-windows ## Build the windows binary and package it in a .tar 
 
 .PHONY: brew-darwin
 brew-darwin: build-darwin ## Build the OSX binary and package it for OSX brew install
-	# brew script goes here
-	# cp -p $(BUILD_PATH)/$(build_binary) $(package_binary)
-	# homebrew-build/build-darwin.sh $(PACKAGE_PATH) $(package_binary) $(CONTROLLER_BASE_URL) $(VERSION)
-	# rm -f $(package_binary)	
+	brew script goes here
+	cp -p $(BUILD_PATH)/$(build_binary) $(package_binary)
+	homebrew-build/build-darwin.sh $(PACKAGE_PATH) $(package_binary) $(CONTROLLER_BASE_URL) $(VERSION)
+	rm -f $(package_binary)	
 .PHONY: deb-linux
 deb-linux: build-linux ## Build the linux binary and package it as a .deb for Debian apt-get install
-	# deb script goes here
-	# cp -p $(BUILD_PATH)/$(build_binary) $(package_binary)	
-	# deb-build/build-deb.sh $(package_binary) $(DOCKER_IMAGE_DEB) $(PACKAGE_PATH) $(CONTROLLER_BASE_URL) $(VERSION)
-	# rm -f $(package_binary)
+	deb script goes here
+	cp -p $(BUILD_PATH)/$(build_binary) $(package_binary)	
+	deb-build/build-deb.sh $(package_binary) $(DOCKER_IMAGE_DEB) $(PACKAGE_PATH) $(CONTROLLER_BASE_URL) $(VERSION)
+	rm -f $(package_binary)
 .PHONY: rpm-linux
 rpm-linux: build-linux ## Build the linux binary and package it as a .rpm for RedHat yum install
-	# rpm script goes here
-	# cp -p $(BUILD_PATH)/$(build_binary) $(package_binary)	
-	# rpm-build/build-rpm.sh $(package_binary) $(DOCKER_IMAGE_RPM) $(PACKAGE_PATH) $(CONTROLLER_BASE_URL) $(VERSION)
-	# rm -f $(package_binary)	
+	rpm script goes here
+	cp -p $(BUILD_PATH)/$(build_binary) $(package_binary)	
+	rpm-build/build-rpm.sh $(package_binary) $(DOCKER_IMAGE_RPM) $(PACKAGE_PATH) $(CONTROLLER_BASE_URL) $(VERSION)
+	rm -f $(package_binary)	
 
 .PHONY: deploy
 deploy: ## Publishes the formula
