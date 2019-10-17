@@ -63,7 +63,6 @@ jobs:
         api_key: "$GITHUB_OAUTH_TOKEN"
         file: package/*
         file_glob: true
-        draft: true
         on:
           branch: master
           tags: true
