@@ -5,6 +5,9 @@ go:
 
 go_import_path: github.com/kabanero-io/kabanero-command-line
 
+env: 
+  - CGO_ENABLED=1
+
 services:
   - docker
 
@@ -60,6 +63,7 @@ jobs:
         api_key: "$GITHUB_OAUTH_TOKEN"
         file: package/*
         file_glob: true
+        draft: true
         on:
           branch: master
           tags: true
