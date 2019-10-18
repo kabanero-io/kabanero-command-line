@@ -8,6 +8,9 @@ go_import_path: github.com/kabanero-io/kabanero-command-line
 services:
   - docker
 
+env:
+  - CGO_ENABLED=1
+
 # skip the default language's install and script steps, we implement job stages instead
 install: skip
 script: skip
