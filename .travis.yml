@@ -53,7 +53,7 @@ jobs:
       # script: make unittest
     - name: Deploy Release
       stage: deploy
-      os: linux
+      os: osx
       script:
         - make VERSION=${TRAVIS_TAG}  package
         - make deploy
