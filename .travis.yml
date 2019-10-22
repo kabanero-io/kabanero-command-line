@@ -51,9 +51,24 @@ jobs:
       name: Unit Test on Windows
       os: windows
       # script: make unittest
-    - name: Deploy Release
+    - name: Deploy Release osx
       stage: deploy
       os: osx
+      script:
+        - make VERSION=${TRAVIS_TAG}  package-osx
+        - make deploy
+      deploy:
+        provider: releases
+        skip_cleanup: true
+        api_key: "$GITHUB_OAUTH_TOKEN"
+        file: package/*
+        file_glob: true
+        on:
+          branch: master
+          tags: true
+    - name: Deploy Release win/linux
+      stage: deploy
+      os: linux
       script:
         - make VERSION=${TRAVIS_TAG}  package
         - make deploy
@@ -66,4 +81,3 @@ jobs:
         on:
           branch: master
           tags: true
-
