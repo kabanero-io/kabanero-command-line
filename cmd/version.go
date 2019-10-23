@@ -31,6 +31,12 @@ var versionCmd = &cobra.Command{
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
 
+		Info.log("kabanero cli version: ", VERSION)
+
+		if cliConfig.GetString(KabURLKey) == "" {
+			return nil
+		}
+
 		url := getRESTEndpoint("v1/version")
 		resp, err := sendHTTPRequest("GET", url, nil)
 		if err != nil {
@@ -41,8 +47,6 @@ var versionCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		// Info.log("kabanero command version: 0.1.0")
-		Info.log("kabanero cli version: ", VERSION)
 		Info.log("kabanero command line service version: ", versionJSON.Version)
 		return nil
 	},
