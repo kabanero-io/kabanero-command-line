@@ -88,7 +88,7 @@ func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response
 var refreshCmd = &cobra.Command{
 	Use:   "refresh",
 	Short: "Refresh the collections list",
-	Long:  `Run the kabanero refresh command to refresh the list of collections from master, making these collections current with the activated collections across all namespaces in the Kabanero instance. This command can also be used to restore deactivated collections. See kabanero deactivate.`,
+	Long:  `Run the kabanero refresh command to refresh the list of collections from the curated collection, making these collections current with the activated collections across all namespaces in the Kabanero instance. This command can also be used to restore deactivated collections. See kabanero deactivate.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		url := getRESTEndpoint("v1/collections")
 		resp, err := sendHTTPRequest("PUT", url, nil)
@@ -109,7 +109,7 @@ var refreshCmd = &cobra.Command{
 		tWriter := new(tabwriter.Writer)
 		tWriter.Init(os.Stdout, 0, 8, 0, '\t', 0)
 		if len(data.NewColl) == 0 && (len(data.ActiveColl) == 0) && len(data.ObsoleteColl) == 0 && len(data.MasterColl) == 0 && len(data.VChangeColl) == 0 {
-			fmt.Println("active collection is already synchronized with master")
+			fmt.Println("active collection is already synchronized with the curated collection")
 		} else {
 			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", "Collection Name", "Version", "Status")
 			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", "----", "----", "----")
