@@ -86,9 +86,7 @@ var listCmd = &cobra.Command{
 		for i := 0; i < len(data.ObsoleteColl); i++ {
 			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.ObsoleteColl[i].Name, data.ObsoleteColl[i].Version, "obsolete")
 		}
-		for i := 0; i < len(data.VChangeColl); i++ {
-			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.VChangeColl[i].Name, data.VChangeColl[i].Version, "version changed")
-		}
+
 		fmt.Fprintln(tWriter)
 
 		tWriter.Flush()
