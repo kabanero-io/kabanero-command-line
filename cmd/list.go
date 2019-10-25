@@ -27,14 +27,14 @@ import (
 )
 
 type CollStruct struct {
-	OriginalName string
-	Name         string
-	Version      string
+	Name    string
+	Version string
+	Status  string
 }
 
 type CollectionsResponse struct {
 	NewColl      []CollStruct `json:"new collections"`
-	ActiveColl   []CollStruct `json:"active collections"`
+	KabColl      []CollStruct `json:"kabanero collections"`
 	ObsoleteColl []CollStruct `json:"obsolete collections"`
 	MasterColl   []CollStruct `json:"master collections"`
 	VChangeColl  []CollStruct `json:"version change collections"`
@@ -80,8 +80,8 @@ var listCmd = &cobra.Command{
 		for i := 0; i < len(data.NewColl); i++ {
 			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.NewColl[i].Name, data.NewColl[i].Version, "inactive")
 		}
-		for i := 0; i < len(data.ActiveColl); i++ {
-			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.ActiveColl[i].Name, data.ActiveColl[i].Version, "active")
+		for i := 0; i < len(data.KabColl); i++ {
+			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.KabColl[i].Name, data.KabColl[i].Version, data.KabColl[i].Status)
 		}
 		for i := 0; i < len(data.ObsoleteColl); i++ {
 			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.ObsoleteColl[i].Name, data.ObsoleteColl[i].Version, "obsolete")
