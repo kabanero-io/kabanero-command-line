@@ -26,12 +26,14 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// CollStruct : Each collection contains following information to be displayed
 type CollStruct struct {
 	Name    string
 	Version string
 	Status  string
 }
 
+// CollectionsResponse : all the collections
 type CollectionsResponse struct {
 	NewColl      []CollStruct `json:"new collections"`
 	KabColl      []CollStruct `json:"kabanero collections"`
