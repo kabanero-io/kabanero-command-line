@@ -8,9 +8,6 @@ go_import_path: github.com/kabanero-io/kabanero-command-line
 services:
   - docker
 
-env:
-  - CGO_ENABLED=1
-
 # skip the default language's install and script steps, we implement job stages instead
 install: skip
 script: skip
@@ -46,6 +43,8 @@ jobs:
     - <<: *test-template
       name: Unit Test on MacOS
       os: osx
+      env:
+        - CGO_ENABLED=1
       # script: make unittest
     - <<: *test-template
       name: Unit Test on Windows
@@ -54,6 +53,8 @@ jobs:
     - name: Deploy Release osx
       stage: deploy
       os: osx
+      env:
+        - CGO_ENABLED=1
       script:
         - make VERSION=${TRAVIS_TAG}  package-osx
         - make deploy
