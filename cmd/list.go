@@ -35,10 +35,11 @@ type CollStruct struct {
 
 // CollectionsResponse : all the collections
 type CollectionsResponse struct {
-	NewColl      []CollStruct `json:"new collections"`
+	NewColl      []CollStruct `json:"new curated collections"`
+	ActivateColl []CollStruct `json:"activate collections"`
 	KabColl      []CollStruct `json:"kabanero collections"`
 	ObsoleteColl []CollStruct `json:"obsolete collections"`
-	CuratedColl   []CollStruct `json:"curated collections"`
+	CuratedColl  []CollStruct `json:"curated collections"`
 	VChangeColl  []CollStruct `json:"version change collections"`
 }
 
