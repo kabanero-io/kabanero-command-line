@@ -35,10 +35,11 @@ type CollStruct struct {
 
 // CollectionsResponse : all the collections
 type CollectionsResponse struct {
-	NewColl      []CollStruct `json:"new collections"`
+	NewColl      []CollStruct `json:"new curated collections"`
+	ActivateColl []CollStruct `json:"activate collections"`
 	KabColl      []CollStruct `json:"kabanero collections"`
 	ObsoleteColl []CollStruct `json:"obsolete collections"`
-	MasterColl   []CollStruct `json:"master collections"`
+	CuratedColl  []CollStruct `json:"curated collections"`
 	VChangeColl  []CollStruct `json:"version change collections"`
 }
 
@@ -95,8 +96,8 @@ var listCmd = &cobra.Command{
 
 		fmt.Fprintf(tWriter, "\n%s\t%s", "Curated Collections", "Version")
 		fmt.Fprintf(tWriter, "\n%s\t%s", "----", "----")
-		for i := 0; i < len(data.MasterColl); i++ {
-			fmt.Fprintf(tWriter, "\n%s\t%s", data.MasterColl[i].Name, data.MasterColl[i].Version)
+		for i := 0; i < len(data.CuratedColl); i++ {
+			fmt.Fprintf(tWriter, "\n%s\t%s", data.CuratedColl[i].Name, data.CuratedColl[i].Version)
 		}
 		fmt.Fprintln(tWriter)
 		tWriter.Flush()
