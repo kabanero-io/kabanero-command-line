@@ -26,17 +26,20 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// CollStruct : Each collection contains following information to be displayed
 type CollStruct struct {
-	OriginalName string
-	Name         string
-	Version      string
+	Name    string
+	Version string
+	Status  string
 }
 
+// CollectionsResponse : all the collections
 type CollectionsResponse struct {
-	NewColl      []CollStruct `json:"new collections"`
-	ActiveColl   []CollStruct `json:"active collections"`
+	NewColl      []CollStruct `json:"new curated collections"`
+	ActivateColl []CollStruct `json:"activate collections"`
+	KabColl      []CollStruct `json:"kabanero collections"`
 	ObsoleteColl []CollStruct `json:"obsolete collections"`
-	MasterColl   []CollStruct `json:"master collections"`
+	CuratedColl  []CollStruct `json:"curated collections"`
 	VChangeColl  []CollStruct `json:"version change collections"`
 }
 
@@ -80,23 +83,21 @@ var listCmd = &cobra.Command{
 		for i := 0; i < len(data.NewColl); i++ {
 			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.NewColl[i].Name, data.NewColl[i].Version, "inactive")
 		}
-		for i := 0; i < len(data.ActiveColl); i++ {
-			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.ActiveColl[i].Name, data.ActiveColl[i].Version, "active")
+		for i := 0; i < len(data.KabColl); i++ {
+			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.KabColl[i].Name, data.KabColl[i].Version, data.KabColl[i].Status)
 		}
 		for i := 0; i < len(data.ObsoleteColl); i++ {
 			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.ObsoleteColl[i].Name, data.ObsoleteColl[i].Version, "obsolete")
 		}
-		for i := 0; i < len(data.VChangeColl); i++ {
-			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.VChangeColl[i].Name, data.VChangeColl[i].Version, "version changed")
-		}
+
 		fmt.Fprintln(tWriter)
 
 		tWriter.Flush()
 
 		fmt.Fprintf(tWriter, "\n%s\t%s", "Curated Collections", "Version")
 		fmt.Fprintf(tWriter, "\n%s\t%s", "----", "----")
-		for i := 0; i < len(data.MasterColl); i++ {
-			fmt.Fprintf(tWriter, "\n%s\t%s", data.MasterColl[i].Name, data.MasterColl[i].Version)
+		for i := 0; i < len(data.CuratedColl); i++ {
+			fmt.Fprintf(tWriter, "\n%s\t%s", data.CuratedColl[i].Name, data.CuratedColl[i].Version)
 		}
 		fmt.Fprintln(tWriter)
 		tWriter.Flush()
