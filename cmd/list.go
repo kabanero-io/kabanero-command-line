@@ -95,7 +95,7 @@ var listCmd = &cobra.Command{
 		// put new collections into a map to compare to curated
 		mNewColl := make(map[string]string)
 		for i := 0; i < len(data.NewColl); i++ {
-			mNewColl[data.NewColl[i].Name] = mNewColl[data.NewColl[i].Name] + " *"
+			mNewColl[data.NewColl[i].Name] = data.NewColl[i].Name + " *"
 		}
 
 		fmt.Fprintf(tWriter, "\n%s\t%s", "Curated Collections", "Version")
