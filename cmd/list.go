@@ -28,9 +28,10 @@ import (
 
 // CollStruct : Each collection contains following information to be displayed
 type CollStruct struct {
-	Name    string
-	Version string
-	Status  string
+	Name         string
+	Version      string
+	Status       string
+	DesiredState string
 }
 
 // CollectionsResponse : all the collections
