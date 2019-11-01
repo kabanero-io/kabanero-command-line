@@ -66,12 +66,11 @@ func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response
 			return resp, errors.New("Login to your kabanero instance")
 		}
 	}
-
 	resp, err = client.Do(req)
 	if err != nil {
 		return resp, errors.New(err.Error())
 	}
-	if resp.StatusCode == 401 || resp.StatusCode == 503 {
+	if resp.StatusCode == 503 {
 		data := make(map[string]interface{})
 		err = json.NewDecoder(resp.Body).Decode(&data)
 		if err != nil {
@@ -80,15 +79,19 @@ func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response
 		expJWTResp := data["message"].(string)
 		return nil, errors.New(expJWTResp)
 	}
+	if resp.StatusCode == 401 {
+		return nil, errors.New("Session expired, login to your kabanero instance again")
+	}
 	Debug.log("RESPONSE ", url, resp.StatusCode, http.StatusText(resp.StatusCode))
 	return resp, nil
 }
 
-// refreshCmd represents the refresh command
-var refreshCmd = &cobra.Command{
-	Use:   "refresh",
-	Short: "Refresh the collections list",
-	Long:  `Run the kabanero refresh command to refresh the list of collections from the curated collection, making these collections current with the activated collections across all namespaces in the Kabanero instance. This command can also be used to restore deactivated collections. See kabanero deactivate.`,
+// syncCmd represents the sync command
+var syncCmd = &cobra.Command{
+	Use:   "sync",
+	Short: "sync the collections list",
+	Long: `Run the kabanero sync command to synchronize the list of kabanero instance collections with the curated collection from github. This will activate/deactivate as well as update versions of the kabanero collections to reflect the state of the curated collection.
+	See also kabanero deactivate.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		url := getRESTEndpoint("v1/collections")
 		resp, err := sendHTTPRequest("PUT", url, nil)
@@ -137,15 +140,15 @@ var refreshCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(refreshCmd)
+	rootCmd.AddCommand(syncCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// refreshCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// syncCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// refreshCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// syncCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
