@@ -1,5 +1,5 @@
 /*
-Copyright © 2019 IBM Corporation and others. 
+Copyright © 2019 IBM Corporation and others.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -45,6 +45,7 @@ var loginCmd = &cobra.Command{
 	Logs in to a Kabanero instance using Github credentials, and stores a temporary access token for subsequent command line calls.
 	The temporary authentication token will be stored in your-home-directory/.kabanero/config.yaml.
 	Use your Github userid and either password or Personal Access Token (PAT).
+	* If you use a GitHub Personal Access Token, make sure it has **read:org** - Read org and team membership, read org projects OAuth Scope allowed. You can select this when creating your PAT in GitHub.
 	`,
 	Example: `
 	# login with Github userid and password:
