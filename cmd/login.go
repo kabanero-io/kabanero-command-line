@@ -42,7 +42,7 @@ var loginCmd = &cobra.Command{
 	Use:   "login kabanero-url -u Github userid -p Github-PAT|Github-password ",
 	Short: "Will authenticate you to a Kabanero instance",
 	Long: `
-	Login to a Kabanero instance using Github credentials, and store a temporary access token for subsequent command line calls.
+	Logs in to a Kabanero instance using Github credentials, and stores a temporary access token for subsequent command line calls.
 	The temporary authentication token will be stored in your-home-directory/.kabanero/config.yaml.
 	Use your Github userid and either password or Personal Access Token (PAT).
 	`,
