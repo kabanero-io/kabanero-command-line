@@ -28,9 +28,10 @@ import (
 
 // CollStruct : Each collection contains following information to be displayed
 type CollStruct struct {
-	Name    string
-	Version string
-	Status  string
+	Name         string
+	Version      string
+	Status       string
+	DesiredState string
 }
 
 // CollectionsResponse : all the collections
@@ -80,9 +81,7 @@ var listCmd = &cobra.Command{
 
 		fmt.Fprintf(tWriter, "\n%s\t%s\t%s", "Collection Name", "Version", "Status")
 		fmt.Fprintf(tWriter, "\n%s\t%s\t%s", "----", "----", "----")
-		for i := 0; i < len(data.NewColl); i++ {
-			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.NewColl[i].Name, data.NewColl[i].Version, "inactive")
-		}
+
 		for i := 0; i < len(data.KabColl); i++ {
 			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.KabColl[i].Name, data.KabColl[i].Version, data.KabColl[i].Status)
 		}
@@ -94,10 +93,21 @@ var listCmd = &cobra.Command{
 
 		tWriter.Flush()
 
+		// put new collections into a map to compare to curated
+		mNewColl := make(map[string]string)
+		for i := 0; i < len(data.NewColl); i++ {
+			mNewColl[data.NewColl[i].Name] = data.NewColl[i].Name + " *"
+		}
+
 		fmt.Fprintf(tWriter, "\n%s\t%s", "Curated Collections", "Version")
 		fmt.Fprintf(tWriter, "\n%s\t%s", "----", "----")
 		for i := 0; i < len(data.CuratedColl); i++ {
-			fmt.Fprintf(tWriter, "\n%s\t%s", data.CuratedColl[i].Name, data.CuratedColl[i].Version)
+			name := data.CuratedColl[i].Name
+			if nameStarred, found := mNewColl[name]; found {
+				fmt.Fprintf(tWriter, "\n%s\t%s", nameStarred, data.CuratedColl[i].Version)
+			} else {
+				fmt.Fprintf(tWriter, "\n%s\t%s", name, data.CuratedColl[i].Version)
+			}
 		}
 		fmt.Fprintln(tWriter)
 		tWriter.Flush()

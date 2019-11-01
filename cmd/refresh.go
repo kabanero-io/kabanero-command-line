@@ -108,19 +108,22 @@ var refreshCmd = &cobra.Command{
 		Debug.log(data)
 		tWriter := new(tabwriter.Writer)
 		tWriter.Init(os.Stdout, 0, 8, 0, '\t', 0)
-		if len(data.NewColl) == 0 && (len(data.KabColl) == 0) && len(data.ObsoleteColl) == 0 && len(data.CuratedColl) == 0 && len(data.VChangeColl) == 0 {
+		if len(data.NewColl) == 0 && (len(data.KabColl) == 0) && len(data.ObsoleteColl) == 0 && len(data.CuratedColl) == 0 && len(data.VChangeColl) == 0 && len(data.ActivateColl) == 0 {
 			fmt.Println("active collection is already synchronized with the curated collection")
 		} else {
 			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", "Collection Name", "Version", "Status")
 			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", "----", "----", "----")
 			for i := 0; i < len(data.NewColl); i++ {
-				fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.NewColl[i].Name, data.NewColl[i].Version, "inactive ==> active")
+				fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.NewColl[i].Name, data.NewColl[i].Version, "added to kabanero")
+			}
+			for i := 0; i < len(data.ActivateColl); i++ {
+				fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.ActivateColl[i].Name, data.ActivateColl[i].Version, "inactive ==> active")
 			}
 			for i := 0; i < len(data.KabColl); i++ {
 				fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.KabColl[i].Name, data.KabColl[i].Version, data.KabColl[i].Status)
 			}
 			for i := 0; i < len(data.ObsoleteColl); i++ {
-				fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.ObsoleteColl[i].Name, data.ObsoleteColl[i].Version, "obsolete")
+				fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.ObsoleteColl[i].Name, data.ObsoleteColl[i].Version, "deactivated")
 			}
 			for i := 0; i < len(data.VChangeColl); i++ {
 				fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.VChangeColl[i].Name, data.VChangeColl[i].Version, "version changed")
