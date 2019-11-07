@@ -58,7 +58,8 @@ func printPrettyJSON(jsonData []byte) error {
 var listCmd = &cobra.Command{
 	Use:   "list ",
 	Short: "List all the collections in the kabanero instance, and their status",
-	Long:  `List all the collections in the kabanero instance, and their status`,
+	Long: `List all the collections in the kabanero instance, and their status. 
+	Modifications to the curated collection may be slow to replicate in git hub and therefore may not be reflected immediately in KABANERO LIST or SYNC display output`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		url := getRESTEndpoint("v1/collections")
 		resp, err := sendHTTPRequest("GET", url, nil)

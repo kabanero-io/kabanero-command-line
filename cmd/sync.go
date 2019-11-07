@@ -91,7 +91,9 @@ var syncCmd = &cobra.Command{
 	Use:   "sync",
 	Short: "sync the collections list",
 	Long: `Run the kabanero sync command to synchronize the list of kabanero instance collections with the curated collection from github. This will activate/deactivate as well as update versions of the kabanero collections to reflect the state of the curated collection.
-	See also kabanero deactivate.`,
+	See also kabanero deactivate.
+	Modifications to the curated collection may be slow to replicate in git hub and therefore may not be reflected immediately in KABANERO LIST or SYNC display output
+	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		url := getRESTEndpoint("v1/collections")
 		resp, err := sendHTTPRequest("PUT", url, nil)
