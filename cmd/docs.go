@@ -26,7 +26,6 @@ import (
 )
 
 //generate Doc file (.md) for cmds in package
-
 func generateDoc(commandDocFile string) error {
 
 	if commandDocFile == "" {
@@ -78,7 +77,6 @@ func generateDoc(commandDocFile string) error {
 }
 
 // docs command is used to generate markdown file for all the kabanero commands
-
 var docsCmd = &cobra.Command{
 	Use:    "docs",
 	Hidden: true,
