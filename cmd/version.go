@@ -21,7 +21,7 @@ import (
 )
 
 type VersionJSON struct {
-	Version string
+	Image string
 }
 
 // versionCmd represents the version command
@@ -37,7 +37,7 @@ var versionCmd = &cobra.Command{
 			return nil
 		}
 
-		url := getRESTEndpoint("v1/version")
+		url := getRESTEndpoint("v1/image")
 		resp, err := sendHTTPRequest("GET", url, nil)
 		if err != nil {
 			return err
@@ -47,7 +47,7 @@ var versionCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		Info.log("kabanero command line service version: ", versionJSON.Version)
+		Info.log("kabanero command line service image: ", versionJSON.Image)
 		return nil
 	},
 }
