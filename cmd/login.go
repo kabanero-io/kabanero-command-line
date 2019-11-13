@@ -90,6 +90,9 @@ var loginCmd = &cobra.Command{
 			return err
 		}
 		Debug.log("RESPONSE ", kabLoginURL, resp.StatusCode, http.StatusText(resp.StatusCode))
+		if resp.StatusCode == 404 {
+			return errors.New("The url: " + cliConfig.GetString(KabURLKey) + " is not a valid kabanero url")
+		}
 
 		var data JWTResponse
 		err = json.NewDecoder(resp.Body).Decode(&data)
