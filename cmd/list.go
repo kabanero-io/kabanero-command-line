@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strings"
 	"text/tabwriter"
 
 	"github.com/spf13/cobra"
@@ -44,6 +45,12 @@ type CollectionsResponse struct {
 	VChangeColl  []CollStruct `json:"version change collections"`
 }
 
+// KabCollectionsHeader for all references to what we call the "Kab Collections"
+var KabCollectionsHeader = "Kabanero Instance Collections"
+
+// GHCollectionsHeader for all references to the "curated collections"
+var GHCollectionsHeader = "GitHub Curated Collections"
+
 func printPrettyJSON(jsonData []byte) error {
 	var testBuffer bytes.Buffer
 	err := json.Indent(&testBuffer, jsonData, "", "\t")
@@ -52,6 +59,10 @@ func printPrettyJSON(jsonData []byte) error {
 	}
 	fmt.Println(testBuffer.String())
 	return nil
+}
+
+func tableKabCollectionHeader() {
+
 }
 
 // listCmd represents the list command
@@ -80,8 +91,8 @@ var listCmd = &cobra.Command{
 		tWriter := new(tabwriter.Writer)
 		tWriter.Init(os.Stdout, 0, 8, 0, '\t', 0)
 
-		fmt.Fprintf(tWriter, "\n%s\t%s\t%s", "Collection Name", "Version", "Status")
-		fmt.Fprintf(tWriter, "\n%s\t%s\t%s", "----", "----", "----")
+		fmt.Fprintf(tWriter, "\n%s\t%s\t%s", KabCollectionsHeader, "Version", "Status")
+		fmt.Fprintf(tWriter, "\n%s\t%s\t%s", strings.Repeat("-", len(KabCollectionsHeader)), "-------", "------")
 
 		for i := 0; i < len(data.KabColl); i++ {
 			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.KabColl[i].Name, data.KabColl[i].Version, data.KabColl[i].Status)
@@ -100,8 +111,8 @@ var listCmd = &cobra.Command{
 			mNewColl[data.NewColl[i].Name] = data.NewColl[i].Name + " *"
 		}
 
-		fmt.Fprintf(tWriter, "\n%s\t%s", "Curated Collections", "Version")
-		fmt.Fprintf(tWriter, "\n%s\t%s", "----", "----")
+		fmt.Fprintf(tWriter, "\n%s\t%s", GHCollectionsHeader, "Version")
+		fmt.Fprintf(tWriter, "\n%s\t%s", strings.Repeat("-", len(GHCollectionsHeader)), "-------")
 		for i := 0; i < len(data.CuratedColl); i++ {
 			name := data.CuratedColl[i].Name
 			if nameStarred, found := mNewColl[name]; found {
