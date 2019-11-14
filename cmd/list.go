@@ -61,10 +61,6 @@ func printPrettyJSON(jsonData []byte) error {
 	return nil
 }
 
-func tableKabCollectionHeader() {
-
-}
-
 // listCmd represents the list command
 var listCmd = &cobra.Command{
 	Use:   "list ",
