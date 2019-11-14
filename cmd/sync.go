@@ -114,10 +114,11 @@ var syncCmd = &cobra.Command{
 		tWriter := new(tabwriter.Writer)
 		tWriter.Init(os.Stdout, 0, 8, 0, '\t', 0)
 		if len(data.NewColl) == 0 && (len(data.KabColl) == 0) && len(data.ObsoleteColl) == 0 && len(data.CuratedColl) == 0 && len(data.VChangeColl) == 0 && len(data.ActivateColl) == 0 {
-			fmt.Println("active collection is already synchronized with the curated collection")
+			syncedOutput := KabCollectionsHeader + " is already synchronized with the " + GHCollectionsHeader
+			fmt.Println(strings.ToLower(syncedOutput))
 		} else {
-			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", "Collection Name", "Version", "Status")
-			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", "----", "----", "----")
+			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", KabCollectionsHeader, "Version", "Status")
+			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", strings.Repeat("-", len(KabCollectionsHeader)), "-------", "------")
 			for i := 0; i < len(data.NewColl); i++ {
 				fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.NewColl[i].Name, data.NewColl[i].Version, "added to kabanero")
 			}
