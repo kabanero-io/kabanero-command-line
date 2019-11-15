@@ -24,7 +24,7 @@ import (
 
 // onboardCmd represents the onboard command
 var onboardCmd = &cobra.Command{
-	Args:  cobra.MinimumNArgs(2),
+	Args:  cobra.MinimumNArgs(1),
 	Use:   "onboard github-id repo-url|org-url",
 	Short: "Command to onboard a developer to the Kabanero infrastructure",
 	Long: `Under development.  In the future this command causes an email to be sent to the user associated
@@ -32,10 +32,9 @@ var onboardCmd = &cobra.Command{
 	Kabanero.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		gituser := args[0]
-		repoName := args[1]
 		var err error
 		url := getRESTEndpoint("v1/onboard")
-		requestBody, _ := json.Marshal(map[string]string{"gituser": gituser, "repoName": repoName})
+		requestBody, _ := json.Marshal(map[string]string{"gituser": gituser})
 		resp, err := sendHTTPRequest("POST", url, requestBody)
 		if err != nil {
 			return err
