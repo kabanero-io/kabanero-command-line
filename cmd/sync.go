@@ -74,7 +74,7 @@ func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response
 		data := make(map[string]interface{})
 		err = json.NewDecoder(resp.Body).Decode(&data)
 		if err != nil {
-			return nil, err
+			return resp, errors.New(cliConfig.GetString(KabURLKey) + " is unreachable")
 		}
 		expJWTResp := data["message"].(string)
 		return nil, errors.New(expJWTResp)

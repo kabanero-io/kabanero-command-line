@@ -89,8 +89,9 @@ var loginCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+
 		Debug.log("RESPONSE ", kabLoginURL, resp.StatusCode, http.StatusText(resp.StatusCode))
-		if resp.StatusCode == 404 || resp.StatusCode == 503 {
+		if resp.StatusCode == 404 {
 			return errors.New("The url: " + cliConfig.GetString(KabURLKey) + " is not a valid kabanero url")
 		}
 
