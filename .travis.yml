@@ -58,6 +58,8 @@ jobs:
       script:
         - make VERSION=${TRAVIS_TAG}  package-osx
         - make deploy
+      before_deploy:
+        - mv package/* "package/kabanero-${TRAVIS_TAG}-macos-amd64.tar"
       deploy:
         provider: releases
         skip_cleanup: true
