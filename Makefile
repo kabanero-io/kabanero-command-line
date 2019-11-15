@@ -90,7 +90,6 @@ package-osx: tar-darwin
 tar-linux: build-linux ## Build the linux binary and package it in a .tar file
 .PHONY: tar-darwin
 tar-darwin: build-darwin ## Build the OSX binary and package it in a .tar file
-	mv $(PACKAGE_PATH)/${build_name}.tar $(PACKAGE_PATH)/$(COMMAND)-$(VERSION)-macos-amd64.tar
 tar-linux tar-darwin:
 	cp -p $(BUILD_PATH)/$(build_binary) $(package_binary)
 	tar cfz $(build_name).tar LICENSE README.md $(package_binary)
