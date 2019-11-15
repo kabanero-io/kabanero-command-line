@@ -74,10 +74,12 @@ func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response
 		data := make(map[string]interface{})
 		err = json.NewDecoder(resp.Body).Decode(&data)
 		if err != nil {
-			return nil, err
+			return resp, errors.New(cliConfig.GetString(KabURLKey) + " is unreachable")
 		}
-		expJWTResp := data["message"].(string)
-		return nil, errors.New(expJWTResp)
+
+	}
+	if resp.StatusCode == 429 {
+		return resp, errors.New("Github retry Limited Exceeded, please try again in 2 minutes")
 	}
 	if resp.StatusCode == 401 {
 		return nil, errors.New("Your session may have expired or the credentials entered may be invalid")
