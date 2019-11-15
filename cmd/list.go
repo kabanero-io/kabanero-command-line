@@ -16,7 +16,6 @@ limitations under the License.
 package cmd
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -50,16 +49,6 @@ var KabCollectionsHeader = "Kabanero Instance Collections"
 
 // GHCollectionsHeader for all references to the "curated collections"
 var GHCollectionsHeader = "GitHub Curated Collections"
-
-func printPrettyJSON(jsonData []byte) error {
-	var testBuffer bytes.Buffer
-	err := json.Indent(&testBuffer, jsonData, "", "\t")
-	if err != nil {
-		return err
-	}
-	fmt.Println(testBuffer.String())
-	return nil
-}
 
 // listCmd represents the list command
 var listCmd = &cobra.Command{

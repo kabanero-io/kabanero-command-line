@@ -80,7 +80,7 @@ func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response
 		return nil, errors.New(expJWTResp)
 	}
 	if resp.StatusCode == 401 {
-		return nil, errors.New("Session expired, login to your kabanero instance again")
+		return nil, errors.New("Your session may have expired or the credentials entered may be invalid")
 	}
 	Debug.log("RESPONSE ", url, resp.StatusCode, http.StatusText(resp.StatusCode))
 	return resp, nil
