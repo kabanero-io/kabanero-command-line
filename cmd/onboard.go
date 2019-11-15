@@ -17,7 +17,7 @@ package cmd
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"fmt"
 
 	"github.com/spf13/cobra"
 )
@@ -39,11 +39,13 @@ var onboardCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		somedata, _ := ioutil.ReadAll(resp.Body)
-		err = printPrettyJSON(somedata)
+
+		data := make(map[string]interface{})
+		err = json.NewDecoder(resp.Body).Decode(&data)
 		if err != nil {
 			return err
 		}
+		fmt.Println(data["message"].(string))
 		return nil
 	},
 }
