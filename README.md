@@ -13,7 +13,7 @@ This repo defines a command line interface used by the enterprise, solution, or 
 environment, as well as to on-board the people that will use 
 the environment to build applications.
 
-Before using the cli please be sure to have configured the cli service. Steps can be found in the following documentation: https://kabanero.io/docs/ref/general/kabanero-cr-config.html
+Before using the cli please be sure to have configured the cli service. Steps can be found in the following documentation: https://kabanero.io/docs/ref/general/collection-install.html
 
 
 Complete documentation is available at https://kabanero.io
