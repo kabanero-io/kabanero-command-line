@@ -7,6 +7,21 @@ path: /cmd/docs.go
 
 This repo defines a command line interface used by the enterprise, solution, or application architect who defines and manages the kabanero collections that are used by developers to create governed applications for their business.
 
+## Installing the Kabanero CLI
+
+. Download the archive corresponding to the platform you are running on.
+* https://github.com/kabanero-io/kabanero-command-line/releases/latest[Latest CLI release, window="_blank"]
+* https://github.com/kabanero-io/kabanero-command-line/releases[All CLI releases, window="_blank"]
+
+. Extract the archive. The archive holds the `./kabanero` command, which is ready to be used.
+* Test the installation by running the `./kabanero help` command and viewing the help output.
+
+. Configure the CLI service. To do this, follow the steps outlined in the following documentation:
+
+** [Configuring a Kabanero CR Instance](https://kabanero.io/docs/ref/general/kabanero-cr-config.html)
+
+** [Configuring Kabanero to use an Alternate Collection Repository](https://kabanero.io/docs/ref/general/collection-install.html )
+
 ### Synopsis
 
 **kabanero** is a command line interface for managing the collections in a Kabanero 
@@ -14,6 +29,10 @@ environment, as well as to on-board the people that will use
 the environment to build applications.
 
 Complete documentation is available at https://kabanero.io
+
+
+. Optional - Add the path to the `kabanero` command to your `PATH` environment variable so that you can use the `kabanero` command without specifying the path each time.
+
 
 ### Options
 
