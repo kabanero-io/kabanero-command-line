@@ -188,7 +188,7 @@ Under development.  In the future this command causes an email to be sent to the
 	Kabanero.
 
 ```
-kabanero onboard github-id repo-url|org-url [flags]
+kabanero onboard github-id [flags]
 ```
 
 ### Options
