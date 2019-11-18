@@ -50,6 +50,9 @@ var rootCmd = &cobra.Command{
 environment, as well as to on-board the people that will use 
 the environment to build applications.
 
+Before using the cli please configure the github organization, team and apiUrl fields in the Kabanero CR for the cli service. Steps can be found in the following documentation: https://kabanero.io/docs/ref/general/collection-install.html
+
+
 Complete documentation is available at https://kabanero.io`,
 }
 
