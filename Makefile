@@ -84,7 +84,7 @@ package: tar-linux tar-windows ## Creates packages for all operating systems and
 # package: tar-linux deb-linux rpm-linux tar-darwin brew-darwin tar-windows ## Creates packages for all operating systems and store them in package/ dir
 
 .PHONY: package-osx
-package-osx: tar-darwin 
+package-osx: tar-darwin brew-darwin
 
 .PHONY: tar-linux
 tar-linux: build-linux ## Build the linux binary and package it in a .tar file
