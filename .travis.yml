@@ -59,7 +59,8 @@ jobs:
         - make VERSION=${TRAVIS_TAG}  package-osx
         - make deploy
       before_deploy:
-        - mv package/* "package/kabanero-${TRAVIS_TAG}-macos-amd64.tar"
+        - mv package/kabanero-${TRAVIS_TAG}-darwin-amd64.tar "package/kabanero-${TRAVIS_TAG}-macos-amd64.tar"
+        - mv package/kabanero-${TRAVIS_TAG}-darwin-amd64.tar.gz "package/kabanero-${TRAVIS_TAG}-homebrew-amd64.tar.gz"
       deploy:
         provider: releases
         skip_cleanup: true
