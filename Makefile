@@ -110,7 +110,7 @@ brew-darwin: build-darwin ## Build the OSX binary and package it for OSX brew in
 	tar -zcvf $(build_name).tar.gz LICENSE README.md $(package_binary)
 	mkdir -p $(PACKAGE_PATH)
 	mv $(build_name).tar.gz $(PACKAGE_PATH)/
-	rm -f $(package_binary
+	rm -f $(package_binary)
 .PHONY: deb-linux
 deb-linux: build-linux ## Build the linux binary and package it as a .deb for Debian apt-get install
 	# deb script goes here
