@@ -1,6 +1,6 @@
 ---
 name: Blank Issue
-about: 'Whats the issue? '
+about: I just want a blank template
 title: ''
 labels: ''
 assignees: ''
