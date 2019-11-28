@@ -84,7 +84,7 @@ package: tar-linux tar-windows ## Creates packages for all operating systems and
 # package: tar-linux deb-linux rpm-linux tar-darwin brew-darwin tar-windows ## Creates packages for all operating systems and store them in package/ dir
 
 .PHONY: package-osx
-package-osx: tar-darwin 
+package-osx: tar-darwin brew-darwin
 
 .PHONY: tar-linux
 tar-linux: build-linux ## Build the linux binary and package it in a .tar file
@@ -107,8 +107,10 @@ tar-windows: build-windows ## Build the windows binary and package it in a .tar 
 brew-darwin: build-darwin ## Build the OSX binary and package it for OSX brew install
 	# brew script goes here
 	cp -p $(BUILD_PATH)/$(build_binary) $(package_binary)
-	homebrew-build/build-darwin.sh $(PACKAGE_PATH) $(package_binary) $(CONTROLLER_BASE_URL) $(VERSION)
-	rm -f $(package_binary)	
+	tar -zcvf $(build_name).tar.gz LICENSE README.md $(package_binary)
+	mkdir -p $(PACKAGE_PATH)
+	mv $(build_name).tar.gz $(PACKAGE_PATH)/
+	rm -f $(package_binary)
 .PHONY: deb-linux
 deb-linux: build-linux ## Build the linux binary and package it as a .deb for Debian apt-get install
 	# deb script goes here
