@@ -68,8 +68,7 @@ var loginCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		password := string(bytePwd)
-		fmt.Println("PassedWORD?=====", password)
+		password := strings.TrimSpace(string(bytePwd))
 
 		// password, _ := cmd.Flags().GetString("password")
 		// if password == "" {
