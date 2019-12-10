@@ -24,6 +24,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"golang.org/x/crypto/ssh/terminal"
 )
 
 type JWTResponse struct {
@@ -62,10 +63,18 @@ var loginCmd = &cobra.Command{
 		if username == "" {
 			fmt.Println("EMPTY USERNAME")
 		}
-		password, _ := cmd.Flags().GetString("password")
-		if password == "" {
-			fmt.Println("EMPTY PASSWORD")
+		fmt.Printf("Password:")
+		bytePwd, err := terminal.ReadPassword(0)
+		if err != nil {
+			return err
 		}
+		password := string(bytePwd)
+		fmt.Println("PassedWORD?=====", password)
+
+		// password, _ := cmd.Flags().GetString("password")
+		// if password == "" {
+		// 	fmt.Println("EMPTY PASSWORD")
+		// }
 		var kabLoginURL string
 
 		viper.SetEnvPrefix("KABANERO")
@@ -128,9 +137,9 @@ var loginCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(loginCmd)
-	loginCmd.Flags().StringP("password", "p", "", "github password/PAT")
+	// loginCmd.Flags().StringP("password", "p", "", "github password/PAT")
 	loginCmd.Flags().StringP("username", "u", "", "github username")
-	_ = loginCmd.MarkFlagRequired("password")
+	// _ = loginCmd.MarkFlagRequired("password")
 	_ = loginCmd.MarkFlagRequired("username")
 	// Here you will define your flags and configuration settings.
 
