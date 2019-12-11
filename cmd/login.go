@@ -41,7 +41,7 @@ func parseKabURL(url string) string {
 
 // loginCmd represents the login command
 var loginCmd = &cobra.Command{
-	Use:   "login kabanero-url -u Github userid -p Github-PAT|Github-password ",
+	Use:   "login kabanero-url -u Github userid /n PASSWORDPROMPT:GitHub Password|PAT",
 	Short: "Will authenticate you to a Kabanero instance",
 	Long: `
 	Logs in to a Kabanero instance using Github credentials, and stores a temporary access token for subsequent command line calls.
@@ -51,10 +51,9 @@ var loginCmd = &cobra.Command{
 	`,
 	Example: `
 	# login with Github userid and password:
-	kabanero login my.kabaneroInstance.io -u myGithubID -p myGithubPassword
-
+	kabanero login my.kabaneroInstance.io -u myGithubID 
 	# login with previously used url Github userid and PAT:
-	kabanero login -u myGithubID -p myGithubPAT
+	kabanero login -u myGithubID 
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		Debug.log("login called")
@@ -137,9 +136,7 @@ var loginCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(loginCmd)
-	// loginCmd.Flags().StringP("password", "p", "", "github password/PAT")
 	loginCmd.Flags().StringP("username", "u", "", "github username")
-	// _ = loginCmd.MarkFlagRequired("password")
 	_ = loginCmd.MarkFlagRequired("username")
 	// Here you will define your flags and configuration settings.
 
