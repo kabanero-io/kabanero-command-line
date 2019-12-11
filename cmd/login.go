@@ -65,7 +65,7 @@ var loginCmd = &cobra.Command{
 			fmt.Println("EMPTY USERNAME")
 		}
 		fmt.Printf("Password:")
-		bytePwd, err := terminal.ReadPassword(syscall.Stdin)
+		bytePwd, err := terminal.ReadPassword(int(syscall.Stdin))
 		if err != nil {
 			return err
 		}
