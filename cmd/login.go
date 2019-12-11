@@ -126,7 +126,7 @@ var loginCmd = &cobra.Command{
 			Debug.log("Unable to validate user: " + username + " to " + cliConfig.GetString(KabURLKey))
 			return errors.New("Unable to validate user: " + username + " to " + cliConfig.GetString(KabURLKey))
 		}
-		fmt.Println("Logged in to Kabanero instance: " + cliConfig.GetString(KabURLKey))
+		fmt.Println("\nLogged in to Kabanero instance: " + cliConfig.GetString(KabURLKey))
 		Debug.log("Logged in to Kabanero instance: " + cliConfig.GetString(KabURLKey))
 		defer resp.Body.Close()
 
