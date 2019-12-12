@@ -34,6 +34,15 @@ The user should already have been configured but the credentials passed may be i
 
 ---
 
+### List
+
+Empty Lists
+
+If the user's cli is correctly connected with the cli service, but running the list command results in an empty list, have the user run `./kabanero list` and check if the versions for the cli and service match. If they do not, direct the user to the cli release page to download the corresponding cli for the service version that they are running. 
+
+
+---
+
 ### All commands 
 * `[Error] EOF`
 
@@ -42,5 +51,6 @@ This is almost always a problem where the microservice has changed what it sends
 * `Session expired, login to your kabanero instance again`
 
 User's jwt has expired. Login again for the microservice to issue a new jwt. If the user is just logging in with the same url, they do not have to pass it into the command again, just username and password will do since the kabanero url is stored in the config.yaml
+
 
 
