@@ -40,7 +40,8 @@ var versionCmd = &cobra.Command{
 		url := getRESTEndpoint("v1/image")
 		resp, err := sendHTTPRequest("GET", url, nil)
 		if err != nil {
-			return err
+			Info.logf("kabanero command line service image: CLI service unavailable, %s", err.Error())
+			return nil
 		}
 		var versionJSON VersionJSON
 		err = json.NewDecoder(resp.Body).Decode(&versionJSON)
