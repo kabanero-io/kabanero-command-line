@@ -102,15 +102,6 @@ var loginCmd = &cobra.Command{
 		if resp.StatusCode == 404 {
 			return errors.New("The url: " + cliConfig.GetString(KabURLKey) + " is not a valid kabanero url")
 		}
-		if resp.StatusCode == 539 {
-			message := make(map[string]interface{})
-			err = json.NewDecoder(resp.Body).Decode(&message)
-			if err != nil {
-				return err
-			}
-			fmt.Println(message["message"].(string))
-			return nil
-		}
 
 		var data JWTResponse
 		err = json.NewDecoder(resp.Body).Decode(&data)
