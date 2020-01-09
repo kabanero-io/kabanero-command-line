@@ -1,7 +1,8 @@
 # Installation
-## Mac OSX
+## OSX, Windows, Linux
 You can download the binary `kabanero` command from here:
 https://github.com/kabanero-io/kabanero-command-line/releases
+
 
 # Generating the README.md
 The project uses Cobra's built in mechanism to generate the CLI README.md.  Run the following command to generate the README:
@@ -22,36 +23,29 @@ You can also test the build process manually.
 
 Prerequisites:
 
-* docker is installed and running
-* wget is installed
-
 After setting the `GOPATH` env var correctly, just run `make <action...>` from the command line, within the same directory where `Makefile` resides. For example `make package clean` will run the `package` and then the `clean` actions.
+
+The version number in manual builds are default to 0.1.0, to change the value yourself change the `VERSION` value in the `Makefile`. 
 
 
 Some of the scripts have conditional paths, because certain Linux commands behave differently on OS/X and elsewhere (fun).
 
 ### What gets produced by the build?
-Quite a bit of stuff. 
 
 Here's a description of the various artifacts as you would see them in a release page:
-
-* The actual RPM package for RHEL/Centos (to be `yum`med or `rpm -i`)
-
-* The binaries tarred up in the way homebrew loves them
-
-* The plain binaries tarred up as they come out of the build process
 
 ** for OS/X
 
 * The binary to run
+* The tarball for the brew install
 
 ** for Linux
 
+* The binary to run
+
 ** for Windows
 
-* The homebrew Formula (which we should push to some git repo, once we go "public")
-
-* The Debian package for Ubuntu-like Linux (to be `apt-get install`ed)
+* The windows .exe to run 
 
 * Some other stuff that's always there
 
