@@ -84,6 +84,15 @@ func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response
 	if resp.StatusCode == 401 {
 		return nil, errors.New("Your session may have expired or the credentials entered may be invalid")
 	}
+	if resp.StatusCode == 539 {
+		message := make(map[string]interface{})
+		err = json.NewDecoder(resp.Body).Decode(&message)
+		if err != nil {
+			return nil, err
+		}
+		fmt.Println(message["message"].(string))
+		return nil, nil
+	}
 	Debug.log("RESPONSE ", url, resp.StatusCode, http.StatusText(resp.StatusCode))
 	return resp, nil
 }
