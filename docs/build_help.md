@@ -17,7 +17,7 @@ Upon commit, only the `test` and `lint` actions are executed by Travis.
 
 ## Creating a new release
 
-In order for Travis to go all the way to `package` and `deploy`, you need to create a *new* release on Github(one that is tagged with a never seen before tag). When you create a new release, a Travis build with automatically run, and the resulting artifacts will be posted on the `Releases` page. With each new release or release candidate don't forget to indicate on the "This is a pre-release" tick box. Update notable changes in the comments section from the last release (check the commits from now to last release).
+In order for Travis to go all the way to `package` and `deploy`, you need to create a *new* release on Github(one that is tagged with a never seen before tag). When you create a new release, a Travis build will automatically run, and the resulting artifacts will be posted on the `Releases` page. With each new release or release candidate don't forget to indicate on the "This is a pre-release" tick box. Update notable changes in the comments section from the last release (check the commits from now to last release).
 
 ## Manual build
 You can also test the build process manually.
