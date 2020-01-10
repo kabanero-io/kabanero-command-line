@@ -27,7 +27,7 @@ Prerequisites:
 
 After setting the `GOPATH` env var correctly, just run `make <action...>` from the command line, within the same directory where `Makefile` resides. For example `make package clean` will run the `package` and then the `clean` actions.
 
-The version number in manual builds are default to 0.1.0, to change the value yourself change the `VERSION` value in the `Makefile`. 
+The version number in manual builds default to 0.1.0. To change the value yourself change the `VERSION` value in the `Makefile`. 
 
 
 Some of the scripts have conditional paths, because certain Linux commands behave differently on OS/X and elsewhere (fun).
