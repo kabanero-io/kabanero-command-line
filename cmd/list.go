@@ -25,39 +25,51 @@ import (
 
 	"github.com/spf13/cobra"
 )
-
-// CollStruct : Each collection contains following information to be displayed
-type CollStruct struct {
+// The list command gets a set of "stacks" back from the CLI Service.  
+// There are 2 distinct structs for the returned stacks:
+//   - KabStruct represents the JSON returned for the Kabanero stacks.  
+//   - VersionStruct represents the JSON returned for all the other stacks.
+type KabStruct struct {
 	Name         string
+	Status       []StatusStruct `json:"status"`
+}
+type StatusStruct struct {
 	Version      string
 	Status       string
-	DesiredState string
 }
 
-// CollectionsResponse : all the collections
-type CollectionsResponse struct {
-	NewColl      []CollStruct `json:"new curated collections"`
-	ActivateColl []CollStruct `json:"activate collections"`
-	KabColl      []CollStruct `json:"kabanero collections"`
-	ObsoleteColl []CollStruct `json:"obsolete collections"`
-	CuratedColl  []CollStruct `json:"curated collections"`
-	VChangeColl  []CollStruct `json:"version change collections"`
+type CommonStackStruct struct {
+	Name         string
+	Versions     []VersionStruct `json:"versions"`
+}
+type VersionStruct struct {
+	Version      string
+	Images       []string `json:"image"`
 }
 
-// KabCollectionsHeader for all references to what we call the "Kab Collections"
-var KabCollectionsHeader = "Kabanero Instance Collections"
+// StacksResponse : all the stacks
+type StacksResponse struct {
+	NewStack      []CommonStackStruct `json:"new curated stacks"`
+	ActivateStack []CommonStackStruct `json:"activate stacks"`
+	KabStack      []KabStruct `json:"kabanero stacks"`
+	ObsoleteStack []CommonStackStruct `json:"obsolete stacks"`
+	CuratedStack  []CommonStackStruct `json:"curated stacks"`
+}
 
-// GHCollectionsHeader for all references to the "curated collections"
-var GHCollectionsHeader = "GitHub Curated Collections"
+// KabStacksHeader for all references to what we call the "Kab stacks"
+var KabStacksHeader = "Kabanero Instance Stacks "
+
+// GHStacksHeader for all references to the "curated stacks"
+var GHStacksHeader = "GitHub Curated Stacks"
 
 // listCmd represents the list command
 var listCmd = &cobra.Command{
 	Use:   "list ",
-	Short: "List all the collections in the kabanero instance, and their status",
-	Long: `List all the collections in the kabanero instance, and their status. 
-	Modifications to the curated collection may be slow to replicate in git hub and therefore may not be reflected immediately in KABANERO LIST or SYNC display output`,
+	Short: "List all the stacks in the kabanero instance, and their status",
+	Long: `List all the stacks in the kabanero instance, and their status. 
+	Modifications to the curated stack may be slow to replicate in git hub and therefore may not be reflected immediately in KABANERO LIST or SYNC display output`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		url := getRESTEndpoint("v1/collections")
+		url := getRESTEndpoint("v1/stacks")
 		resp, err := sendHTTPRequest("GET", url, nil)
 		if err != nil {
 			return err
@@ -66,7 +78,7 @@ var listCmd = &cobra.Command{
 		Debug.log("RESPONSE ", url, resp.StatusCode, http.StatusText(resp.StatusCode))
 		//Decode the response into data
 		decoder := json.NewDecoder(resp.Body)
-		var data CollectionsResponse
+		var data StacksResponse
 		err = decoder.Decode(&data)
 		if err != nil {
 			return err
@@ -76,35 +88,46 @@ var listCmd = &cobra.Command{
 		tWriter := new(tabwriter.Writer)
 		tWriter.Init(os.Stdout, 0, 8, 0, '\t', 0)
 
-		fmt.Fprintf(tWriter, "\n%s\t%s\t%s", KabCollectionsHeader, "Version", "Status")
-		fmt.Fprintf(tWriter, "\n%s\t%s\t%s", strings.Repeat("-", len(KabCollectionsHeader)), "-------", "------")
+		fmt.Fprintf(tWriter, "\n%s\t%s\t%s", KabStacksHeader, "Version", "Status")
+		fmt.Fprintf(tWriter, "\n%s\t%s\t%s", strings.Repeat("-", len(KabStacksHeader)), "-------", "------")
 
-		for i := 0; i < len(data.KabColl); i++ {
-			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.KabColl[i].Name, data.KabColl[i].Version, data.KabColl[i].Status)
+		for i := 0; i < len(data.KabStack); i++ {
+			for j :=0; j < len(data.KabStack[i].Status); j++ {
+			  fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.KabStack[i].Name, data.KabStack[i].Status[j].Version, data.KabStack[i].Status[j].Status)
+			}
 		}
-		for i := 0; i < len(data.ObsoleteColl); i++ {
-			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.ObsoleteColl[i].Name, data.ObsoleteColl[i].Version, "obsolete")
+		for i := 0; i < len(data.ObsoleteStack); i++ { 
+			for j :=0; j < len(data.ObsoleteStack[i].Versions); j++ {
+			  fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.ObsoleteStack[i].Name, data.ObsoleteStack[i].Versions[j].Version, "obsolete")
+			}
 		}
-
 		fmt.Fprintln(tWriter)
-
 		tWriter.Flush()
 
-		// put new collections into a map to compare to curated
-		mNewColl := make(map[string]string)
-		for i := 0; i < len(data.NewColl); i++ {
-			mNewColl[data.NewColl[i].Name] = data.NewColl[i].Name + " *"
+		// put new stacks name/version into a map to compare to curated.  
+		mNewStack := make(map[string]string)
+		for i := 0; i < len(data.NewStack); i++ {
+			for j := 0; j < len(data.NewStack[i].Versions); j++ {
+			  mNewStack[data.NewStack[i].Name] = data.NewStack[i].Name + data.NewStack[i].Versions[j].Version
+			}
 		}
 
-		fmt.Fprintf(tWriter, "\n%s\t%s", GHCollectionsHeader, "Version")
-		fmt.Fprintf(tWriter, "\n%s\t%s", strings.Repeat("-", len(GHCollectionsHeader)), "-------")
-		for i := 0; i < len(data.CuratedColl); i++ {
-			name := data.CuratedColl[i].Name
-			if nameStarred, found := mNewColl[name]; found {
-				fmt.Fprintf(tWriter, "\n%s\t%s", nameStarred, data.CuratedColl[i].Version)
-			} else {
-				fmt.Fprintf(tWriter, "\n%s\t%s", name, data.CuratedColl[i].Version)
-			}
+		fmt.Fprintf(tWriter, "\n%s\t%s", GHStacksHeader, "Version")
+		fmt.Fprintf(tWriter, "\n%s\t%s", strings.Repeat("-", len(GHStacksHeader)), "-------")
+		for i := 0; i < len(data.CuratedStack); i++ {
+			name := data.CuratedStack[i].Name
+			for j := 0; j < len(data.CuratedStack[i].Versions); j++ {
+				version := data.CuratedStack[i].Versions[j].Version
+				nameAndVersion := name + version
+			 
+				//fmt.Fprintf(tWriter, "\n%s", name)
+				_, found := mNewStack[nameAndVersion]
+			    if  found {
+			    	fmt.Fprintf(tWriter, "\n%s\t%s\t%s", name, version, "new")
+			    } else {
+				  fmt.Fprintf(tWriter, "\n%s\t%s", name, version)
+			    }
+		    }
 		}
 		fmt.Fprintln(tWriter)
 		tWriter.Flush()
