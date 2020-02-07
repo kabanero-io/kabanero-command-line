@@ -95,6 +95,7 @@ var loginCmd = &cobra.Command{
 
 		resp, err := sendHTTPRequest("POST", kabLoginURL, requestBody)
 		if err != nil {
+			Debug.log("login: Error on sendHTTPRequest:")
 			return err
 		}
 

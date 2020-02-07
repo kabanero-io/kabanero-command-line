@@ -25,7 +25,7 @@ import (
 // deactivateCmd represents the deactivate command
 var deactivateCmd = &cobra.Command{
 	Args:  cobra.MinimumNArgs(1),
-	Use:   "deactivate collection-name",
+	Use:   "deactivate stack-name version",
 	Short: "Remove the specified collection from the list of available application types, without deleting it from the Kabanero instance.",
 	Long: `
 Run the deactivate command to remove the specified collection from the list of available application types, without deleting it from the Kabanero instance.
@@ -34,15 +34,18 @@ This command is useful in a case where you have cloned a collection and customiz
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// fmt.Println("deactivate called")
 		collectionName := args[0]
-		url := getRESTEndpoint("v1/collections/" + collectionName)
+		version := args[1]
+		url := getRESTEndpoint("v1/stacks/" + collectionName + "/versions/" + version)
 		resp, err := sendHTTPRequest("DELETE", url, nil)
 		if err != nil {
+			Debug.log("deactivate: Error on sendHTTPRequest:")
 			return err
 		}
 		data := make(map[string]interface{})
 
 		err = json.NewDecoder(resp.Body).Decode(&data)
 		if err != nil {
+			Debug.log("deactivate: Error on Decode:")
 			return err
 		}
 		deactivateResponse := data["status"]

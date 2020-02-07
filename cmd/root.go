@@ -1,8 +1,5 @@
 package cmd
 
-//import collections "github.com/kabanero-command-line/kab-cli/kabanero/collections/cmd"
-//import access "github.com/kabanero-command-line/kab-cli/kabanero/onboard/cmd"
-
 import (
 	"flag"
 	"fmt"
@@ -13,8 +10,6 @@ import (
 
 	// for logging
 	"k8s.io/klog"
-
-	//  homedir "github.com/mitchellh/go-homedir"
 
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
@@ -29,9 +24,9 @@ var (
 	APIVersionV1 = "v1"
 	//dryrun          bool
 	verbose         bool
+	verboseHTTP     bool
 	klogInitialized = false
 	KabURLKey       = "KABURL"
-	KabURLContext   = "KabCollections-1.0-SNAPSHOT"
 )
 
 func homeDir() string {
@@ -46,7 +41,7 @@ func homeDir() string {
 var rootCmd = &cobra.Command{
 	Use:   "kabanero",
 	Short: "This repo defines a command line interface used by the enterprise, solution, or application architect who defines and manages the kabanero collections that are used by developers to create governed applications for their business.",
-	Long: `**kabanero** is a command line interface for managing the collections in a Kabanero 
+	Long: `**kabanero** is a command line interface for managing the stacks in a Kabanero 
 environment, as well as to on-board the people that will use 
 the environment to build applications.
 
@@ -69,7 +64,12 @@ func init() {
 	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.kabanero.yaml)")
 	// Added for logging
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "Turns on debug output and logging to a file in $HOME/.kabanero/logs")
-
+	rootCmd.PersistentFlags().BoolVarP(&verboseHTTP, "debug http", "x", false, "Turns on debug output for http request/responses")
+	err := rootCmd.PersistentFlags().MarkHidden("debug http")
+	if err != nil {
+		fmt.Fprintln(os.Stdout, "err with MarkHidden")
+	}
+	//rootCmd.Execute()
 	// not implemented: rootCmd.PersistentFlags().BoolVar(&dryrun, "dryrun", false, "Turns on dry run mode")
 
 	// The subbcommand processor for commands to manage the apphub
