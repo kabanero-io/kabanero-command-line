@@ -67,7 +67,7 @@ func init() {
 	rootCmd.PersistentFlags().BoolVarP(&verboseHTTP, "debug http", "x", false, "Turns on debug output for http request/responses")
 	err := rootCmd.PersistentFlags().MarkHidden("debug http")
 	if err != nil {
-		fmt.Fprintln(os.Stdout, "err with MarkHidden")	
+		fmt.Fprintln(os.Stdout, "err with MarkHidden")
 	}
 	//rootCmd.Execute()
 	// not implemented: rootCmd.PersistentFlags().BoolVar(&dryrun, "dryrun", false, "Turns on dry run mode")
