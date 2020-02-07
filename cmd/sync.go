@@ -119,10 +119,10 @@ func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response
 // syncCmd represents the sync command
 var syncCmd = &cobra.Command{
 	Use:   "sync",
-	Short: "sync the collections list",
-	Long: `Run the kabanero sync command to synchronize the list of kabanero instance collections with the curated collection from github. This will activate/deactivate as well as update versions of the kabanero collections to reflect the state of the curated collection.
+	Short: "sync the stack list",
+	Long: `Run the kabanero sync command to synchronize the list of kabanero instance stacks with the curated stacks from github. This will activate/deactivate as well as update versions of the kabanero stacks to reflect the state of the curated stacks.
 	See also kabanero deactivate.
-	Modifications to the curated collection may be slow to replicate in git hub and therefore may not be reflected immediately in KABANERO LIST or SYNC display output
+	Modifications to the curated stacks may be slow to replicate in git hub and therefore may not be reflected immediately in KABANERO LIST or SYNC display output
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		url := getRESTEndpoint("v1/stacks")

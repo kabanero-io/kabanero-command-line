@@ -23,13 +23,13 @@ import (
 
 // activateCmd represents the activate command
 var activateCmd = &cobra.Command{
-	Use:    "activate collection-name",
+	Use:    "activate stack-name",
 	Hidden: true,
-	Short:  "Activate a collection for use by the development team",
+	Short:  "Activate a stack for use by the development team",
 	Long: `
-A collection can be available to a development team
+A stack can be available to a development team
 to use for building applications or not. Activate
-will cause the collection to be shown to 
+will cause the stack to be shown to 
 the develoopment team when they list the types of
 application they can build.`,
 	Run: func(cmd *cobra.Command, args []string) {
