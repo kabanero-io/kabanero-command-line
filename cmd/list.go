@@ -18,7 +18,7 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"net/http"
+	// "net/http"
 	"os"
 	"strings"
 	"text/tabwriter"
@@ -42,6 +42,7 @@ type CommonStackStruct struct {
 	Name         string
 	Versions     []VersionStruct `json:"versions"`
 }
+
 type VersionStruct struct {
 	Version      string
 	Images       []string `json:"image"`
@@ -69,18 +70,20 @@ var listCmd = &cobra.Command{
 	Long: `List all the stacks in the kabanero instance, and their status. 
 	Modifications to the curated stack may be slow to replicate in git hub and therefore may not be reflected immediately in KABANERO LIST or SYNC display output`,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		Debug.log("List called...")
 		url := getRESTEndpoint("v1/stacks")
 		resp, err := sendHTTPRequest("GET", url, nil)
 		if err != nil {
+			Debug.log("list: Error on sendHTTPRequest:")
 			return err
 		}
-
-		Debug.log("RESPONSE ", url, resp.StatusCode, http.StatusText(resp.StatusCode))
+		// cannot reference resp here.  May not be fully formed and cause nil pointer deref: Debug.log("RESPONSE ", url, resp.StatusCode, http.StatusText(resp.StatusCode))
 		//Decode the response into data
 		decoder := json.NewDecoder(resp.Body)
 		var data StacksResponse
 		err = decoder.Decode(&data)
 		if err != nil {
+			Debug.log("list: Error on Decode:")
 			return err
 		}
 
