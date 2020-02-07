@@ -25,34 +25,35 @@ import (
 
 	"github.com/spf13/cobra"
 )
-// The list command gets a set of "stacks" back from the CLI Service.  
+
+// The list command gets a set of "stacks" back from the CLI Service.
 // There are 2 distinct structs for the returned stacks:
-//   - KabStruct represents the JSON returned for the Kabanero stacks.  
-//   - VersionStruct represents the JSON returned for all the other stacks.
+//   - KabStruct represents the JSON returned for the Kabanero stacks.
+//   - CommonStackStruct represents the JSON returned for all the other stacks.
 type KabStruct struct {
-	Name         string
-	Status       []StatusStruct `json:"status"`
+	Name   string
+	Status []StatusStruct `json:"status"`
 }
 type StatusStruct struct {
-	Version      string
-	Status       string
+	Version string
+	Status  string
 }
 
 type CommonStackStruct struct {
-	Name         string
-	Versions     []VersionStruct `json:"versions"`
+	Name     string
+	Versions []VersionStruct `json:"versions"`
 }
 
 type VersionStruct struct {
-	Version      string
-	Images       []string `json:"image"`
+	Version string
+	Images  []string `json:"image"`
 }
 
 // StacksResponse : all the stacks
 type StacksResponse struct {
 	NewStack      []CommonStackStruct `json:"new curated stacks"`
 	ActivateStack []CommonStackStruct `json:"activate stacks"`
-	KabStack      []KabStruct `json:"kabanero stacks"`
+	KabStack      []KabStruct         `json:"kabanero stacks"`
 	ObsoleteStack []CommonStackStruct `json:"obsolete stacks"`
 	CuratedStack  []CommonStackStruct `json:"curated stacks"`
 }
@@ -95,23 +96,23 @@ var listCmd = &cobra.Command{
 		fmt.Fprintf(tWriter, "\n%s\t%s\t%s", strings.Repeat("-", len(KabStacksHeader)), "-------", "------")
 
 		for i := 0; i < len(data.KabStack); i++ {
-			for j :=0; j < len(data.KabStack[i].Status); j++ {
-			  fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.KabStack[i].Name, data.KabStack[i].Status[j].Version, data.KabStack[i].Status[j].Status)
+			for j := 0; j < len(data.KabStack[i].Status); j++ {
+				fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.KabStack[i].Name, data.KabStack[i].Status[j].Version, data.KabStack[i].Status[j].Status)
 			}
 		}
-		for i := 0; i < len(data.ObsoleteStack); i++ { 
-			for j :=0; j < len(data.ObsoleteStack[i].Versions); j++ {
-			  fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.ObsoleteStack[i].Name, data.ObsoleteStack[i].Versions[j].Version, "obsolete")
+		for i := 0; i < len(data.ObsoleteStack); i++ {
+			for j := 0; j < len(data.ObsoleteStack[i].Versions); j++ {
+				fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.ObsoleteStack[i].Name, data.ObsoleteStack[i].Versions[j].Version, "obsolete")
 			}
 		}
 		fmt.Fprintln(tWriter)
 		tWriter.Flush()
 
-		// put new stacks name/version into a map to compare to curated.  
+		// put new stacks name/version into a map to compare to curated.
 		mNewStack := make(map[string]string)
 		for i := 0; i < len(data.NewStack); i++ {
 			for j := 0; j < len(data.NewStack[i].Versions); j++ {
-			  mNewStack[data.NewStack[i].Name] = data.NewStack[i].Name + data.NewStack[i].Versions[j].Version
+				mNewStack[data.NewStack[i].Name] = data.NewStack[i].Name + data.NewStack[i].Versions[j].Version
 			}
 		}
 
@@ -122,15 +123,15 @@ var listCmd = &cobra.Command{
 			for j := 0; j < len(data.CuratedStack[i].Versions); j++ {
 				version := data.CuratedStack[i].Versions[j].Version
 				nameAndVersion := name + version
-			 
+
 				//fmt.Fprintf(tWriter, "\n%s", name)
 				_, found := mNewStack[nameAndVersion]
-			    if  found {
-			    	fmt.Fprintf(tWriter, "\n%s\t%s\t%s", name, version, "new")
-			    } else {
-				  fmt.Fprintf(tWriter, "\n%s\t%s", name, version)
-			    }
-		    }
+				if found {
+					fmt.Fprintf(tWriter, "\n%s\t%s\t%s", name, version, "new")
+				} else {
+					fmt.Fprintf(tWriter, "\n%s\t%s", name, version)
+				}
+			}
 		}
 		fmt.Fprintln(tWriter)
 		tWriter.Flush()

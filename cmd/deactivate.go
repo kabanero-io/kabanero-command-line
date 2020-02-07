@@ -35,7 +35,7 @@ This command is useful in a case where you have cloned a collection and customiz
 		// fmt.Println("deactivate called")
 		collectionName := args[0]
 		version := args[1]
-		url := getRESTEndpoint("v1/stacks/" + collectionName + "/versions/"+ version)
+		url := getRESTEndpoint("v1/stacks/" + collectionName + "/versions/" + version)
 		resp, err := sendHTTPRequest("DELETE", url, nil)
 		if err != nil {
 			Debug.log("deactivate: Error on sendHTTPRequest:")

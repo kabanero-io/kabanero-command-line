@@ -68,14 +68,14 @@ func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response
 		}
 	}
 
-	if verboseHttp {
+	if verboseHTTP {
 		requestDump, err := httputil.DumpRequest(req, true)
 		if err != nil {
-		  fmt.Println(err)
+			fmt.Println(err)
 		}
 		Info.log("requestDump: " + string(requestDump))
-	  }
-  
+	}
+
 	resp, err = client.Do(req)
 	if err != nil {
 		return resp, errors.New(err.Error())
@@ -94,24 +94,24 @@ func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response
 	if resp.StatusCode == 401 {
 		return nil, errors.New("Your session may have expired or the credentials entered may be invalid")
 	}
-	if (resp.StatusCode == 539 || resp.StatusCode == 424 || resp.StatusCode ==500) {
+	if resp.StatusCode == 539 || resp.StatusCode == 424 || resp.StatusCode == 500 {
 		message := make(map[string]interface{})
 		err = json.NewDecoder(resp.Body).Decode(&message)
 		if err != nil {
 			Debug.log("sync: Decode error for 500/539/424")
 			return nil, err
 		}
-		fmt.Println("HTTP Status " +  string(resp.StatusCode) + ": " + message["message"].(string))
+		fmt.Println("HTTP Status " + string(resp.StatusCode) + ": " + message["message"].(string))
 		return resp, errors.New("Invalid Response")
 	}
-  
-    if verboseHttp {
-	  responseDump, err := httputil.DumpResponse(resp, true)
-	  if err != nil {
-	    fmt.Println(err)
-	  }
-	  Info.log("responseDump: " + string(responseDump))
-    }
+
+	if verboseHTTP {
+		responseDump, err := httputil.DumpResponse(resp, true)
+		if err != nil {
+			fmt.Println(err)
+		}
+		Info.log("responseDump: " + string(responseDump))
+	}
 	Debug.log("RESPONSE ", url, " ", resp.StatusCode, " ", http.StatusText(resp.StatusCode))
 	return resp, nil
 }
@@ -151,28 +151,28 @@ var syncCmd = &cobra.Command{
 		} else {
 			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", KabStacksHeader, "Version", "Status")
 			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", strings.Repeat("-", len(KabStacksHeader)), "-------", "------")
-			
+
 			for i := 0; i < len(data.NewStack); i++ {
-				for j :=0; j < len(data.NewStack[i].Versions); j++ {
+				for j := 0; j < len(data.NewStack[i].Versions); j++ {
 					fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.NewStack[i].Name, data.NewStack[i].Versions[j].Version, "added to Kabanero")
 				}
 			}
 			for i := 0; i < len(data.ActivateStack); i++ {
-				for j :=0; j < len(data.ActivateStack[i].Versions); j++ {
+				for j := 0; j < len(data.ActivateStack[i].Versions); j++ {
 					fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.ActivateStack[i].Name, data.ActivateStack[i].Versions[j].Version, "inactive ==> active")
 				}
 			}
 			for i := 0; i < len(data.KabStack); i++ {
-				for j :=0; j < len(data.KabStack[i].Status); j++ {
+				for j := 0; j < len(data.KabStack[i].Status); j++ {
 					fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.KabStack[i].Name, data.KabStack[i].Status[j].Version, data.KabStack[i].Status[j].Status)
 				}
 			}
 			for i := 0; i < len(data.ObsoleteStack); i++ {
-				for j :=0; j < len(data.ObsoleteStack[i].Versions); j++ {
+				for j := 0; j < len(data.ObsoleteStack[i].Versions); j++ {
 					fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.ObsoleteStack[i].Name, data.ObsoleteStack[i].Versions[j].Version, "deactivated")
 				}
 			}
-			
+
 			fmt.Fprintln(tWriter)
 			tWriter.Flush()
 		}
