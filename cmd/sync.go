@@ -169,7 +169,7 @@ var syncCmd = &cobra.Command{
 			}
 			for i := 0; i < len(data.ObsoleteStack); i++ {
 				for j := 0; j < len(data.ObsoleteStack[i].Versions); j++ {
-					fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.ObsoleteStack[i].Name, data.ObsoleteStack[i].Versions[j].Version, "deactivated")
+					fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.ObsoleteStack[i].Name, data.ObsoleteStack[i].Versions[j].Version, "deleted")
 				}
 			}
 
