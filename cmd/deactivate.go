@@ -24,7 +24,7 @@ import (
 
 // deactivateCmd represents the deactivate command
 var deactivateCmd = &cobra.Command{
-	Args:  cobra.MinimumNArgs(1),
+	Args:  cobra.MinimumNArgs(2),
 	Use:   "deactivate stack-name version",
 	Short: "Remove the specified stack from the list of available application types, without deleting it from the Kabanero instance.",
 	Long: `
