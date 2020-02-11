@@ -18,6 +18,7 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
+
 	// "net/http"
 	"os"
 	"strings"
@@ -27,9 +28,8 @@ import (
 )
 
 // The list command gets a set of "stacks" back from the CLI Service.
-// There are 2 distinct structs for the returned stacks:
-//   - KabStruct represents the JSON returned for the Kabanero stacks.
-//   - CommonStackStruct represents the JSON returned for all the other stacks.
+
+// KabStruct : represents the JSON returned for the Kabanero stacks.
 type KabStruct struct {
 	Name   string
 	Status []StatusStruct `json:"status"`
@@ -39,23 +39,32 @@ type StatusStruct struct {
 	Status  string
 }
 
+// CommonStackStruct : represents the JSON returned for all the other stacks.
 type CommonStackStruct struct {
 	Name     string
 	Versions []VersionStruct `json:"versions"`
 }
 
 type VersionStruct struct {
-	Version string
-	Images  []string `json:"image"`
+	Images   []string `json:"image"`
+	Reponame string
+	Version  string
 }
 
-// StacksResponse : all the stacks
+// StacksResponse : all the stacks from GH
 type StacksResponse struct {
 	NewStack      []CommonStackStruct `json:"new curated stacks"`
 	ActivateStack []CommonStackStruct `json:"activate stacks"`
 	KabStack      []KabStruct         `json:"kabanero stacks"`
 	ObsoleteStack []CommonStackStruct `json:"obsolete stacks"`
 	CuratedStack  []CommonStackStruct `json:"curated stacks"`
+	Repos         []ReposStruct       `json:"repositories"`
+}
+
+// Repos : yaml sources that the stacks are coming form
+type ReposStruct struct {
+	Name string
+	URL  string
 }
 
 // KabStacksHeader for all references to what we call the "Kab stacks"
@@ -89,9 +98,13 @@ var listCmd = &cobra.Command{
 		}
 
 		Debug.log(data)
+		fmt.Println()
+		fmt.Println("Kabanero CLI service url: ", cliConfig.GetString(KabURLKey))
+
 		tWriter := new(tabwriter.Writer)
 		tWriter.Init(os.Stdout, 0, 8, 0, '\t', 0)
 
+		//Kabenero Stacks
 		fmt.Fprintf(tWriter, "\n%s\t%s\t%s", KabStacksHeader, "Version", "Status")
 		fmt.Fprintf(tWriter, "\n%s\t%s\t%s", strings.Repeat("-", len(KabStacksHeader)), "-------", "------")
 
@@ -108,7 +121,7 @@ var listCmd = &cobra.Command{
 		fmt.Fprintln(tWriter)
 		tWriter.Flush()
 
-		// put new stacks name/version into a map to compare to curated.
+		// put new stacks name/version into a map to compare to curated because the new stacks overlap with the regular list of stacks
 		mNewStack := make(map[string]string)
 		for i := 0; i < len(data.NewStack); i++ {
 			for j := 0; j < len(data.NewStack[i].Versions); j++ {
@@ -116,8 +129,16 @@ var listCmd = &cobra.Command{
 			}
 		}
 
-		fmt.Fprintf(tWriter, "\n%s\t%s", GHStacksHeader, "Version")
-		fmt.Fprintf(tWriter, "\n%s\t%s", strings.Repeat("-", len(GHStacksHeader)), "-------")
+		fmt.Println()
+		fmt.Println()
+		fmt.Println("GitHub Curated Stacks (repo name - url):")
+		for i := 0; i < len(data.Repos); i++ {
+			fmt.Printf("   %s - %s", data.Repos[0].Name, data.Repos[0].URL)
+		}
+		fmt.Println()
+
+		fmt.Fprintf(tWriter, "\n%s\t%s\t%s", GHStacksHeader, "Version", "Repo")
+		fmt.Fprintf(tWriter, "\n%s\t%s\t%s", strings.Repeat("-", len(GHStacksHeader)), "-------", "----")
 		for i := 0; i < len(data.CuratedStack); i++ {
 			name := data.CuratedStack[i].Name
 			for j := 0; j < len(data.CuratedStack[i].Versions); j++ {
@@ -127,9 +148,9 @@ var listCmd = &cobra.Command{
 				//fmt.Fprintf(tWriter, "\n%s", name)
 				_, found := mNewStack[nameAndVersion]
 				if found {
-					fmt.Fprintf(tWriter, "\n%s\t%s\t%s", name, version, "new")
+					fmt.Fprintf(tWriter, "\n%s\t%s\t%s", name+" (new)", version, data.CuratedStack[i].Versions[j].Reponame)
 				} else {
-					fmt.Fprintf(tWriter, "\n%s\t%s", name, version)
+					fmt.Fprintf(tWriter, "\n%s\t%s\t%s", name, version, data.CuratedStack[i].Versions[j].Reponame)
 				}
 			}
 		}
