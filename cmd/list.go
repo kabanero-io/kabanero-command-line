@@ -100,12 +100,6 @@ var listCmd = &cobra.Command{
 		Debug.log(data)
 		fmt.Println()
 		fmt.Println("Kabanero CLI service url: ", cliConfig.GetString(KabURLKey))
-		fmt.Println()
-		fmt.Println("GitHub Curated Stacks (repo name - url):")
-		for i := 0; i < len(data.Repos); i++ {
-			fmt.Printf("   %s - %s", data.Repos[0].Name, data.Repos[0].URL)
-		}
-		fmt.Println()
 
 		tWriter := new(tabwriter.Writer)
 		tWriter.Init(os.Stdout, 0, 8, 0, '\t', 0)
@@ -134,6 +128,14 @@ var listCmd = &cobra.Command{
 				mNewStack[data.NewStack[i].Name] = data.NewStack[i].Name + data.NewStack[i].Versions[j].Version
 			}
 		}
+
+		fmt.Println()
+		fmt.Println()
+		fmt.Println("GitHub Curated Stacks (repo name - url):")
+		for i := 0; i < len(data.Repos); i++ {
+			fmt.Printf("   %s - %s", data.Repos[0].Name, data.Repos[0].URL)
+		}
+		fmt.Println()
 
 		fmt.Fprintf(tWriter, "\n%s\t%s\t%s", GHStacksHeader, "Version", "Repo")
 		fmt.Fprintf(tWriter, "\n%s\t%s\t%s", strings.Repeat("-", len(GHStacksHeader)), "-------", "----")
