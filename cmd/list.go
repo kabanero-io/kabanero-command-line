@@ -125,7 +125,8 @@ var listCmd = &cobra.Command{
 		mNewStack := make(map[string]string)
 		for i := 0; i < len(data.NewStack); i++ {
 			for j := 0; j < len(data.NewStack[i].Versions); j++ {
-				mNewStack[data.NewStack[i].Name] = data.NewStack[i].Name + data.NewStack[i].Versions[j].Version
+				nameAndVersion := data.NewStack[i].Name + data.NewStack[i].Versions[j].Version
+				mNewStack[nameAndVersion] = "new stack"
 			}
 		}
 
