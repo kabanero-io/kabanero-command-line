@@ -78,7 +78,7 @@ var listCmd = &cobra.Command{
 	Use:   "list ",
 	Short: "List all the stacks in the kabanero instance, and their status",
 	Long: `List all the stacks in the kabanero instance, and their status. 
-	Modifications to the curated stack may be slow to replicate in git hub and therefore may not be reflected immediately in KABANERO LIST or SYNC display output`,
+	Modifications to the curated stack may be slow to replicate in Github and therefore may not be reflected immediately in KABANERO LIST or SYNC display output`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		Debug.log("List called...")
 		url := getRESTEndpoint("v1/stacks")
@@ -132,14 +132,13 @@ var listCmd = &cobra.Command{
 
 		fmt.Println()
 		fmt.Println()
-		fmt.Println("GitHub Curated Stacks (repo name - url):")
+		fmt.Println("GitHub Curated Stack Repositories (repo name - url):")
 		for i := 0; i < len(data.Repos); i++ {
-			fmt.Printf("   %s - %s", data.Repos[0].Name, data.Repos[0].URL)
+			fmt.Fprintf(tWriter, "%s%s%s%s\n", "   ", data.Repos[i].Name, " - ", data.Repos[i].URL)
 		}
-		fmt.Println()
 
-		fmt.Fprintf(tWriter, "\n%s\t%s\t%s", GHStacksHeader, "Version", "Repo")
-		fmt.Fprintf(tWriter, "\n%s\t%s\t%s", strings.Repeat("-", len(GHStacksHeader)), "-------", "----")
+		fmt.Fprintf(tWriter, "\n%s\t%s\t%s", GHStacksHeader, "Version", "Repo Name")
+		fmt.Fprintf(tWriter, "\n%s\t%s\t%s", strings.Repeat("-", len(GHStacksHeader)), "-------", "---------")
 		for i := 0; i < len(data.CuratedStack); i++ {
 			name := data.CuratedStack[i].Name
 			for j := 0; j < len(data.CuratedStack[i].Versions); j++ {
