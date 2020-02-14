@@ -86,8 +86,9 @@ func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response
 	if resp.StatusCode == 503 {
 		data := make(map[string]interface{})
 		err = json.NewDecoder(resp.Body).Decode(&data)
-		fmt.Println("----------", data)
-
+		if data["message"] != "" {
+			fmt.Println(data["message"])
+		}
 		if err != nil {
 			return resp, errors.New(cliConfig.GetString(KabURLKey) + " is unreachable." + resp.Status)
 		}
