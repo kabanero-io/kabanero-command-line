@@ -78,13 +78,19 @@ func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response
 
 	resp, err = client.Do(req)
 	if err != nil {
+		data := make(map[string]interface{})
+		err = json.NewDecoder(resp.Body).Decode(&data)
+		fmt.Println("----------", data)
 		return resp, errors.New(err.Error())
 	}
 	if resp.StatusCode == 503 {
 		data := make(map[string]interface{})
 		err = json.NewDecoder(resp.Body).Decode(&data)
+		if data["message"] != "" {
+			fmt.Println(data["message"])
+		}
 		if err != nil {
-			return resp, errors.New(cliConfig.GetString(KabURLKey) + " is unreachable")
+			return resp, errors.New(cliConfig.GetString(KabURLKey) + " is unreachable." + resp.Status)
 		}
 
 	}
@@ -125,6 +131,7 @@ var syncCmd = &cobra.Command{
 	Modifications to the curated stacks may be slow to replicate in git hub and therefore may not be reflected immediately in KABANERO LIST or SYNC display output
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
+
 		url := getRESTEndpoint("v1/stacks")
 		resp, err := sendHTTPRequest("PUT", url, nil)
 		if err != nil {
@@ -152,14 +159,28 @@ var syncCmd = &cobra.Command{
 			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", KabStacksHeader, "Version", "Status")
 			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", strings.Repeat("-", len(KabStacksHeader)), "-------", "------")
 
+			var statusMsg string
+			var exceptionMsgs []string
+
 			for i := 0; i < len(data.NewStack); i++ {
+				statusMsg = "added to Kabanero"
+				if data.NewStack[i].ExceptionMessage != "" {
+					statusMsg = data.NewStack[i].Status
+					exceptionMsgs = append(exceptionMsgs, data.NewStack[i].ExceptionMessage)
+				}
 				for j := 0; j < len(data.NewStack[i].Versions); j++ {
-					fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.NewStack[i].Name, data.NewStack[i].Versions[j].Version, "added to Kabanero")
+					fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.NewStack[i].Name, data.NewStack[i].Versions[j].Version, statusMsg)
 				}
 			}
 			for i := 0; i < len(data.ActivateStack); i++ {
+				statusMsg = "inactive ==> active"
+				if data.ActivateStack[i].ExceptionMessage != "" {
+					statusMsg = data.ActivateStack[i].Status
+					exceptionMsgs = append(exceptionMsgs, data.ActivateStack[i].ExceptionMessage)
+				}
+
 				for j := 0; j < len(data.ActivateStack[i].Versions); j++ {
-					fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.ActivateStack[i].Name, data.ActivateStack[i].Versions[j].Version, "inactive ==> active")
+					fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.ActivateStack[i].Name, data.ActivateStack[i].Versions[j].Version, statusMsg)
 				}
 			}
 			for i := 0; i < len(data.KabStack); i++ {
@@ -168,14 +189,24 @@ var syncCmd = &cobra.Command{
 				}
 			}
 			for i := 0; i < len(data.ObsoleteStack); i++ {
+				statusMsg = "deleted"
+				if data.ObsoleteStack[i].ExceptionMessage != "" {
+					statusMsg = data.ObsoleteStack[i].Status
+					exceptionMsgs = append(exceptionMsgs, data.ObsoleteStack[i].ExceptionMessage)
+				}
 				for j := 0; j < len(data.ObsoleteStack[i].Versions); j++ {
-					fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.ObsoleteStack[i].Name, data.ObsoleteStack[i].Versions[j].Version, "deleted")
+					fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.ObsoleteStack[i].Name, data.ObsoleteStack[i].Versions[j].Version, statusMsg)
 				}
 			}
 
 			fmt.Fprintln(tWriter)
 			tWriter.Flush()
+
+			for i := 0; i < len(exceptionMsgs); i++ {
+				fmt.Println(exceptionMsgs[i])
+			}
 		}
+
 		return nil
 	},
 }

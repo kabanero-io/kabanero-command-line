@@ -41,8 +41,10 @@ type StatusStruct struct {
 
 // CommonStackStruct : represents the JSON returned for all the other stacks.
 type CommonStackStruct struct {
-	Name     string
-	Versions []VersionStruct `json:"versions"`
+	Name             string
+	Versions         []VersionStruct `json:"versions"`
+	Status           string
+	ExceptionMessage string `json:"exception message"`
 }
 
 type VersionStruct struct {
