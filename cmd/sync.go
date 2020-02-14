@@ -122,14 +122,6 @@ func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response
 	return resp, nil
 }
 
-func isExceptionMsg(commonStackResp CommonStackStruct) bool {
-	msg := commonStackResp.ExceptionMessage
-	if msg == "" {
-		return false
-	}
-	return true
-}
-
 // syncCmd represents the sync command
 var syncCmd = &cobra.Command{
 	Use:   "sync",
@@ -172,7 +164,7 @@ var syncCmd = &cobra.Command{
 
 			for i := 0; i < len(data.NewStack); i++ {
 				statusMsg = "added to Kabanero"
-				if isExceptionMsg(data.NewStack[i]) {
+				if data.NewStack[i].ExceptionMessage != "" {
 					statusMsg = data.NewStack[i].Status
 					exceptionMsgs = append(exceptionMsgs, data.NewStack[i].ExceptionMessage)
 				}
@@ -182,7 +174,7 @@ var syncCmd = &cobra.Command{
 			}
 			for i := 0; i < len(data.ActivateStack); i++ {
 				statusMsg = "inactive ==> active"
-				if isExceptionMsg(data.ActivateStack[i]) {
+				if data.ActivateStack[i].ExceptionMessage != "" {
 					statusMsg = data.ActivateStack[i].Status
 					exceptionMsgs = append(exceptionMsgs, data.ActivateStack[i].ExceptionMessage)
 				}
@@ -198,7 +190,7 @@ var syncCmd = &cobra.Command{
 			}
 			for i := 0; i < len(data.ObsoleteStack); i++ {
 				statusMsg = "deleted"
-				if isExceptionMsg(data.ObsoleteStack[i]) {
+				if data.ObsoleteStack[i].ExceptionMessage != "" {
 					statusMsg = data.ObsoleteStack[i].Status
 					exceptionMsgs = append(exceptionMsgs, data.ObsoleteStack[i].ExceptionMessage)
 				}
