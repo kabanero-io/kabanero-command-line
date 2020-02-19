@@ -53,10 +53,8 @@ This command is useful in a case where you have cloned a stack and customized it
 		if deactivateResponse == nil {
 			return errors.New("no status with deactivate response")
 		}
-		// if _, found := data["exception message"]; found {
+		Debug.log(deactivateResponse)
 		fmt.Println(deactivateResponse)
-		// }
-		// Debug.log(deactivateResponse)
 
 		return nil
 	},
