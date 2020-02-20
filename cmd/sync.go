@@ -75,7 +75,8 @@ func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response
 
 	req.Header.Set("Content-Type", "application/json")
 	if !strings.Contains(url, "login") {
-		req.Header.Set("Authorization", string(cliConfig.GetString("jwt")))
+		req.Header.Set("Authorization", "Bearer "+string(cliConfig.GetString("jwt")))
+
 		if cliConfig.GetString("jwt") == "" {
 			Debug.log("No JWT- login to kab instance")
 			fmt.Println("Login to your kabanero instance")
