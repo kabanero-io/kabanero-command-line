@@ -45,7 +45,7 @@ var rootCmd = &cobra.Command{
 environment, as well as to on-board the people that will use 
 the environment to build applications.
 
-Before using the cli please configure the github authorization for the cli service. Steps can be found in the following documentation: https://kabanero.io/docs/ref/general/github-authorization.html
+Before using the cli please configure the github authorization for the cli service. Steps can be found in the following documentation: https://kabanero.io/docs/ref/general/configuration/github-authorization.html
 
 
 Complete documentation is available at https://kabanero.io`,
@@ -63,7 +63,7 @@ func init() {
 	// we will only allow default config file name/location for now.
 	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.kabanero.yaml)")
 	// Added for logging
-	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "Turns on debug output and logging to a file in $HOME/.kabanero/logs")
+	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "Turns on debug output and logging to a file in $HOME/.kabanero/logs. If installed with brew the file is in ~/Library/Logs/kabanero/")
 	rootCmd.PersistentFlags().BoolVarP(&verboseHTTP, "debug http", "x", false, "Turns on debug output for http request/responses")
 	err := rootCmd.PersistentFlags().MarkHidden("debug http")
 	if err != nil {
