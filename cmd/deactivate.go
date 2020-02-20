@@ -17,7 +17,6 @@ package cmd
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -51,7 +50,8 @@ This command is useful in a case where you have cloned a stack and customized it
 		}
 		deactivateResponse := data["status"]
 		if deactivateResponse == nil {
-			return errors.New("no status with deactivate response")
+			// return errors.New("no status with deactivate response")
+			return err
 		}
 		Debug.log(deactivateResponse)
 		fmt.Println(deactivateResponse)

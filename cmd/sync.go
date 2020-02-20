@@ -49,12 +49,13 @@ func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response
 	var req *http.Request
 	var err error
 
+	// commented out codes have their own handling
 	serviceErrorCodes := map[int]string{
-		// 400: "Stack Version not found/version not found",
-		401: "Session expired or invalid certs",
-		// 404: "Unable to reach services endpoint- no message to relay",
+		400: "Stack Version not found/version not found/ jwt expired",
+		// 401: "Session expired or invalid certs",
+		// 404: "Unable to reach services endpoint",
 		424: "Kab CR did not specify pipelines",
-		429: "GH retry limit exceeded",
+		429: "GitHub retry limit exceeded",
 		500: "Internal Server Error",
 		503: "Operator pod is not fully up",
 		539: "CLI has not been configured",
@@ -76,7 +77,9 @@ func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response
 	if !strings.Contains(url, "login") {
 		req.Header.Set("Authorization", string(cliConfig.GetString("jwt")))
 		if cliConfig.GetString("jwt") == "" {
-			return resp, errors.New("Login to your kabanero instance")
+			Debug.log("No JWT- login to kab instance")
+			fmt.Println("Login to your kabanero instance")
+			os.Exit(3)
 		}
 	}
 
@@ -102,16 +105,12 @@ func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response
 		}
 		Info.log("responseDump: " + string(responseDump))
 	}
-	// if resp.StatusCode == 503 {
-	// 	data := make(map[string]interface{})
-	// 	err = json.NewDecoder(resp.Body).Decode(&data)
-	// 	if err != nil {
-	// 		return resp, errors.New(cliConfig.GetString(KabURLKey) + " is unreachable." + resp.Status)
-	// 	}
-	// 	if data["message"] != "" {
-	// 		fmt.Println(data["message"])
-	// 	}
-	// }
+	if resp.StatusCode == 401 {
+		message := ("Session expired or your token is invalid. Please try logging in again")
+		fmt.Println(message)
+		Debug.log(message)
+		os.Exit(3)
+	}
 
 	if _, found := serviceErrorCodes[resp.StatusCode]; found {
 		message := make(map[string]interface{})
@@ -123,8 +122,10 @@ func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response
 		if message["message"] == nil {
 			return resp, errors.New("No message in response")
 		}
-		Debug.logf("HTTP Status " + string(resp.StatusCode) + ": " + message["message"].(string))
-		return resp, errors.New(message["message"].(string))
+		fmt.Println()
+		Debug.logf("HTTP Status %d : %s", resp.StatusCode, message["message"].(string))
+		fmt.Println(message["message"].(string))
+		os.Exit(3)
 
 	}
 
