@@ -63,7 +63,7 @@ func init() {
 	// we will only allow default config file name/location for now.
 	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.kabanero.yaml)")
 	// Added for logging
-	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "Turns on debug output and logging to a file in $HOME/.kabanero/logs")
+	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "Turns on debug output and logging to a file in $HOME/.kabanero/logs. If installed with brew the file is in ~/Library/Logs/kabanero/")
 	rootCmd.PersistentFlags().BoolVarP(&verboseHTTP, "debug http", "x", false, "Turns on debug output for http request/responses")
 	err := rootCmd.PersistentFlags().MarkHidden("debug http")
 	if err != nil {
