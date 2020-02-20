@@ -49,10 +49,12 @@ This command is useful in a case where you have cloned a stack and customized it
 			return err
 		}
 		deactivateResponse := data["status"]
-		if _, found := data["exception message"]; found {
-			fmt.Println(deactivateResponse)
+		if deactivateResponse == nil {
+			// return errors.New("no status with deactivate response")
+			return err
 		}
 		Debug.log(deactivateResponse)
+		fmt.Println(deactivateResponse)
 
 		return nil
 	},
