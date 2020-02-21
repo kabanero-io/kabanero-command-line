@@ -123,7 +123,6 @@ func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response
 		if message["message"] == nil {
 			return resp, errors.New("No message in response")
 		}
-		fmt.Println()
 		Debug.logf("HTTP Status %d : %s", resp.StatusCode, message["message"].(string))
 		fmt.Println(message["message"].(string))
 		os.Exit(3)
