@@ -41,7 +41,7 @@ func parseKabURL(url string) string {
 
 // loginCmd represents the login command
 var loginCmd = &cobra.Command{
-	Use:   "login kabanero-url -u Github userid /n PASSWORDPROMPT:GitHub Password|PAT",
+	Use:   "login kabanero-cli-url -u Github userid \n  At the password prompt, enter your GitHub Password/PAT",
 	Short: "Will authenticate you to a Kabanero instance",
 	Long: `
 	Logs in to a Kabanero instance using Github credentials, and stores a temporary access token for subsequent command line calls.

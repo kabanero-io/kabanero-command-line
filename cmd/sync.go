@@ -123,7 +123,6 @@ func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response
 		if message["message"] == nil {
 			return resp, errors.New("No message in response")
 		}
-		fmt.Println()
 		Debug.logf("HTTP Status %d : %s", resp.StatusCode, message["message"].(string))
 		fmt.Println(message["message"].(string))
 		os.Exit(3)
@@ -165,7 +164,7 @@ var syncCmd = &cobra.Command{
 		tWriter := new(tabwriter.Writer)
 		tWriter.Init(os.Stdout, 0, 8, 0, '\t', 0)
 		if len(data.NewStack) == 0 && (len(data.KabStack) == 0) && len(data.ObsoleteStack) == 0 && len(data.CuratedStack) == 0 && len(data.ActivateStack) == 0 {
-			syncedOutput := KabStacksHeader + " is already synchronized with the " + GHStacksHeader
+			syncedOutput := KabStacksHeader + " are already synchronized with the " + GHStacksHeader
 			fmt.Println(strings.ToLower(syncedOutput))
 		} else {
 			fmt.Fprintf(tWriter, "\n%s\t%s\t%s", KabStacksHeader, "Version", "Status")
