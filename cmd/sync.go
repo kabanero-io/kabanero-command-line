@@ -94,9 +94,13 @@ func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response
 
 	resp, err = client.Do(req)
 	if err != nil {
-		data := make(map[string]interface{})
-		err = json.NewDecoder(resp.Body).Decode(&data)
-		fmt.Println("----------", data)
+		fmt.Println("No response from url: " + cliConfig.GetString(KabURLKey))
+		// data := make(map[string]interface{})
+		// if resp == nil {
+		// 	fmt.Println("No response")
+		// }
+		// err = json.NewDecoder(resp.Body).Decode(&data)
+		// fmt.Println("----------", data)
 		return resp, errors.New(err.Error())
 	}
 	if verboseHTTP {
