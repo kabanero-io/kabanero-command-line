@@ -20,6 +20,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"os"
 	"strings"
 	"syscall"
 
@@ -58,11 +59,9 @@ var loginCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		Debug.log("login called")
 		var err error
+		var message string
 
 		username, _ := cmd.Flags().GetString("username")
-		if username == "" {
-			fmt.Println("EMPTY USERNAME")
-		}
 		fmt.Printf("Password:")
 		bytePwd, err := terminal.ReadPassword(int(syscall.Stdin))
 		if err != nil {
@@ -101,7 +100,10 @@ var loginCmd = &cobra.Command{
 
 		Debug.log("RESPONSE ", kabLoginURL, resp.StatusCode, http.StatusText(resp.StatusCode))
 		if resp.StatusCode == 404 {
-			return errors.New("The url: " + cliConfig.GetString(KabURLKey) + " is not a valid kabanero url")
+			message = "The url: " + cliConfig.GetString(KabURLKey) + " is not a valid kabanero url"
+			Debug.log(message)
+			fmt.Println(message)
+			os.Exit(3)
 		}
 
 		var data JWTResponse
@@ -115,8 +117,10 @@ var loginCmd = &cobra.Command{
 			return err
 		}
 		if cliConfig.GetString("jwt") == "" {
-			Debug.log("Unable to validate user: " + username + " to " + cliConfig.GetString(KabURLKey))
-			return errors.New("Unable to validate user: " + username + " to " + cliConfig.GetString(KabURLKey))
+			message = ("Unable to validate user: " + username + " to " + cliConfig.GetString(KabURLKey))
+			Debug.log(message)
+			fmt.Println(message)
+			os.Exit(3)
 		}
 		fmt.Println("\nLogged in to Kabanero instance: " + cliConfig.GetString(KabURLKey))
 		Debug.log("Logged in to Kabanero instance: " + cliConfig.GetString(KabURLKey))
