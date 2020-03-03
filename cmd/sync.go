@@ -19,7 +19,6 @@ import (
 	"bytes"
 	"crypto/tls"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
 	"net/http/httputil"
@@ -101,9 +100,10 @@ func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response
 
 	resp, err = client.Do(req)
 	if err != nil {
-		fmt.Println("No response from url: " + cliConfig.GetString(KabURLKey))
-		Debug.log("No response from url (check vpn): " + cliConfig.GetString(KabURLKey))
-		return resp, errors.New(err.Error())
+		// fmt.Println("No response from url: " + cliConfig.GetString(KabURLKey))
+		// Debug.log("No response from url (check vpn): " + cliConfig.GetString(KabURLKey))
+		messageAndExit("No response from url: " + cliConfig.GetString(KabURLKey))
+		// return resp, errors.New(err.Error())
 	}
 	if verboseHTTP {
 		responseDump, err := httputil.DumpResponse(resp, true)

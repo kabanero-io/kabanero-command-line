@@ -67,6 +67,7 @@ var loginCmd = &cobra.Command{
 			return err
 		}
 		password := strings.TrimSpace(string(bytePwd))
+		fmt.Println()
 
 		var kabLoginURL string
 
@@ -123,7 +124,7 @@ var loginCmd = &cobra.Command{
 			// fmt.Println(message)
 			// os.Exit(3)
 		}
-		fmt.Println("\nLogged in to Kabanero instance: " + cliConfig.GetString(KabURLKey))
+		fmt.Println("Logged in to Kabanero instance: " + cliConfig.GetString(KabURLKey))
 		Debug.log("Logged in to Kabanero instance: " + cliConfig.GetString(KabURLKey))
 		defer resp.Body.Close()
 
