@@ -20,7 +20,6 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"os"
 	"strings"
 	"syscall"
 
@@ -59,7 +58,7 @@ var loginCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		Debug.log("login called")
 		var err error
-		var message string
+		// var message string
 
 		username, _ := cmd.Flags().GetString("username")
 		fmt.Printf("Password:")
@@ -69,10 +68,6 @@ var loginCmd = &cobra.Command{
 		}
 		password := strings.TrimSpace(string(bytePwd))
 
-		// password, _ := cmd.Flags().GetString("password")
-		// if password == "" {
-		// 	fmt.Println("EMPTY PASSWORD")
-		// }
 		var kabLoginURL string
 
 		viper.SetEnvPrefix("KABANERO")
@@ -94,21 +89,26 @@ var loginCmd = &cobra.Command{
 
 		resp, err := sendHTTPRequest("POST", kabLoginURL, requestBody)
 		if err != nil {
-			Debug.log("login: Error on sendHTTPRequest:")
-			return err
+			messageAndExit("login: Error on sendHTTPRequest:")
+			// message = "login: Error on sendHTTPRequest:"
+			// Debug.log(message)
+			// fmt.Println(message)
+			// os.Exit(3)
 		}
 
 		Debug.log("RESPONSE ", kabLoginURL, resp.StatusCode, http.StatusText(resp.StatusCode))
 		if resp.StatusCode == 404 {
-			message = "The url: " + cliConfig.GetString(KabURLKey) + " is not a valid kabanero url"
-			Debug.log(message)
-			fmt.Println(message)
-			os.Exit(3)
+			// message = "The url: " + cliConfig.GetString(KabURLKey) + " is not a valid kabanero url"
+			messageAndExit("The url: " + cliConfig.GetString(KabURLKey) + " is not a valid kabanero url")
+			// Debug.log(message)
+			// fmt.Println(message)
+			// os.Exit(3)
 		}
 
 		var data JWTResponse
 		err = json.NewDecoder(resp.Body).Decode(&data)
 		if err != nil {
+			Debug.log(err)
 			return err
 		}
 		cliConfig.Set("jwt", data.JWT)
@@ -117,10 +117,11 @@ var loginCmd = &cobra.Command{
 			return err
 		}
 		if cliConfig.GetString("jwt") == "" {
-			message = ("Unable to validate user: " + username + " to " + cliConfig.GetString(KabURLKey))
-			Debug.log(message)
-			fmt.Println(message)
-			os.Exit(3)
+			messageAndExit("Unable to validate user: " + username + " to " + cliConfig.GetString(KabURLKey))
+			// message = ("Unable to validate user: " + username + " to " + cliConfig.GetString(KabURLKey))
+			// Debug.log(message)
+			// fmt.Println(message)
+			// os.Exit(3)
 		}
 		fmt.Println("\nLogged in to Kabanero instance: " + cliConfig.GetString(KabURLKey))
 		Debug.log("Logged in to Kabanero instance: " + cliConfig.GetString(KabURLKey))

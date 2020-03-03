@@ -31,6 +31,12 @@ import (
 	"github.com/spf13/cobra"
 )
 
+func messageAndExit(msg string) {
+	Debug.log(msg)
+	fmt.Println(msg)
+	os.Exit(3)
+}
+
 func getRESTEndpoint(appendValue string) string {
 	return "https://" + cliConfig.GetString(KabURLKey) + "/" + appendValue
 }
@@ -49,7 +55,7 @@ func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response
 	var req *http.Request
 	var err error
 
-	// commented out codes have their own handling
+	// commented out codes have their own handling and are here just for error code tracking
 	serviceErrorCodes := map[int]string{
 		400: "Stack Version not found/version not found/ jwt expired",
 		// 401: "Session expired or invalid certs",
@@ -78,9 +84,10 @@ func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response
 		req.Header.Set("Authorization", "Bearer "+string(cliConfig.GetString("jwt")))
 
 		if cliConfig.GetString("jwt") == "" {
-			Debug.log("No JWT- login to kab instance")
-			fmt.Println("Login to your kabanero instance")
-			os.Exit(3)
+			messageAndExit("Login to your kabanero instance")
+			// Debug.log("No JWT- login to kab instance")
+			// fmt.Println("Login to your kabanero instance")
+			// os.Exit(3)
 		}
 	}
 
@@ -107,26 +114,29 @@ func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response
 		Info.log("responseDump: " + string(responseDump))
 	}
 	if resp.StatusCode == 401 {
-		message := ("Session expired or your token is invalid. Please try logging in again")
-		fmt.Println(message)
-		Debug.log(message)
-		os.Exit(3)
+		messageAndExit("Session expired or your token is invalid. Please try logging in again")
+		// message := ("Session expired or your token is invalid. Please try logging in again")
+		// fmt.Println(message)
+		// Debug.log(message)
+		// os.Exit(3)
 	}
 
 	if _, found := serviceErrorCodes[resp.StatusCode]; found {
 		message := make(map[string]interface{})
 		err = json.NewDecoder(resp.Body).Decode(&message)
 		if err != nil {
-			Debug.log("Decode error")
-			return nil, err
+			// Debug.log("Decode error")
+			// return nil, err
+			messageAndExit("Error decoding http response")
 		}
 		if message["message"] == nil {
-			return resp, errors.New("No message in response")
+			// return resp, errors.New("No message in response")
+			messageAndExit("No message in http response")
 		}
-		Debug.logf("HTTP Status %d : %s", resp.StatusCode, message["message"].(string))
-		fmt.Println(message["message"].(string))
-		os.Exit(3)
-
+		// Debug.logf("HTTP Status %d : %s", resp.StatusCode, message["message"].(string))
+		// fmt.Println(message["message"].(string))
+		// os.Exit(3)
+		messageAndExit(fmt.Sprintf("HTTP Status %d : %s", resp.StatusCode, message["message"].(string)))
 	}
 
 	Debug.log("RESPONSE ", url, " ", resp.StatusCode, " ", http.StatusText(resp.StatusCode))
@@ -146,8 +156,9 @@ var syncCmd = &cobra.Command{
 		url := getRESTEndpoint("v1/stacks")
 		resp, err := sendHTTPRequest("PUT", url, nil)
 		if err != nil {
-			Debug.log("sync: Error on sendHTTPRequest:")
-			return errors.New(err.Error())
+			messageAndExit("sync: Error on sendHTTPRequest:")
+			// Debug.log("sync: Error on sendHTTPRequest:")
+			// return errors.New(err.Error())
 		}
 		Debug.log("RESPONSE ", url, resp.StatusCode, http.StatusText(resp.StatusCode))
 		defer resp.Body.Close()
@@ -156,8 +167,9 @@ var syncCmd = &cobra.Command{
 		var data StacksResponse
 		err = decoder.Decode(&data)
 		if err != nil {
-			Debug.log("sync: Error on Decode:")
-			return err
+			messageAndExit("sync: Error on Decode")
+			// Debug.log("sync: Error on Decode:")
+			// return err
 		}
 
 		Debug.log(data)
