@@ -57,7 +57,6 @@ var loginCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		Debug.log("login called")
 		var err error
-		// var message string
 
 		username, _ := cmd.Flags().GetString("username")
 		fmt.Printf("Password:")
