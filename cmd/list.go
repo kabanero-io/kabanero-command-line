@@ -86,8 +86,7 @@ var listCmd = &cobra.Command{
 		url := getRESTEndpoint("v1/stacks")
 		resp, err := sendHTTPRequest("GET", url, nil)
 		if err != nil {
-			Debug.log("list: Error on sendHTTPRequest:")
-			return err
+			messageAndExit("list: Error sending HTTP request")
 		}
 		// cannot reference resp here.  May not be fully formed and cause nil pointer deref: Debug.log("RESPONSE ", url, resp.StatusCode, http.StatusText(resp.StatusCode))
 		//Decode the response into data
@@ -95,8 +94,7 @@ var listCmd = &cobra.Command{
 		var data StacksResponse
 		err = decoder.Decode(&data)
 		if err != nil {
-			Debug.log("list: Error on Decode:")
-			return err
+			messageAndExit("list: Error decoding http response")
 		}
 
 		Debug.log(data)
