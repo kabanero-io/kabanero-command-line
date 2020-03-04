@@ -101,6 +101,15 @@ var listCmd = &cobra.Command{
 		fmt.Println()
 		fmt.Println("Kabanero CLI service url: ", cliConfig.GetString(KabURLKey))
 
+		// put obsolete stacks into a map w versions to append (obsolete) note to stack statuses
+		obsoleteMap := make(map[string]string)
+		for i := 0; i < len(data.ObsoleteStack); i++ {
+			for j := 0; j < len(data.ObsoleteStack[i].Versions); j++ {
+				obsNameVer := data.ObsoleteStack[i].Name + data.ObsoleteStack[i].Versions[j].Version
+				obsoleteMap[obsNameVer] = "obsolete" //value is just placeholder
+			}
+		}
+
 		tWriter := new(tabwriter.Writer)
 		tWriter.Init(os.Stdout, 0, 8, 0, '\t', 0)
 
@@ -110,14 +119,16 @@ var listCmd = &cobra.Command{
 
 		for i := 0; i < len(data.KabStack); i++ {
 			for j := 0; j < len(data.KabStack[i].Status); j++ {
-				fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.KabStack[i].Name, data.KabStack[i].Status[j].Version, data.KabStack[i].Status[j].Status)
+				nameAndVersion := data.KabStack[i].Name + data.KabStack[i].Status[j].Version
+				if _, found := obsoleteMap[nameAndVersion]; found {
+					fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.KabStack[i].Name, data.KabStack[i].Status[j].Version, data.KabStack[i].Status[j].Status+" (obsolete)")
+
+				} else {
+					fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.KabStack[i].Name, data.KabStack[i].Status[j].Version, data.KabStack[i].Status[j].Status)
+				}
 			}
 		}
-		for i := 0; i < len(data.ObsoleteStack); i++ {
-			for j := 0; j < len(data.ObsoleteStack[i].Versions); j++ {
-				fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.ObsoleteStack[i].Name, data.ObsoleteStack[i].Versions[j].Version, "obsolete")
-			}
-		}
+
 		fmt.Fprintln(tWriter)
 		tWriter.Flush()
 
