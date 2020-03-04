@@ -38,20 +38,17 @@ This command is useful in a case where you have cloned a stack and customized it
 		url := getRESTEndpoint("v1/stacks/" + stackName + "/versions/" + version)
 		resp, err := sendHTTPRequest("DELETE", url, nil)
 		if err != nil {
-			Debug.log("deactivate: Error on sendHTTPRequest:")
-			return err
+			messageAndExit("deactivate: Error sending HTTP request")
 		}
 		data := make(map[string]interface{})
 
 		err = json.NewDecoder(resp.Body).Decode(&data)
 		if err != nil {
-			Debug.log("deactivate: Error on Decode:")
-			return err
+			messageAndExit("deactivate: error decoding http response")
 		}
 		deactivateResponse := data["status"]
 		if deactivateResponse == nil {
-			// return errors.New("no status with deactivate response")
-			return err
+			messageAndExit("Error: No status in deactivate response")
 		}
 		Debug.log(deactivateResponse)
 		fmt.Println(deactivateResponse)

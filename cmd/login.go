@@ -17,7 +17,6 @@ package cmd
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -81,7 +80,7 @@ var loginCmd = &cobra.Command{
 			}
 		} else {
 			if cliConfig.GetString(KabURLKey) == "" {
-				return errors.New("No Kabanero instance url specified")
+				messageAndExit("No Kabanero instance url specified")
 			}
 		}
 		kabLoginURL = getRESTEndpoint("login")
@@ -91,19 +90,11 @@ var loginCmd = &cobra.Command{
 		resp, err := sendHTTPRequest("POST", kabLoginURL, requestBody)
 		if err != nil {
 			messageAndExit("login: Error on sendHTTPRequest:")
-			// message = "login: Error on sendHTTPRequest:"
-			// Debug.log(message)
-			// fmt.Println(message)
-			// os.Exit(3)
 		}
 
 		Debug.log("RESPONSE ", kabLoginURL, resp.StatusCode, http.StatusText(resp.StatusCode))
 		if resp.StatusCode == 404 {
-			// message = "The url: " + cliConfig.GetString(KabURLKey) + " is not a valid kabanero url"
 			messageAndExit("The url: " + cliConfig.GetString(KabURLKey) + " is not a valid kabanero url")
-			// Debug.log(message)
-			// fmt.Println(message)
-			// os.Exit(3)
 		}
 
 		var data JWTResponse
@@ -119,10 +110,6 @@ var loginCmd = &cobra.Command{
 		}
 		if cliConfig.GetString("jwt") == "" {
 			messageAndExit("Unable to validate user: " + username + " to " + cliConfig.GetString(KabURLKey))
-			// message = ("Unable to validate user: " + username + " to " + cliConfig.GetString(KabURLKey))
-			// Debug.log(message)
-			// fmt.Println(message)
-			// os.Exit(3)
 		}
 		fmt.Println("Logged in to Kabanero instance: " + cliConfig.GetString(KabURLKey))
 		Debug.log("Logged in to Kabanero instance: " + cliConfig.GetString(KabURLKey))
