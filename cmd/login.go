@@ -62,7 +62,6 @@ func is06Compatible() bool {
 		fmt.Printf("\nYour current CLI version (%s) is incompatible with the command line service image (%s). Please upgrade your command line service to version 0.6.0 or greater, or get a version of the CLI that matches the service image\n", VERSION, servicesVersion)
 		return false
 	}
-	fmt.Println(servicesVersion)
 	return true
 }
 
