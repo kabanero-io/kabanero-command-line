@@ -120,7 +120,7 @@ func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response
 		message := make(map[string]interface{})
 		err = json.NewDecoder(resp.Body).Decode(&message)
 		if err != nil {
-			messageAndExit("Error decoding http response")
+			messageAndExit("No Response, check CLI service status")
 		}
 		if message["message"] == nil {
 			messageAndExit("No message in http response")
