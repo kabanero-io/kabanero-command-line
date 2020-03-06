@@ -138,7 +138,7 @@ var loginCmd = &cobra.Command{
 			messageAndExit("Unable to validate user: " + username + " to " + cliConfig.GetString(KabURLKey))
 		}
 
-		if !developerMode && !is06Compatible() {
+		if !is06Compatible() {
 
 			url := getRESTEndpoint("logout")
 			resp, err := sendHTTPRequest("POST", url, nil)
