@@ -58,7 +58,7 @@ func is06Compatible() bool {
 	servicesVersion2ndVal, _ := strconv.Atoi(strings.Split(servicesVersion, ".")[1])
 	if servicesVersion2ndVal < 6 {
 
-		fmt.Printf("\nYour current CLI version (%s) is incompatible with the command line service image (%s). Please upgrade your Kabanero service to  version 0.6.0 or greater, or get a version of the CLI that matches the service image\n", VERSION, servicesVersion)
+		fmt.Printf("\nYour current CLI version (%s) is incompatible with the command line service image (%s). Please upgrade your Kabanero service to version 0.6.0 or greater, or get a version of the CLI that matches the service image\n", VERSION, servicesVersion)
 		return false
 	}
 	fmt.Println(servicesVersion)
