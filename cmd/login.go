@@ -56,7 +56,7 @@ func is06Compatible() bool {
 	servicesVersion2ndVal, _ := strconv.Atoi(strings.Split(servicesVersion, ".")[1])
 	if servicesVersion2ndVal < 6 {
 
-		fmt.Printf("\nYour current CLI version (%s) is incompatible with the command line service image (%s). Please upgrade your Kabanero service to  version 0.6.0 or greater, or revert to cli version 0.4.0.", VERSION, servicesVersion)
+		fmt.Printf("\nYour current CLI version (%s) is incompatible with the command line service image (%s). Please upgrade your Kabanero service to  version 0.6.0 or greater, or get a version of the CLI that matches the service image\n", VERSION, servicesVersion)
 		return false
 	}
 	fmt.Println(servicesVersion)
@@ -136,7 +136,7 @@ var loginCmd = &cobra.Command{
 			messageAndExit("Unable to validate user: " + username + " to " + cliConfig.GetString(KabURLKey))
 		}
 
-		if developerMode == false && !is06Compatible() {
+		if !developerMode && !is06Compatible() {
 
 			url := getRESTEndpoint("logout")
 			resp, err := sendHTTPRequest("POST", url, nil)
