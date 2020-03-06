@@ -51,8 +51,10 @@ func is06Compatible() bool {
 	if err != nil {
 		return false
 	}
-	versionJSON.Image = "kabanero/kabanero-command-line-services:0.4.0"
 	servicesVersion := strings.Split(versionJSON.Image, ":")[1]
+	if servicesVersion == "latest" {
+		return true
+	}
 	servicesVersion2ndVal, _ := strconv.Atoi(strings.Split(servicesVersion, ".")[1])
 	if servicesVersion2ndVal < 6 {
 
