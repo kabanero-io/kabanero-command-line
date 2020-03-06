@@ -25,7 +25,6 @@ var (
 	//dryrun          bool
 	verbose         bool
 	verboseHTTP     bool
-	developerMode   bool
 	klogInitialized = false
 	KabURLKey       = "KABURL"
 )
