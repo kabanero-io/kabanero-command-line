@@ -25,6 +25,7 @@ var (
 	//dryrun          bool
 	verbose         bool
 	verboseHTTP     bool
+	developerMode   bool
 	klogInitialized = false
 	KabURLKey       = "KABURL"
 )
@@ -65,6 +66,7 @@ func init() {
 	// Added for logging
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "Turns on debug output and logging to a file in $HOME/.kabanero/logs. If installed with brew the file is in ~/Library/Logs/kabanero/")
 	rootCmd.PersistentFlags().BoolVarP(&verboseHTTP, "debug http", "x", false, "Turns on debug output for http request/responses")
+	rootCmd.PersistentFlags().BoolVarP(&developerMode, "developer mode", "d", false, "Bypasses certain blocks in the CLI")
 	err := rootCmd.PersistentFlags().MarkHidden("debug http")
 	if err != nil {
 		fmt.Fprintln(os.Stdout, "err with MarkHidden")

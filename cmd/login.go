@@ -19,6 +19,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 	"syscall"
 
@@ -36,6 +37,30 @@ func parseKabURL(url string) string {
 	url = strings.TrimPrefix(url, "https://")
 	url = strings.TrimSuffix(url, "/")
 	return url
+}
+
+func is06Compatible() bool {
+	url := getRESTEndpoint("v1/image")
+	resp, err := sendHTTPRequest("GET", url, nil)
+	if err != nil {
+		Info.logf("kabanero command line service image: CLI service unavailable, %s", err.Error())
+		return false
+	}
+	var versionJSON VersionJSON
+	err = json.NewDecoder(resp.Body).Decode(&versionJSON)
+	if err != nil {
+		return false
+	}
+	versionJSON.Image = "kabanero/kabanero-command-line-services:0.4.0"
+	servicesVersion := strings.Split(versionJSON.Image, ":")[1]
+	servicesVersion2ndVal, _ := strconv.Atoi(strings.Split(servicesVersion, ".")[1])
+	if servicesVersion2ndVal < 6 {
+
+		fmt.Printf("\nYour current CLI version (%s) is incompatible with the command line service image (%s). Please upgrade your Kabanero service to  version 0.6.0 or greater, or revert to cli version 0.4.0.", VERSION, servicesVersion)
+		return false
+	}
+	fmt.Println(servicesVersion)
+	return true
 }
 
 // loginCmd represents the login command
@@ -110,8 +135,26 @@ var loginCmd = &cobra.Command{
 		if cliConfig.GetString("jwt") == "" {
 			messageAndExit("Unable to validate user: " + username + " to " + cliConfig.GetString(KabURLKey))
 		}
-		fmt.Println("Logged in to Kabanero instance: " + cliConfig.GetString(KabURLKey))
-		Debug.log("Logged in to Kabanero instance: " + cliConfig.GetString(KabURLKey))
+
+		if developerMode == false && !is06Compatible() {
+
+			url := getRESTEndpoint("logout")
+			resp, err := sendHTTPRequest("POST", url, nil)
+			if err != nil {
+				return err
+			}
+
+			defer resp.Body.Close()
+			cliConfig.Set("jwt", "")
+			err = cliConfig.WriteConfig()
+			if err != nil {
+				return err
+			}
+		} else {
+
+			fmt.Println("Logged in to Kabanero instance: " + cliConfig.GetString(KabURLKey))
+			Debug.log("Logged in to Kabanero instance: " + cliConfig.GetString(KabURLKey))
+		}
 		defer resp.Body.Close()
 
 		return nil
