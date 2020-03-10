@@ -41,8 +41,7 @@ func homeDir() string {
 var rootCmd = &cobra.Command{
 	Use:   "kabanero",
 	Short: "This repo defines a command line interface used by the enterprise, solution, or application architect who defines and manages the kabanero stacks that are used by developers to create governed applications for their business.",
-	Long: `**kabanero** is a command line interface for managing the stacks in a Kabanero environment, as well as to on-board the people that will use 
-the environment to build applications.
+	Long: `The Kabenero CLI is a command line interface for managing the stacks in a Kabanero environment to create government applications for their business.
 
 Before using the cli please configure the github authorization for the cli service. Steps can be found in the following documentation: https://kabanero.io/docs/ref/general/configuration/github-authorization.html
 
