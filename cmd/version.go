@@ -16,6 +16,7 @@ package cmd
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/spf13/cobra"
 )
@@ -37,6 +38,8 @@ var versionCmd = &cobra.Command{
 			return nil
 		}
 
+		fmt.Print("kabanero command line service image: ")
+
 		url := getRESTEndpoint("v1/image")
 		resp, err := sendHTTPRequest("GET", url, nil)
 		if err != nil {
@@ -48,7 +51,7 @@ var versionCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		Info.log("kabanero command line service image: ", versionJSON.Image)
+		fmt.Print(versionJSON.Image + "\n")
 		return nil
 	},
 }
