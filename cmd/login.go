@@ -26,7 +26,21 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"golang.org/x/crypto/ssh/terminal"
+	"k8s.io/cli-runtime/pkg/genericclioptions"
 )
+
+var (
+	SkipTLS bool
+)
+
+type LoginOptions struct {
+	Username string
+	Password string
+
+	InsecureTLS bool
+	CertFile    string
+	genericclioptions.IOStreams
+}
 
 type JWTResponse struct {
 	JWT     string
@@ -83,6 +97,7 @@ var loginCmd = &cobra.Command{
 	kabanero login -u myGithubID 
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		// genericclioptions
 		Debug.log("login called")
 		var err error
 
@@ -110,6 +125,19 @@ var loginCmd = &cobra.Command{
 				messageAndExit("No Kabanero instance url specified")
 			}
 		}
+
+		// if SkipTLS{
+		// serverConfig := map[string]interface{}{
+		// 	"server": map[string]string{
+		// 		"insecureTLS": "SkipTLS",
+		// 		"server":      cliConfig.GetString(KabURLKey),
+		// 	},
+		// }
+		// }
+		// cliConfig.Set(serverConfig)
+		cliConfig.Set("insecureTLS", SkipTLS)
+		cliConfig.WriteConfig()
+
 		kabLoginURL = getRESTEndpoint("login")
 
 		requestBody, _ := json.Marshal(map[string]string{"gituser": username, "gitpat": password})
@@ -166,9 +194,12 @@ var loginCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(loginCmd)
+
 	loginCmd.Flags().StringP("username", "u", "", "github username")
+
 	_ = loginCmd.MarkFlagRequired("username")
-	// Here you will define your flags and configuration settings.
+
+	loginCmd.Flags().BoolVar(&SkipTLS, "insecure-skip-tls-verify", false, "If true, the server's certificate will not be checked for validity. This will make your HTTPS connections insecure")
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:

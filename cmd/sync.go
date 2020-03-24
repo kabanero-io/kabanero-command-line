@@ -48,7 +48,7 @@ func getRESTEndpoint(appendValue string) string {
 
 func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response, error) {
 	tr := &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: cliConfig.GetBool("insecureTLS")},
 	}
 	client := &http.Client{
 		Timeout:   time.Second * 30,
