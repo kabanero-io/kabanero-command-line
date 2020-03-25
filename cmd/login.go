@@ -83,9 +83,8 @@ func is06Compatible() bool {
 	return true
 }
 
-func TLSFlagCheck(skipTLS bool) {
+func HandleTLSFLag(skipTLS bool) {
 	if skipTLS {
-		//prompt for the y/n
 		fmt.Print("Are you sure you want to continue with an insecure connection to " + cliConfig.GetString(KabURLKey) + " (y/n): ")
 
 		reader := bufio.NewReader(os.Stdin)
@@ -156,9 +155,7 @@ var loginCmd = &cobra.Command{
 			}
 		}
 
-		TLSFlagCheck(SkipTLS)
-		// cliConfig.Set("insecureTLS", SkipTLS)
-		// cliConfig.WriteConfig()
+		HandleTLSFLag(SkipTLS)
 
 		kabLoginURL = getRESTEndpoint("login")
 
