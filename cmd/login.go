@@ -16,12 +16,15 @@ limitations under the License.
 package cmd
 
 import (
+	"bufio"
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 	"syscall"
+	"unicode"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -80,6 +83,34 @@ func is06Compatible() bool {
 	return true
 }
 
+func TLSFlagCheck(skipTLS bool) {
+	if skipTLS {
+		//prompt for the y/n
+		fmt.Print("Are you sure you want to continue with an insecure connection to " + cliConfig.GetString(KabURLKey) + " (y/n): ")
+
+		reader := bufio.NewReader(os.Stdin)
+		char, _, err := reader.ReadRune()
+		if err != nil {
+			fmt.Println(err)
+			//TODO handle incorrect characters or full yes
+		}
+		fmt.Println()
+		unicode.ToLower(char)
+		switch char {
+		case 'y':
+			cliConfig.Set("insecureTLS", true)
+			cliConfig.WriteConfig()
+		case 'n':
+			cliConfig.Set("insecureTLS", false)
+			cliConfig.WriteConfig()
+		}
+
+	} else {
+		// TODO prompt to say you have to specify the ca cert
+	}
+
+}
+
 // loginCmd represents the login command
 var loginCmd = &cobra.Command{
 	Use:   "login kabanero-cli-url -u Github userid \n  At the password prompt, enter your GitHub Password/PAT",
@@ -126,17 +157,9 @@ var loginCmd = &cobra.Command{
 			}
 		}
 
-		// if SkipTLS{
-		// serverConfig := map[string]interface{}{
-		// 	"server": map[string]string{
-		// 		"insecureTLS": "SkipTLS",
-		// 		"server":      cliConfig.GetString(KabURLKey),
-		// 	},
-		// }
-		// }
-		// cliConfig.Set(serverConfig)
-		cliConfig.Set("insecureTLS", SkipTLS)
-		cliConfig.WriteConfig()
+		TLSFlagCheck(SkipTLS)
+		// cliConfig.Set("insecureTLS", SkipTLS)
+		// cliConfig.WriteConfig()
 
 		kabLoginURL = getRESTEndpoint("login")
 
