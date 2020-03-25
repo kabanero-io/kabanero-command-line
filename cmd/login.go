@@ -33,7 +33,8 @@ import (
 )
 
 var (
-	SkipTLS bool
+	SkipTLS    bool
+	clientCert string
 )
 
 type LoginOptions struct {
@@ -104,7 +105,11 @@ func HandleTLSFLag(skipTLS bool) {
 		}
 
 	} else {
+		clientCert = "../test/wurst_cert"
+		cliConfig.Set(CertKey, clientCert)
+		cliConfig.WriteConfig()
 		// TODO prompt to say you have to specify the ca cert
+
 	}
 
 }

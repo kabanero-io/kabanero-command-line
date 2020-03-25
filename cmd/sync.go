@@ -18,8 +18,10 @@ package cmd
 import (
 	"bytes"
 	"crypto/tls"
+	"crypto/x509"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/http/httputil"
 	"os"
@@ -47,13 +49,6 @@ func getRESTEndpoint(appendValue string) string {
 }
 
 func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response, error) {
-	tr := &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: cliConfig.GetBool("insecureTLS")},
-	}
-	client := &http.Client{
-		Timeout:   time.Second * 30,
-		Transport: tr,
-	}
 
 	var resp *http.Response
 	var requestBody *bytes.Buffer
@@ -70,6 +65,26 @@ func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response
 		500: "Internal Server Error",
 		503: "Operator pod is not fully up",
 		539: "CLI has not been configured",
+	}
+
+	rootCAPool, _ := x509.SystemCertPool()
+	if rootCAPool == nil {
+		rootCAPool = x509.NewCertPool()
+	}
+	cert, err := ioutil.ReadFile(cliConfig.GetString(CertKey))
+	if err != nil {
+		// TODO handle able to read file w special messageand exit
+	}
+	rootCAPool.AppendCertsFromPEM(cert)
+
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: cliConfig.GetBool("insecureTLS"),
+			RootCAs: rootCAPool,
+		},
+	}
+	client := &http.Client{
+		Timeout:   time.Second * 30,
+		Transport: tr,
 	}
 
 	if jsonBody != nil {
