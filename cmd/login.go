@@ -95,8 +95,7 @@ func TLSFlagCheck(skipTLS bool) {
 			//TODO handle incorrect characters or full yes
 		}
 		fmt.Println()
-		unicode.ToLower(char)
-		switch char {
+		switch unicode.ToLower(char) {
 		case 'y':
 			cliConfig.Set("insecureTLS", true)
 			cliConfig.WriteConfig()
