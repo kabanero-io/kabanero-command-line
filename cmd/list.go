@@ -35,8 +35,11 @@ type KabStruct struct {
 	Status []StatusStruct `json:"status"`
 }
 type StatusStruct struct {
-	Version string
-	Status  string
+	Version        string
+	Status         string
+	DigestCheck    bool   `json:"digest check passed"`
+	ImageDigest    string `json:"image digest"`
+	KabaneroDigest string `json:"kabanero digest"`
 }
 
 // CommonStackStruct : represents the JSON returned for all the other stacks.
@@ -114,17 +117,17 @@ var listCmd = &cobra.Command{
 		tWriter.Init(os.Stdout, 0, 8, 0, '\t', 0)
 
 		//Kabenero Stacks
-		fmt.Fprintf(tWriter, "\n%s\t%s\t%s", KabStacksHeader, "Version", "Status")
-		fmt.Fprintf(tWriter, "\n%s\t%s\t%s", strings.Repeat("-", len(KabStacksHeader)), "-------", "------")
+		fmt.Fprintf(tWriter, "\n%s\t%s\t%s\t%s", KabStacksHeader, "Version", "Status", "Digest Check")
+		fmt.Fprintf(tWriter, "\n%s\t%s\t%s\t%s", strings.Repeat("-", len(KabStacksHeader)), "-------", "------", "------------")
 
 		for i := 0; i < len(data.KabStack); i++ {
 			for j := 0; j < len(data.KabStack[i].Status); j++ {
 				nameAndVersion := data.KabStack[i].Name + data.KabStack[i].Status[j].Version
 				if _, found := obsoleteMap[nameAndVersion]; found {
-					fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.KabStack[i].Name, data.KabStack[i].Status[j].Version, data.KabStack[i].Status[j].Status+" (obsolete)")
+					fmt.Fprintf(tWriter, "\n%s\t%s\t%s\t%t", data.KabStack[i].Name, data.KabStack[i].Status[j].Version, data.KabStack[i].Status[j].Status+" (obsolete)", data.KabStack[i].Status[j].DigestCheck)
 
 				} else {
-					fmt.Fprintf(tWriter, "\n%s\t%s\t%s", data.KabStack[i].Name, data.KabStack[i].Status[j].Version, data.KabStack[i].Status[j].Status)
+					fmt.Fprintf(tWriter, "\n%s\t%s\t%s\t%t", data.KabStack[i].Name, data.KabStack[i].Status[j].Version, data.KabStack[i].Status[j].Status, data.KabStack[i].Status[j].DigestCheck)
 				}
 			}
 		}
