@@ -29,22 +29,12 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"golang.org/x/crypto/ssh/terminal"
-	"k8s.io/cli-runtime/pkg/genericclioptions"
 )
 
 var (
 	SkipTLS    bool
 	clientCert string
 )
-
-type LoginOptions struct {
-	Username string
-	Password string
-
-	InsecureTLS bool
-	CertFile    string
-	genericclioptions.IOStreams
-}
 
 type JWTResponse struct {
 	JWT     string
@@ -85,7 +75,17 @@ func is06Compatible() bool {
 }
 
 func HandleTLSFLag(skipTLS bool) {
-	if skipTLS {
+	cliConfig.Set("insecureTLS", skipTLS)
+	cliConfig.WriteConfig()
+
+	if clientCert != "" {
+		cliConfig.Set(CertKey, clientCert)
+		cliConfig.WriteConfig()
+		return
+	}
+
+	if !skipTLS && clientCert == "" {
+
 		fmt.Print("Are you sure you want to continue with an insecure connection to " + cliConfig.GetString(KabURLKey) + " (y/n): ")
 
 		reader := bufio.NewReader(os.Stdin)
@@ -102,13 +102,12 @@ func HandleTLSFLag(skipTLS bool) {
 		case 'n':
 			cliConfig.Set("insecureTLS", false)
 			cliConfig.WriteConfig()
-		}
 
-	} else {
-		clientCert = "../test/wurst_cert"
-		cliConfig.Set(CertKey, clientCert)
-		cliConfig.WriteConfig()
-		// TODO prompt to say you have to specify the ca cert
+			if cliConfig.GetString(CertKey) == "" {
+				messageAndExit("To continue with a secure connection, provide certificate authority with --certificate-authority= at login. See login -h for help.")
+			}
+
+		}
 
 	}
 
@@ -224,6 +223,7 @@ func init() {
 	_ = loginCmd.MarkFlagRequired("username")
 
 	loginCmd.Flags().BoolVar(&SkipTLS, "insecure-skip-tls-verify", false, "If true, the server's certificate will not be checked for validity. This will make your HTTPS connections insecure")
+	loginCmd.Flags().StringVar(&clientCert, "certificate-authority", "", "Path to a cert file for the certificate authority")
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:

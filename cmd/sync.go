@@ -71,16 +71,22 @@ func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response
 	if rootCAPool == nil {
 		rootCAPool = x509.NewCertPool()
 	}
-	cert, err := ioutil.ReadFile(cliConfig.GetString(CertKey))
-	if err != nil {
-		// TODO handle able to read file w special messageand exit
+	if !cliConfig.GetBool("insecureTLS") {
+		fmt.Println("INSECURE!!!!", cliConfig.GetString(CertKey))
+		cert, err := ioutil.ReadFile(cliConfig.GetString(CertKey))
+		if err != nil {
+			messageAndExit(fmt.Sprintf("Problem with the certificate for %s, provided at %s", cliConfig.GetString(KabURLKey), cliConfig.GetString(CertKey)))
+		}
+		rootCAPool.AppendCertsFromPEM(cert)
 	}
-	rootCAPool.AppendCertsFromPEM(cert)
 
 	tr := &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: cliConfig.GetBool("insecureTLS"),
-			RootCAs: rootCAPool,
-		},
+		TLSClientConfig: &tls.Config{
+			RootCAs:            rootCAPool,
+			InsecureSkipVerify: cliConfig.GetBool("insecureTLS")},
+
+		// InsecureSkipVerify: cliConfig.GetBool("insecureTLS"),
+
 	}
 	client := &http.Client{
 		Timeout:   time.Second * 30,
@@ -118,6 +124,7 @@ func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response
 
 	resp, err = client.Do(req)
 	if err != nil {
+		fmt.Println(err)
 		messageAndExit("No response from url: " + cliConfig.GetString(KabURLKey))
 	}
 	if verboseHTTP {
