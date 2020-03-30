@@ -117,7 +117,7 @@ var listCmd = &cobra.Command{
 		tWriter.Init(os.Stdout, 0, 8, 0, '\t', 0)
 
 		//Kabenero Stacks
-		fmt.Fprintf(tWriter, "\n%s\t%s\t%s\t%s", KabStacksHeader, "Version", "Status", "Digest Check")
+		fmt.Fprintf(tWriter, "\n%s\t%s\t%s\t%s", KabStacksHeader, "Version", "Status", "Valid Digest")
 		fmt.Fprintf(tWriter, "\n%s\t%s\t%s\t%s", strings.Repeat("-", len(KabStacksHeader)), "-------", "------", "------------")
 
 		for i := 0; i < len(data.KabStack); i++ {
