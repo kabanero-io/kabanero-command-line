@@ -76,11 +76,17 @@ func is06Compatible() bool {
 
 func HandleTLSFLag(skipTLS bool) {
 	cliConfig.Set("insecureTLS", skipTLS)
-	cliConfig.WriteConfig()
+	err := cliConfig.WriteConfig()
+	if err != nil {
+		messageAndExit("There was a problem writing to the cli config")
+	}
 
 	if clientCert != "" {
 		cliConfig.Set(CertKey, clientCert)
-		cliConfig.WriteConfig()
+		err = cliConfig.WriteConfig()
+		if err != nil {
+			messageAndExit("There was a problem writing to the cli config")
+		}
 		return
 	}
 
@@ -98,10 +104,16 @@ func HandleTLSFLag(skipTLS bool) {
 		switch unicode.ToLower(char) {
 		case 'y':
 			cliConfig.Set("insecureTLS", true)
-			cliConfig.WriteConfig()
+			err = cliConfig.WriteConfig()
+			if err != nil {
+				messageAndExit("There was a problem writing to the cli config")
+			}
 		case 'n':
 			cliConfig.Set("insecureTLS", false)
-			cliConfig.WriteConfig()
+			err = cliConfig.WriteConfig()
+			if err != nil {
+				messageAndExit("There was a problem writing to the cli config")
+			}
 
 			if cliConfig.GetString(CertKey) == "" {
 				messageAndExit("To continue with a secure connection, provide certificate authority with --certificate-authority= at login. See login -h for help.")
