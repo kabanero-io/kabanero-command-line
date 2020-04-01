@@ -37,7 +37,7 @@ type KabStruct struct {
 type StatusStruct struct {
 	Version        string
 	Status         string
-	DigestCheck    bool   `json:"digest check passed"`
+	DigestCheck    string `json:"digest check"`
 	ImageDigest    string `json:"image digest"`
 	KabaneroDigest string `json:"kabanero digest"`
 }
@@ -124,10 +124,10 @@ var listCmd = &cobra.Command{
 			for j := 0; j < len(data.KabStack[i].Status); j++ {
 				nameAndVersion := data.KabStack[i].Name + data.KabStack[i].Status[j].Version
 				if _, found := obsoleteMap[nameAndVersion]; found {
-					fmt.Fprintf(tWriter, "\n%s\t%s\t%s\t%t", data.KabStack[i].Name, data.KabStack[i].Status[j].Version, data.KabStack[i].Status[j].Status+" (obsolete)", data.KabStack[i].Status[j].DigestCheck)
+					fmt.Fprintf(tWriter, "\n%s\t%s\t%s\t%s", data.KabStack[i].Name, data.KabStack[i].Status[j].Version, data.KabStack[i].Status[j].Status+" (obsolete)", data.KabStack[i].Status[j].DigestCheck)
 
 				} else {
-					fmt.Fprintf(tWriter, "\n%s\t%s\t%s\t%t", data.KabStack[i].Name, data.KabStack[i].Status[j].Version, data.KabStack[i].Status[j].Status, data.KabStack[i].Status[j].DigestCheck)
+					fmt.Fprintf(tWriter, "\n%s\t%s\t%s\t%s", data.KabStack[i].Name, data.KabStack[i].Status[j].Version, data.KabStack[i].Status[j].Status, data.KabStack[i].Status[j].DigestCheck)
 				}
 			}
 		}
