@@ -7,7 +7,6 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/hex"
-	"fmt"
 	"io"
 )
 
@@ -18,26 +17,17 @@ func Create32BKey(phrase string) string {
 }
 
 func EncryptString(value string, key string) string {
-
 	keySlice, _ := hex.DecodeString(key)
-	// keySlice := []byte(key)
 	acipher, _ := aes.NewCipher(keySlice)
-
 	gcm, _ := cipher.NewGCM(acipher)
-
 	nonce := make([]byte, gcm.NonceSize())
 	io.ReadFull(rand.Reader, nonce)
 	encryptedText := gcm.Seal(nonce, nonce, []byte(value), nil)
-	fmt.Println("encrypted jwt", encryptedText)
 	return base64.StdEncoding.EncodeToString(encryptedText)
-	// return string(encryptedText)
-	// return hex.EncodeToString(encryptedText)
 }
 
 func DecryptString(encryptedVal string, key string) string {
 	keySlice, _ := hex.DecodeString(key)
-	// keySlice := []byte(key)
-	// dataSlice, _ := hex.DecodeString(encryptedVal)
 	dataSlice, _ := base64.StdEncoding.DecodeString(encryptedVal)
 	block, _ := aes.NewCipher(keySlice)
 	gcm, _ := cipher.NewGCM(block)

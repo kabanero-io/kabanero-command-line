@@ -27,6 +27,8 @@ import (
 	"text/tabwriter"
 	"time"
 
+	"github.com/kabanero-io/kabanero-command-line/pkg/security"
+
 	"github.com/spf13/cobra"
 )
 
@@ -86,7 +88,8 @@ func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response
 
 	req.Header.Set("Content-Type", "application/json")
 	if !strings.Contains(url, "login") {
-		req.Header.Set("Authorization", "Bearer "+string(cliConfig.GetString("jwt")))
+		jwt := security.DecryptString(cliConfig.GetString("jwt"), cliConfig.GetString("key"))
+		req.Header.Set("Authorization", "Bearer "+jwt)
 
 		if cliConfig.GetString("jwt") == "" {
 			messageAndExit("Login to your kabanero instance")
