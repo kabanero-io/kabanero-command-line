@@ -37,7 +37,6 @@ func DecryptString(encryptedVal string, key string) string {
 	dataSlice, _ := base64.StdEncoding.DecodeString(encryptedVal)
 	block, _ := aes.NewCipher(keySlice)
 	gcm, _ := cipher.NewGCM(block)
-	nonce := make([]byte, gcm.NonceSize())
 	nonceSize := gcm.NonceSize()
 	nonce, cipherSlice := dataSlice[:nonceSize], dataSlice[nonceSize:]
 	decryptedText, _ := gcm.Open(nil, nonce, cipherSlice, nil)
