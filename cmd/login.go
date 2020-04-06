@@ -22,8 +22,11 @@ import (
 	"strconv"
 	"strings"
 	"syscall"
+	"time"
 
+	"github.com/kabanero-io/kabanero-command-line/pkg/security"
 	"github.com/spf13/cobra"
+
 	"github.com/spf13/viper"
 	"golang.org/x/crypto/ssh/terminal"
 )
@@ -130,7 +133,12 @@ var loginCmd = &cobra.Command{
 			Debug.log(err)
 			return err
 		}
-		cliConfig.Set("jwt", data.JWT)
+		key := security.Create32BKey((time.Now().String()))
+		cliConfig.Set("key", key)
+
+		encryptedJWT := security.EncryptString(data.JWT, key)
+		cliConfig.Set("jwt", encryptedJWT)
+
 		err = cliConfig.WriteConfig()
 		if err != nil {
 			return err
