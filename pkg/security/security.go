@@ -5,6 +5,7 @@ import (
 	"crypto/cipher"
 	"crypto/rand"
 	"crypto/sha256"
+	"encoding/base64"
 	"encoding/hex"
 	"fmt"
 	"io"
@@ -28,7 +29,8 @@ func EncryptString(value string, key string) string {
 	io.ReadFull(rand.Reader, nonce)
 	encryptedText := gcm.Seal(nonce, nonce, []byte(value), nil)
 	fmt.Println("encrypted jwt", encryptedText)
-	return string(encryptedText)
+	return base64.StdEncoding.EncodeToString(encryptedText)
+	// return string(encryptedText)
 	// return hex.EncodeToString(encryptedText)
 }
 
@@ -36,7 +38,7 @@ func DecryptString(encryptedVal string, key string) string {
 	keySlice, _ := hex.DecodeString(key)
 	// keySlice := []byte(key)
 	// dataSlice, _ := hex.DecodeString(encryptedVal)
-	dataSlice := []byte(encryptedVal)
+	dataSlice, _ := base64.StdEncoding.DecodeString(encryptedVal)
 	block, _ := aes.NewCipher(keySlice)
 	gcm, _ := cipher.NewGCM(block)
 	nonce := make([]byte, gcm.NonceSize())
