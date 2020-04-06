@@ -12,7 +12,10 @@ import (
 
 func Create32BKey(phrase string) string {
 	h := sha256.New()
-	h.Write([]byte(phrase))
+	_, err := h.Write([]byte(phrase))
+	if err != nil {
+		panic(err.Error())
+	}
 	return hex.EncodeToString(h.Sum(nil))
 }
 
