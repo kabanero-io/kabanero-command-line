@@ -21,7 +21,10 @@ func EncryptString(value string, key string) string {
 	acipher, _ := aes.NewCipher(keySlice)
 	gcm, _ := cipher.NewGCM(acipher)
 	nonce := make([]byte, gcm.NonceSize())
-	io.ReadFull(rand.Reader, nonce)
+	_, err := io.ReadFull(rand.Reader, nonce)
+	if err != nil {
+		panic(err.Error())
+	}
 	encryptedText := gcm.Seal(nonce, nonce, []byte(value), nil)
 	return base64.StdEncoding.EncodeToString(encryptedText)
 }
