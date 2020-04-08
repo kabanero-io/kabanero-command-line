@@ -88,12 +88,13 @@ func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response
 
 	req.Header.Set("Content-Type", "application/json")
 	if !strings.Contains(url, "login") {
+		if cliConfig.GetString("jwt") == "" || cliConfig.GetString("key") == "" {
+			messageAndExit("Login to your kabanero instance")
+		}
+
 		jwt := security.DecryptString(cliConfig.GetString("jwt"), cliConfig.GetString("key"))
 		req.Header.Set("Authorization", "Bearer "+jwt)
 
-		if cliConfig.GetString("jwt") == "" {
-			messageAndExit("Login to your kabanero instance")
-		}
 	}
 
 	if verboseHTTP {
