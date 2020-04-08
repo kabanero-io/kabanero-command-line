@@ -107,7 +107,8 @@ func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response
 
 	resp, err = client.Do(req)
 	if err != nil {
-		messageAndExit("No response from url: " + cliConfig.GetString(KabURLKey))
+		msg := "No response from url: " + cliConfig.GetString(KabURLKey)
+		messageandDebugExit(msg, msg+" "+err.Error())
 	}
 	if verboseHTTP {
 		responseDump, err := httputil.DumpResponse(resp, true)
