@@ -127,7 +127,7 @@ var listCmd = &cobra.Command{
 					fmt.Fprintf(tWriter, "\n%s\t%s\t%s\t%s", data.KabStack[i].Name, data.KabStack[i].Status[j].Version, data.KabStack[i].Status[j].Status+" (obsolete)", data.KabStack[i].Status[j].DigestCheck)
 
 				} else {
-					fmt.Fprintf(tWriter, "\n%s\t%s\t%s\t%s", data.KabStack[i].Name, data.KabStack[i].Status[j].Version, data.KabStack[i].Status[j].Status, data.KabStack[i].Status[j].DigestCheck)
+					fmt.Fprintf(tWriter, "\n%s\t%s\t%s\t%s", data.KabStack[i].Name, data.KabStack[i].Status[j].Version, data.KabStack[i].Status[j].Status+" ", data.KabStack[i].Status[j].DigestCheck)
 				}
 			}
 		}
