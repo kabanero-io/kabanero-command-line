@@ -182,7 +182,6 @@ func init() {
 	loginCmd.Flags().StringP("username", "u", "", "github username")
 	_ = loginCmd.MarkFlagRequired("username")
 	loginCmd.Flags().StringP("password", "p", "", "github password/PAT. If no password is provided, prompt will appear")
-	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
