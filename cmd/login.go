@@ -31,10 +31,6 @@ import (
 	"golang.org/x/crypto/ssh/terminal"
 )
 
-var (
-	password string
-)
-
 type JWTResponse struct {
 	JWT     string
 	Message string
@@ -95,6 +91,8 @@ var loginCmd = &cobra.Command{
 		var err error
 
 		username, _ := cmd.Flags().GetString("username")
+		password, _ := cmd.Flags().GetString("password")
+
 		if password == "" {
 			fmt.Printf("Password:")
 			bytePwd, err := terminal.ReadPassword(int(syscall.Stdin))
@@ -183,7 +181,7 @@ func init() {
 	rootCmd.AddCommand(loginCmd)
 	loginCmd.Flags().StringP("username", "u", "", "github username")
 	_ = loginCmd.MarkFlagRequired("username")
-	loginCmd.Flags().StringVar(&password, "password", "", "github password/PAT")
+	loginCmd.Flags().StringP("password", "p", "", "github password/PAT. If no password is provided, prompt will appear")
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
