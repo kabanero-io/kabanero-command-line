@@ -2,6 +2,7 @@
 
 #### Constant variables
 # Set a default VERSION only if it is not already set
+ARCH ?= amd64
 VERSION ?= 0.1.0
 COMMAND := kabanero
 BUILD_PATH := $(PWD)/build
@@ -21,7 +22,7 @@ CONTROLLER_BASE_URL := https://github.com/${GH_ORG}/controller/releases/download
 # CAUTION: All targets that use these variables must have the OS after the first '-' in their name.
 #          For example, these are all good: build-linux, tar-darwin, tar-darwin-new
 os = $(word 2,$(subst -, ,$@))
-build_name = $(COMMAND)-$(VERSION)-$(os)-amd64
+build_name = $(COMMAND)-$(VERSION)-$(os)-$(ARCH)
 build_binary = $(COMMAND)
 # build_binary = $(build_name)$(BINARY_EXT_$(os))
 package_binary = $(COMMAND)$(BINARY_EXT_$(os))
@@ -77,7 +78,7 @@ build-darwin: ## Build the OSX binary
 .PHONY: build-windows
 build-windows: ## Build the windows binary
 build-linux build-darwin build-windows: ## Build the binary of the respective operating system
-	GOOS=$(os) GOARCH=amd64 go build -o $(BUILD_PATH)/$(build_binary) -ldflags "-X main.VERSION=$(VERSION)"
+	GOOS=$(os) GOARCH=$(ARCH) go build -o $(BUILD_PATH)/$(build_binary) -ldflags "-X main.VERSION=$(VERSION)"
 
 .PHONY: package
 package: tar-linux tar-windows ## Creates packages for all operating systems and store them in package/ dir
