@@ -91,13 +91,17 @@ var loginCmd = &cobra.Command{
 		var err error
 
 		username, _ := cmd.Flags().GetString("username")
-		fmt.Printf("Password:")
-		bytePwd, err := terminal.ReadPassword(int(syscall.Stdin))
-		if err != nil {
-			return err
+		password, _ := cmd.Flags().GetString("password")
+
+		if password == "" {
+			fmt.Printf("Password:")
+			bytePwd, err := terminal.ReadPassword(int(syscall.Stdin))
+			if err != nil {
+				return err
+			}
+			password = strings.TrimSpace(string(bytePwd))
+			fmt.Println()
 		}
-		password := strings.TrimSpace(string(bytePwd))
-		fmt.Println()
 
 		var kabLoginURL string
 
@@ -177,7 +181,7 @@ func init() {
 	rootCmd.AddCommand(loginCmd)
 	loginCmd.Flags().StringP("username", "u", "", "github username")
 	_ = loginCmd.MarkFlagRequired("username")
-	// Here you will define your flags and configuration settings.
+	loginCmd.Flags().StringP("password", "p", "", "github password/PAT. If no password is provided, prompt will appear")
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
