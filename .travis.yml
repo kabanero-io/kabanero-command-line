@@ -87,14 +87,10 @@ jobs:
           tags: true
     - name: Deploy Release P/Z
       stage: deploy
-      matrix:
-        include:
-          - os: linux
-            arch: ARCH=ppc64le
-          - os: linux
-            arch: ARCH=s390x
+      os: linux
+      arch: ppc64le
       script:
-        - make ARCH=$ARCH VERSION=${TRAVIS_TAG}  package-pz
+        - make ARCH=ppc64le VERSION=${TRAVIS_TAG}  package-pz
         - make deploy
       deploy:
         provider: releases
