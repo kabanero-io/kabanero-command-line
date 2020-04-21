@@ -31,7 +31,7 @@ test-template: &test-template
   <<: *install-controller
   script: make test
 
-linux-deploy-template: &linux-deploy-template
+standard-deploy-template: &standard-deploy-template
   stage: deploy
   os: linux
   script:
@@ -86,37 +86,18 @@ jobs:
         on:
           branch: master
           tags: true
-    - name: Deploy Release win/linux
-      stage: deploy
-      os: linux
-      script:
-        - make VERSION=${TRAVIS_TAG}  package
-        - make deploy
-      deploy:
-        provider: releases
-        skip_cleanup: true
-        api_key: "$GITHUB_OAUTH_TOKEN"
-        file: package/*
-        file_glob: true
-        on:
-          branch: master
-          tags: true
-    - name: Deploy Release P
-      stage: deploy
-      os: linux        
+    - <<: *standard-deploy-template
+      name: Deploy Release win/linux
+      env:
+        - ARCH=amd64
+        - PACKAGE=package
+    - <<: *standard-deploy-template
+      name: Deploy Release P  
       arch: ppc64le
-      script:
-        - make ARCH=ppc64le VERSION=${TRAVIS_TAG}  package-pz
-      deploy:
-        provider: releases
-        skip_cleanup: true
-        api_key: "$GITHUB_OAUTH_TOKEN"
-        file: package/*
-        file_glob: true
-        on:
-          branch: master
-          tags: true
-    - <<: *linux-deploy-template
+      env:
+        - ARCH=s390x
+        - PACKAGE=package-pz
+    - <<: *standard-deploy-template
       name: Deploy Release Z 
       arch: s390x
       env:
