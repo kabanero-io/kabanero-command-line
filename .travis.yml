@@ -34,6 +34,9 @@ test-template: &test-template
 linux-deploy-template: &linux-deploy-template
   stage: deploy
   os: linux
+  script:
+    - make ARCH=$ARCH VERSION=${TRAVIS_TAG}  $PACKAGE
+    - make deploy
   deploy:
     provider: releases
     skip_cleanup: true
@@ -116,7 +119,6 @@ jobs:
     - <<: &linux-deploy-template
       name: Deploy Release Z 
       arch: s390x
-      before_deploy:
-        script:
-          - make ARCH=s390x VERSION=${TRAVIS_TAG}  package-pz
-          - make deploy
+      env:
+        - ARCH=s390x
+        - PACKAGE=package-pz
