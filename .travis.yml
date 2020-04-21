@@ -104,7 +104,6 @@ jobs:
       arch: ppc64le
       script:
         - make ARCH=ppc64le VERSION=${TRAVIS_TAG}  package-pz
-        - make deploy
       deploy:
         provider: releases
         skip_cleanup: true
@@ -117,6 +116,7 @@ jobs:
     - <<: &linux-deploy-template
       name: Deploy Release Z 
       arch: s390x
-      script:
-        - make ARCH=s390x VERSION=${TRAVIS_TAG}  package-pz
-        - make deploy
+      before_deploy:
+        script:
+          - make ARCH=s390x VERSION=${TRAVIS_TAG}  package-pz
+          - make deploy
