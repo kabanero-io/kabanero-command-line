@@ -95,7 +95,7 @@ jobs:
       name: Deploy Release P  
       arch: ppc64le
       env:
-        - ARCH=s390x
+        - ARCH=ppc64le
         - PACKAGE=package-pz
     - <<: *standard-deploy-template
       name: Deploy Release Z 
