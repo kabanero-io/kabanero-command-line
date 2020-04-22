@@ -17,18 +17,9 @@ stages:
   - name: test
   - name: deploy
     if: tag IS present
-
-install-controller: &install-controller
-  install:
-      - if [ "$TRAVIS_OS_NAME" = "windows" ]; then choco install make; fi
-      # - make install-controller
-      # manually set the list of stacks to test
-      # the stacks repo will generate their own list of stacks that have changed and should be tested
-      - export STACKSLIST=incubator/nodejs
       
-test-template: &test-template
+test-template: &test-template #empty test
   stage: test
-  <<: *install-controller
   script: make test
 
 standard-deploy-template: &standard-deploy-template
@@ -90,7 +81,7 @@ jobs:
       name: Deploy Release win/linux
       env:
         - ARCH=amd64
-        - PACKAGE=package
+        - PACKAGE=package-win-and-linux
     - <<: *standard-deploy-template
       name: Deploy Release P  
       arch: ppc64le
