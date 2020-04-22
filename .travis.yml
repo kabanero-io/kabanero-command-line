@@ -23,6 +23,7 @@ install-controller: &install-controller
       - if [ "$TRAVIS_OS_NAME" = "windows" ]; then choco install make; fi
       
 test-template: &test-template
+  <<: *install-controller
   stage: test
   script: make test
 
