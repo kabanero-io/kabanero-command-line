@@ -18,12 +18,12 @@ stages:
   - name: deploy
     if: tag IS present
 
-install-controller: &install-controller
+install-win-req: &install-win-req
   install:
       - if [ "$TRAVIS_OS_NAME" = "windows" ]; then choco install make; fi
       
 test-template: &test-template
-  <<: *install-controller
+  <<: *install-win-req
   stage: test
   script: make test
 
