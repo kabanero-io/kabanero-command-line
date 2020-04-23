@@ -77,15 +77,19 @@ build-linux: ## Build the linux binary
 build-darwin: ## Build the OSX binary
 .PHONY: build-windows
 build-windows: ## Build the windows binary
+
 build-linux build-darwin build-windows: ## Build the binary of the respective operating system
 	GOOS=$(os) GOARCH=$(ARCH) go build -o $(BUILD_PATH)/$(build_binary) -ldflags "-X main.VERSION=$(VERSION)"
 
-.PHONY: package
-package: tar-linux tar-windows ## Creates packages for all operating systems and store them in package/ dir
+.PHONY: package-win-and-linux
+package-win-and-linux: tar-linux tar-windows ## Creates packages for all operating systems and store them in package/ dir
 # package: tar-linux deb-linux rpm-linux tar-darwin brew-darwin tar-windows ## Creates packages for all operating systems and store them in package/ dir
 
 .PHONY: package-osx
 package-osx: tar-darwin brew-darwin
+
+.PHONY: package-pz
+package-pz: tar-linux
 
 .PHONY: tar-linux
 tar-linux: build-linux ## Build the linux binary and package it in a .tar file
