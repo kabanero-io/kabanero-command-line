@@ -10,7 +10,9 @@ import (
 type DescribeInfo struct {
 	Name           string
 	Version        string
+	Project        string
 	Source         string `json:"git repo url"`
+	Image          string `json:"image"`
 	Status         string
 	DigestCheck    string `json:"digest check"`
 	ImageDigest    string `json:"image digest"`
@@ -41,7 +43,9 @@ var describeCmd = &cobra.Command{
 		Debug.log(describeData)
 		fmt.Println("stack name: ", describeData.Name)
 		fmt.Println("version: ", describeData.Version)
+		fmt.Println("project: ", describeData.Project)
 		fmt.Println("source: ", describeData.Source)
+		fmt.Println("image: ", describeData.Image)
 		fmt.Println("status: ", describeData.Status)
 		fmt.Println("digest check: ", describeData.DigestCheck)
 		fmt.Println("kabanero digest: ", describeData.KabaneroDigest)
