@@ -25,8 +25,10 @@ import (
 	"strings"
 	"syscall"
 	"unicode"
-
+	"time"
+	"github.com/kabanero-io/kabanero-command-line/pkg/security"
 	"github.com/spf13/cobra"
+
 	"github.com/spf13/viper"
 	"golang.org/x/crypto/ssh/terminal"
 )
@@ -43,6 +45,7 @@ type JWTResponse struct {
 
 func parseKabURL(url string) string {
 	url = strings.TrimPrefix(url, "https://")
+	url = strings.TrimPrefix(url, "http://")
 	url = strings.TrimSuffix(url, "/")
 	return url
 }
@@ -147,13 +150,17 @@ var loginCmd = &cobra.Command{
 		var err error
 
 		username, _ := cmd.Flags().GetString("username")
-		fmt.Printf("Password:")
-		bytePwd, err := terminal.ReadPassword(int(syscall.Stdin))
-		if err != nil {
-			return err
+		password, _ := cmd.Flags().GetString("password")
+
+		if password == "" {
+			fmt.Printf("Password:")
+			bytePwd, err := terminal.ReadPassword(int(syscall.Stdin))
+			if err != nil {
+				return err
+			}
+			password = strings.TrimSpace(string(bytePwd))
+			fmt.Println()
 		}
-		password := strings.TrimSpace(string(bytePwd))
-		fmt.Println()
 
 		var kabLoginURL string
 
@@ -193,7 +200,12 @@ var loginCmd = &cobra.Command{
 			Debug.log(err)
 			return err
 		}
-		cliConfig.Set("jwt", data.JWT)
+		key := security.Create32BKey((time.Now().String()))
+		cliConfig.Set("key", key)
+
+		encryptedJWT := security.EncryptString(data.JWT, key)
+		cliConfig.Set("jwt", encryptedJWT)
+
 		err = cliConfig.WriteConfig()
 		if err != nil {
 			return err
@@ -233,7 +245,7 @@ func init() {
 	loginCmd.Flags().StringP("username", "u", "", "github username")
 
 	_ = loginCmd.MarkFlagRequired("username")
-
+	loginCmd.Flags().StringP("password", "p", "", "github password/PAT. If no password is provided, prompt will appear")
 	loginCmd.Flags().BoolVar(&SkipTLS, "insecure-skip-tls-verify", false, "If true, the server's certificate will not be checked for validity. This will make your HTTPS connections insecure")
 	loginCmd.Flags().StringVar(&clientCert, "certificate-authority", "", "Path to a cert file for the certificate authority")
 

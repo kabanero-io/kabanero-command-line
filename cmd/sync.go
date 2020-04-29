@@ -29,6 +29,8 @@ import (
 	"text/tabwriter"
 	"time"
 
+	"github.com/kabanero-io/kabanero-command-line/pkg/security"
+
 	"github.com/spf13/cobra"
 )
 
@@ -107,11 +109,13 @@ func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response
 
 	req.Header.Set("Content-Type", "application/json")
 	if !strings.Contains(url, "login") {
-		req.Header.Set("Authorization", "Bearer "+string(cliConfig.GetString("jwt")))
-
-		if cliConfig.GetString("jwt") == "" {
+		if cliConfig.GetString("jwt") == "" || cliConfig.GetString("key") == "" {
 			messageAndExit("Login to your kabanero instance")
 		}
+
+		jwt := security.DecryptString(cliConfig.GetString("jwt"), cliConfig.GetString("key"))
+		req.Header.Set("Authorization", "Bearer "+jwt)
+
 	}
 
 	if verboseHTTP {
@@ -124,8 +128,8 @@ func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response
 
 	resp, err = client.Do(req)
 	if err != nil {
-		fmt.Println(err)
-		messageAndExit("No response from url: " + cliConfig.GetString(KabURLKey))
+		msg := "No response from url: " + cliConfig.GetString(KabURLKey)
+		messageandDebugExit(msg, msg+" "+err.Error())
 	}
 	if verboseHTTP {
 		responseDump, err := httputil.DumpResponse(resp, true)

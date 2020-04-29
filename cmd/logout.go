@@ -36,6 +36,7 @@ have been interacting with.`,
 
 		defer resp.Body.Close()
 		cliConfig.Set("jwt", "")
+		cliConfig.Set("key", "")
 		err = cliConfig.WriteConfig()
 		if err != nil {
 			return err
