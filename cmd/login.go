@@ -35,8 +35,8 @@ import (
 )
 
 var (
-	SkipTLS    bool
-	clientCert string
+	InsecureTLS bool
+	clientCert  string
 )
 
 type JWTResponse struct {
@@ -78,8 +78,8 @@ func is06Compatible() bool {
 	return true
 }
 
-func HandleTLSFLag(skipTLS bool) {
-	cliConfig.Set("insecureTLS", skipTLS)
+func HandleTLSFLag(insecureTLS bool) {
+	cliConfig.Set("insecureTLS", insecureTLS)
 	err := cliConfig.WriteConfig()
 	if err != nil {
 		messageAndExit("There was a problem writing to the cli config")
@@ -94,7 +94,7 @@ func HandleTLSFLag(skipTLS bool) {
 		return
 	}
 
-	if !skipTLS && clientCert == "" {
+	if !insecureTLS && clientCert == "" {
 
 		fmt.Print("Are you sure you want to continue with an insecure connection to " + cliConfig.GetString(KabURLKey) + " (y/n): ")
 
@@ -120,7 +120,7 @@ func HandleTLSFLag(skipTLS bool) {
 			}
 
 			if cliConfig.GetString(CertKey) == "" {
-				messageAndExit("To continue with a secure connection, provide path to certificate with --certificate-authority= at login. See login -h for help.")
+				messageAndExit("To continue with a secure connection, provide path to certificate with --certificate-authority at login. See login -h for help.")
 			}
 
 		}
@@ -178,7 +178,7 @@ var loginCmd = &cobra.Command{
 			}
 		}
 
-		HandleTLSFLag(SkipTLS)
+		HandleTLSFLag(InsecureTLS)
 
 		kabLoginURL = getRESTEndpoint("login")
 
@@ -246,7 +246,7 @@ func init() {
 
 	_ = loginCmd.MarkFlagRequired("username")
 	loginCmd.Flags().StringP("password", "p", "", "github password/PAT. If no password is provided, prompt will appear")
-	loginCmd.Flags().BoolVar(&SkipTLS, "insecure-skip-tls-verify", false, "If true, the server's certificate will not be checked for validity. This will make your HTTPS connections insecure")
+	loginCmd.Flags().BoolVar(&InsecureTLS, "insecure-skip-tls-verify", false, "If true, the server's certificate will not be checked for validity. This will make your HTTPS connections insecure")
 	loginCmd.Flags().StringVar(&clientCert, "certificate-authority", "", "Path to a cert file for the certificate authority")
 
 	// Cobra supports Persistent Flags which will work for this command
