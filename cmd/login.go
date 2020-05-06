@@ -123,6 +123,9 @@ func HandleTLSFLag(insecureTLS bool) {
 				messageAndExit("To continue with a secure connection, provide path to certificate with --certificate-authority at login. See login -h for help.")
 			}
 
+		default:
+			messageAndExit("Please enter y or n")
+
 		}
 
 	}
