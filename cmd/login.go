@@ -19,8 +19,6 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
-	"github.com/kabanero-io/kabanero-command-line/pkg/security"
-	"github.com/spf13/cobra"
 	"net/http"
 	"os"
 	"strconv"
@@ -28,6 +26,9 @@ import (
 	"syscall"
 	"time"
 	"unicode"
+
+	"github.com/kabanero-io/kabanero-command-line/pkg/security"
+	"github.com/spf13/cobra"
 
 	"github.com/spf13/viper"
 	"golang.org/x/crypto/ssh/terminal"
@@ -145,7 +146,6 @@ var loginCmd = &cobra.Command{
 	kabanero login -u myGithubID 
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		// genericclioptions
 		Debug.log("login called")
 		var err error
 
