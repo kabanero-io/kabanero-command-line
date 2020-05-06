@@ -120,7 +120,7 @@ func HandleTLSFLag(skipTLS bool) {
 			}
 
 			if cliConfig.GetString(CertKey) == "" {
-				messageAndExit("To continue with a secure connection, provide certificate authority with --certificate-authority= at login. See login -h for help.")
+				messageAndExit("To continue with a secure connection, provide path to certificate with --certificate-authority= at login. See login -h for help.")
 			}
 
 		}
