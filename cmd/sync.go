@@ -74,7 +74,6 @@ func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response
 		rootCAPool = x509.NewCertPool()
 	}
 	if !cliConfig.GetBool("insecureTLS") {
-		fmt.Println("INSECURE!!!!", cliConfig.GetString(CertKey))
 		cert, err := ioutil.ReadFile(cliConfig.GetString(CertKey))
 		if err != nil {
 			messageAndExit(fmt.Sprintf("Problem with the certificate for %s, provided at %s", cliConfig.GetString(KabURLKey), cliConfig.GetString(CertKey)))
@@ -86,9 +85,6 @@ func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response
 		TLSClientConfig: &tls.Config{
 			RootCAs:            rootCAPool,
 			InsecureSkipVerify: cliConfig.GetBool("insecureTLS")},
-
-		// InsecureSkipVerify: cliConfig.GetBool("insecureTLS"),
-
 	}
 	client := &http.Client{
 		Timeout:   time.Second * 30,
