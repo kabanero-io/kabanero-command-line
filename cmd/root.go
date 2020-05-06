@@ -27,6 +27,7 @@ var (
 	verboseHTTP     bool
 	klogInitialized = false
 	KabURLKey       = "KABURL"
+	CertKey         = "CertLocation"
 )
 
 func homeDir() string {

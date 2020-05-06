@@ -18,8 +18,10 @@ package cmd
 import (
 	"bytes"
 	"crypto/tls"
+	"crypto/x509"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/http/httputil"
 	"os"
@@ -49,13 +51,6 @@ func getRESTEndpoint(appendValue string) string {
 }
 
 func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response, error) {
-	tr := &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-	}
-	client := &http.Client{
-		Timeout:   time.Second * 30,
-		Transport: tr,
-	}
 
 	var resp *http.Response
 	var requestBody *bytes.Buffer
@@ -72,6 +67,28 @@ func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response
 		500: "Internal Server Error",
 		503: "Operator pod is not fully up",
 		539: "CLI has not been configured",
+	}
+
+	rootCAPool, _ := x509.SystemCertPool()
+	if rootCAPool == nil {
+		rootCAPool = x509.NewCertPool()
+	}
+	if !cliConfig.GetBool("insecureTLS") {
+		cert, err := ioutil.ReadFile(cliConfig.GetString(CertKey))
+		if err != nil {
+			messageAndExit(fmt.Sprintf("Problem with the certificate for %s, provided at %s", cliConfig.GetString(KabURLKey), cliConfig.GetString(CertKey)))
+		}
+		rootCAPool.AppendCertsFromPEM(cert)
+	}
+
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{
+			RootCAs:            rootCAPool,
+			InsecureSkipVerify: cliConfig.GetBool("insecureTLS")},
+	}
+	client := &http.Client{
+		Timeout:   time.Second * 30,
+		Transport: tr,
 	}
 
 	if jsonBody != nil {
@@ -107,8 +124,8 @@ func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response
 
 	resp, err = client.Do(req)
 	if err != nil {
-		msg := "No response from url: " + cliConfig.GetString(KabURLKey)
-		messageandDebugExit(msg, msg+" "+err.Error())
+		msg := "Could not connect to url: " + cliConfig.GetString(KabURLKey) + "\nError: " + err.Error()
+		messageAndExit(msg)
 	}
 	if verboseHTTP {
 		responseDump, err := httputil.DumpResponse(resp, true)

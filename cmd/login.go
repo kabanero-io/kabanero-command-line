@@ -16,19 +16,27 @@ limitations under the License.
 package cmd
 
 import (
+	"bufio"
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 	"syscall"
 	"time"
+	"unicode"
 
 	"github.com/kabanero-io/kabanero-command-line/pkg/security"
 	"github.com/spf13/cobra"
 
 	"github.com/spf13/viper"
 	"golang.org/x/crypto/ssh/terminal"
+)
+
+var (
+	InsecureTLS bool
+	clientCert  string
 )
 
 type JWTResponse struct {
@@ -68,6 +76,60 @@ func is06Compatible() bool {
 		return false
 	}
 	return true
+}
+
+func HandleTLSFLag(insecureTLS bool) {
+	cliConfig.Set("insecureTLS", insecureTLS)
+	err := cliConfig.WriteConfig()
+	if err != nil {
+		messageAndExit("There was a problem writing to the cli config")
+	}
+
+	if clientCert != "" {
+		cliConfig.Set(CertKey, clientCert)
+		err = cliConfig.WriteConfig()
+		if err != nil {
+			messageAndExit("There was a problem writing to the cli config")
+		}
+		return
+	}
+
+	if !insecureTLS && clientCert == "" {
+
+		fmt.Print("Are you sure you want to continue with an insecure connection to " + cliConfig.GetString(KabURLKey) + " (y/n): ")
+
+		reader := bufio.NewReader(os.Stdin)
+		char, _, err := reader.ReadRune()
+		if err != nil {
+			fmt.Println(err)
+			//TODO handle incorrect characters or full yes
+		}
+		fmt.Println()
+		switch unicode.ToLower(char) {
+		case 'y':
+			cliConfig.Set("insecureTLS", true)
+			err = cliConfig.WriteConfig()
+			if err != nil {
+				messageAndExit("There was a problem writing to the cli config")
+			}
+		case 'n':
+			cliConfig.Set("insecureTLS", false)
+			err = cliConfig.WriteConfig()
+			if err != nil {
+				messageAndExit("There was a problem writing to the cli config")
+			}
+
+			if cliConfig.GetString(CertKey) == "" {
+				messageAndExit("To continue with a secure connection, provide path to certificate with --certificate-authority at login. See login -h for help.")
+			}
+
+		default:
+			messageAndExit("Please enter y or n")
+
+		}
+
+	}
+
 }
 
 // loginCmd represents the login command
@@ -118,6 +180,9 @@ var loginCmd = &cobra.Command{
 				messageAndExit("No Kabanero instance url specified")
 			}
 		}
+
+		HandleTLSFLag(InsecureTLS)
+
 		kabLoginURL = getRESTEndpoint("login")
 
 		requestBody, _ := json.Marshal(map[string]string{"gituser": username, "gitpat": password})
@@ -179,9 +244,13 @@ var loginCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(loginCmd)
+
 	loginCmd.Flags().StringP("username", "u", "", "github username")
+
 	_ = loginCmd.MarkFlagRequired("username")
 	loginCmd.Flags().StringP("password", "p", "", "github password/PAT. If no password is provided, prompt will appear")
+	loginCmd.Flags().BoolVar(&InsecureTLS, "insecure-skip-tls-verify", false, "If true, the server's certificate will not be checked for validity. This will make your HTTPS connections insecure")
+	loginCmd.Flags().StringVar(&clientCert, "certificate-authority", "", "Path to a cert file for the certificate authority")
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
