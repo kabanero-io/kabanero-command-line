@@ -62,7 +62,7 @@ func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response
 		400: "Stack Version not found/version not found/ jwt expired",
 		// 401: "Session expired or invalid certs",
 		// 404: "Unable to reach services endpoint",
-		424: "Kab CR did not specify pipelines",
+		424: "Kab CR config errors",
 		429: "GitHub retry limit exceeded",
 		500: "Internal Server Error",
 		503: "Operator pod is not fully up",
