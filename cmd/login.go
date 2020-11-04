@@ -68,12 +68,14 @@ func is06Compatible() bool {
 	if servicesVersion == "latest" {
 		return true
 	}
-	servicesVersion1stVal, _ := strconv.Atoi(strings.Split(servicesVersion, ".")[0])
-	servicesVersion2ndVal, _ := strconv.Atoi(strings.Split(servicesVersion, ".")[1])
-	if servicesVersion2ndVal < 6 && servicesVersion1stVal == 0 {
+	if strings.Contains(servicesVersion, ".") { //check if this is a version eg: 0.9.1 vs a sha256
+		servicesVersion1stVal, _ := strconv.Atoi(strings.Split(servicesVersion, ".")[0])
+		servicesVersion2ndVal, _ := strconv.Atoi(strings.Split(servicesVersion, ".")[1])
+		if servicesVersion2ndVal < 6 && servicesVersion1stVal == 0 {
 
-		fmt.Printf("\nYour current CLI version (%s) is incompatible with the command line service image (%s). Please upgrade your command line service to version 0.6.0 or greater, or get a version of the CLI that matches the service image\n", VERSION, servicesVersion)
-		return false
+			fmt.Printf("\nYour current CLI version (%s) is incompatible with the command line service image (%s). Please upgrade your command line service to version 0.6.0 or greater, or get a version of the CLI that matches the service image\n", VERSION, servicesVersion)
+			return false
+		}
 	}
 	return true
 }
