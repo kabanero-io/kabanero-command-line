@@ -4,14 +4,15 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
-	"crypto/sha256"
+	"crypto/sha512"
+
 	"encoding/base64"
 	"encoding/hex"
 	"io"
 )
 
 func Create32BKey(phrase string) string {
-	h := sha256.New()
+	h := sha512.New()
 	_, err := h.Write([]byte(phrase))
 	if err != nil {
 		panic(err.Error())
