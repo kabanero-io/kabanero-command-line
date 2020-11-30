@@ -205,7 +205,7 @@ var loginCmd = &cobra.Command{
 			Debug.log(err)
 			return err
 		}
-		key := security.Create32BKey((time.Now().String()))
+		key := security.Create64BKey((time.Now().String()))
 		cliConfig.Set("key", key)
 
 		encryptedJWT := security.EncryptString(data.JWT, key)
