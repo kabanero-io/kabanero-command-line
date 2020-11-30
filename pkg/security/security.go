@@ -11,7 +11,7 @@ import (
 	"io"
 )
 
-func Create32BKey(phrase string) string {
+func Create64BKey(phrase string) string {
 	h := sha512.New()
 	_, err := h.Write([]byte(phrase))
 	if err != nil {
