@@ -115,11 +115,15 @@ func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response
 	}
 
 	if verboseHTTP {
-		requestDump, err := httputil.DumpRequest(req, true)
-		if err != nil {
-			fmt.Println(err)
+		if strings.Contains(url, "login") {
+			Info.log("Login to: " + url)
+		} else {
+			requestDump, err := httputil.DumpRequest(req, true)
+			if err != nil {
+				fmt.Println(err)
+			}
+			Info.log("requestDump: " + string(requestDump))
 		}
-		Info.log("requestDump: " + string(requestDump))
 	}
 
 	resp, err = client.Do(req)
