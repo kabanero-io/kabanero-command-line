@@ -1,14 +1,15 @@
-# Installation
-## OSX, Windows, Linux
+# Build Guide
+
+## Installation
+### OSX, Windows, Linux
 You can download the binary `kabanero` command from here:
 https://github.com/kabanero-io/kabanero-command-line/releases
 
 
-# Generating the README.md
+## Generating the README.md
 The project uses Cobra's built in mechanism to generate the CLI README.md.  Run the following command to generate the README:
     ` ./build/kabanero docs --docFile ./README.md`
 
-# Building from Source
 
 ## Travis build
 The project is instrumented with Travis CI and with an appropriate `Makefile`. Most of the build logic is triggered from within the `Makefile`.
@@ -19,7 +20,17 @@ Upon commit, only the `test` and `lint` actions are executed by Travis.
 
 In order for Travis to go all the way to `package` and `deploy`, you need to create a *new* release on Github(one that is tagged with a never seen before tag). When you create a new release, a Travis build will automatically run, and the resulting artifacts will be posted on the `Releases` page. With each new release or release candidate don't forget to indicate on the "This is a pre-release" tick box. Update notable changes in the comments section from the last release (check the commits from now to last release).
 
-## Manual build
+## Updating the brew install for new releases
+
+The homebrew repository for Kabanero CLI: https://github.com/kabanero-io/homebrew-kabanero
+
+This brew install method is similar to what the Appsody team did for the Appsody CLI. You just have to update the `url` and `sha` fields. 
+
+`url`: This will be the url for the homebrew tar that gets generated from the travis build for a new release. 
+
+`sha`: Download the homebrew tar locally and calculate the sha256 for it. You can use the command:  `shasum -a 256 <homebrew_tar>` 
+
+## Building the CLI manually
 You can also test the build process manually.
 
 
@@ -53,3 +64,5 @@ Here's a description of the various artifacts as you would see them in a release
 
 ### Running the CLI
 `./kabanero`
+
+
