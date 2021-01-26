@@ -193,6 +193,8 @@ var loginCmd = &cobra.Command{
 		if err != nil {
 			messageAndExit("login: Error on sendHTTPRequest:")
 		}
+		requestBody = nil
+		password = ""
 
 		Debug.log("RESPONSE ", kabLoginURL, resp.StatusCode, http.StatusText(resp.StatusCode))
 		if resp.StatusCode == 404 {

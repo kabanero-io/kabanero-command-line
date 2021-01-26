@@ -127,6 +127,8 @@ func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response
 	}
 
 	resp, err = client.Do(req)
+	req = nil
+	requestBody = nil
 	if err != nil {
 		msg := "Could not connect to url: " + cliConfig.GetString(KabURLKey) + "\nError: " + err.Error()
 		messageAndExit(msg)
