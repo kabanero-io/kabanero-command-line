@@ -30,6 +30,8 @@ import (
 	"github.com/kabanero-io/kabanero-command-line/pkg/security"
 	"github.com/spf13/cobra"
 
+	"encoding/base64"
+
 	"github.com/spf13/viper"
 	"golang.org/x/crypto/ssh/terminal"
 )
@@ -186,8 +188,9 @@ var loginCmd = &cobra.Command{
 		HandleTLSFLag(InsecureTLS)
 
 		kabLoginURL = getRESTEndpoint("login")
-
-		requestBody, _ := json.Marshal(map[string]string{"gituser": username, "gitpat": password})
+		ePass := base64.StdEncoding.EncodeToString([]byte(password))
+		eUser := base64.StdEncoding.EncodeToString([]byte(username))
+		requestBody, _ := json.Marshal(map[string]string{"000_ERG_TEN_TWENTY": eUser, "010_BOHM_THIRTY_FIVE": ePass})
 
 		resp, err := sendHTTPRequest("POST", kabLoginURL, requestBody)
 		if err != nil {
