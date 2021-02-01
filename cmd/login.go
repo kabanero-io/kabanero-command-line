@@ -159,15 +159,34 @@ var loginCmd = &cobra.Command{
 		username, _ := cmd.Flags().GetString("username")
 		password, _ := cmd.Flags().GetString("password")
 
+		if username == "" {
+			fmt.Printf("Username:")
+			bytePwd, err := terminal.ReadPassword(int(syscall.Stdin))
+			if err != nil {
+				return err
+			}
+			//ePass = base64.StdEncoding.EncodeToString(bytePwd)
+			username = strings.TrimSpace(string(bytePwd))
+			fmt.Println()
+		}
+
 		if password == "" {
 			fmt.Printf("Password:")
 			bytePwd, err := terminal.ReadPassword(int(syscall.Stdin))
 			if err != nil {
 				return err
 			}
+			//ePass = base64.StdEncoding.EncodeToString(bytePwd)
 			password = strings.TrimSpace(string(bytePwd))
 			fmt.Println()
 		}
+		ePass := base64.StdEncoding.EncodeToString([]byte(password))
+		eUser := base64.StdEncoding.EncodeToString([]byte(username))
+
+		password = ""
+		username = ""
+		fmt.Println(username)
+		fmt.Println(password)
 
 		var kabLoginURL string
 
@@ -188,13 +207,16 @@ var loginCmd = &cobra.Command{
 		HandleTLSFLag(InsecureTLS)
 
 		kabLoginURL = getRESTEndpoint("login")
-		ePass := base64.StdEncoding.EncodeToString([]byte(password))
-		eUser := base64.StdEncoding.EncodeToString([]byte(username))
+
 		requestBody, _ := json.Marshal(map[string]string{"000_ERG_TEN_TWENTY": eUser, "010_BOHM_THIRTY_FIVE": ePass})
 
 		resp, err := sendHTTPRequest("POST", kabLoginURL, requestBody)
 		if err != nil {
 			messageAndExit("login: Error on sendHTTPRequest:")
+		}
+		requestBody = nil
+		if requestBody == nil {
+			fmt.Print()
 		}
 
 		Debug.log("RESPONSE ", kabLoginURL, resp.StatusCode, http.StatusText(resp.StatusCode))
@@ -221,6 +243,8 @@ var loginCmd = &cobra.Command{
 		if cliConfig.GetString("jwt") == "" {
 			messageAndExit("Unable to validate user: " + username + " to " + cliConfig.GetString(KabURLKey))
 		}
+		key = ""
+		fmt.Println(key)
 
 		if !is06Compatible() {
 
@@ -252,7 +276,7 @@ func init() {
 
 	loginCmd.Flags().StringP("username", "u", "", "github username")
 
-	_ = loginCmd.MarkFlagRequired("username")
+	//_ = loginCmd.MarkFlagRequired("username") // possibly comment out to make username flad not required and add promot for username
 	loginCmd.Flags().StringP("password", "p", "", "github password/PAT. If no password is provided, prompt will appear")
 	loginCmd.Flags().BoolVar(&InsecureTLS, "insecure-skip-tls-verify", false, "If true, the server's certificate will not be checked for validity. This will make your HTTPS connections insecure")
 	loginCmd.Flags().StringVar(&clientCert, "certificate-authority", "", "Path to a cert file for the certificate authority")
