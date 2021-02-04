@@ -88,7 +88,6 @@ func HandleTLSFLag(insecureTLS bool) {
 	if err != nil {
 		messageAndExit("There was a problem writing to the cli config")
 	}
-
 	if clientCert != "" {
 		cliConfig.Set(CertKey, clientCert)
 		err = cliConfig.WriteConfig()
@@ -101,7 +100,6 @@ func HandleTLSFLag(insecureTLS bool) {
 	if !insecureTLS && clientCert == "" {
 
 		fmt.Print("Are you sure you want to continue with an insecure connection to " + cliConfig.GetString(KabURLKey) + " (y/n): ")
-
 		reader := bufio.NewReader(os.Stdin)
 		char, _, err := reader.ReadRune()
 		if err != nil {
@@ -155,7 +153,11 @@ var loginCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		Debug.log("login called")
 		var err error
+		var ePass = ""
+		var eUser = ""
 
+		fmt.Println(ePass)
+		fmt.Println(eUser)
 		username, _ := cmd.Flags().GetString("username")
 		password, _ := cmd.Flags().GetString("password")
 
@@ -165,33 +167,40 @@ var loginCmd = &cobra.Command{
 			if err != nil {
 				return err
 			}
-			//ePass = base64.StdEncoding.EncodeToString(bytePwd)
-			username = strings.TrimSpace(string(bytePwd))
+			eUser = base64.StdEncoding.EncodeToString(bytePwd)
+			for i := 0; i < len(bytePwd); i++ {
+				bytePwd[i] = 0
+			}
+			bytePwd = nil
+			if bytePwd == nil {
+				fmt.Print()
+			}
 			fmt.Println()
+		} else {
+			eUser = base64.StdEncoding.EncodeToString([]byte(username))
 		}
-
 		if password == "" {
 			fmt.Printf("Password:")
 			bytePwd, err := terminal.ReadPassword(int(syscall.Stdin))
 			if err != nil {
 				return err
 			}
-			//ePass = base64.StdEncoding.EncodeToString(bytePwd)
-			password = strings.TrimSpace(string(bytePwd))
+			ePass = base64.StdEncoding.EncodeToString(bytePwd)
+			for i := 0; i < len(bytePwd); i++ {
+				bytePwd[i] = 0
+			}
+			bytePwd = nil
+			if bytePwd == nil {
+				fmt.Print()
+			}
 			fmt.Println()
+		} else {
+			ePass = base64.StdEncoding.EncodeToString([]byte(password))
 		}
-		ePass := base64.StdEncoding.EncodeToString([]byte(password))
-		eUser := base64.StdEncoding.EncodeToString([]byte(username))
-
-		password = ""
-		username = ""
-		fmt.Println(username)
-		fmt.Println(password)
 
 		var kabLoginURL string
 
 		viper.SetEnvPrefix("KABANERO")
-
 		if len(args) > 0 {
 			cliConfig.Set(KabURLKey, parseKabURL(args[0]))
 			err = cliConfig.WriteConfig()
@@ -209,13 +218,20 @@ var loginCmd = &cobra.Command{
 		kabLoginURL = getRESTEndpoint("login")
 
 		requestBody, _ := json.Marshal(map[string]string{"000_ERG_TEN_TWENTY": eUser, "010_BOHM_THIRTY_FIVE": ePass})
-
 		resp, err := sendHTTPRequest("POST", kabLoginURL, requestBody)
 		if err != nil {
 			messageAndExit("login: Error on sendHTTPRequest:")
 		}
 		requestBody = nil
 		if requestBody == nil {
+			fmt.Print()
+		}
+		eUser = ""
+		if eUser == "" {
+			fmt.Print()
+		}
+		ePass = ""
+		if ePass == "" {
 			fmt.Print()
 		}
 
@@ -232,10 +248,8 @@ var loginCmd = &cobra.Command{
 		}
 		key := security.Create32BKey((time.Now().String()))
 		cliConfig.Set("key", key)
-
 		encryptedJWT := security.EncryptString(data.JWT, key)
 		cliConfig.Set("jwt", encryptedJWT)
-
 		err = cliConfig.WriteConfig()
 		if err != nil {
 			return err
@@ -245,9 +259,7 @@ var loginCmd = &cobra.Command{
 		}
 		key = ""
 		fmt.Println(key)
-
 		if !is06Compatible() {
-
 			url := getRESTEndpoint("logout")
 			resp, err := sendHTTPRequest("POST", url, nil)
 			if err != nil {
@@ -261,12 +273,14 @@ var loginCmd = &cobra.Command{
 				return err
 			}
 		} else {
-
 			fmt.Println("Logged in to Kabanero instance: " + cliConfig.GetString(KabURLKey))
 			Debug.log("Logged in to Kabanero instance: " + cliConfig.GetString(KabURLKey))
 		}
 		defer resp.Body.Close()
-
+		cliConfig = nil
+		if cliConfig == nil {
+			fmt.Print()
+		}
 		return nil
 	},
 }
@@ -277,6 +291,7 @@ func init() {
 	loginCmd.Flags().StringP("username", "u", "", "github username")
 
 	//_ = loginCmd.MarkFlagRequired("username") // possibly comment out to make username flad not required and add promot for username
+	//loginCmd.Flags().String("username", "u", "", "github username. If no username is provided, prompt will appear")
 	loginCmd.Flags().StringP("password", "p", "", "github password/PAT. If no password is provided, prompt will appear")
 	loginCmd.Flags().BoolVar(&InsecureTLS, "insecure-skip-tls-verify", false, "If true, the server's certificate will not be checked for validity. This will make your HTTPS connections insecure")
 	loginCmd.Flags().StringVar(&clientCert, "certificate-authority", "", "Path to a cert file for the certificate authority")
