@@ -102,10 +102,6 @@ func sendHTTPRequest(method string, url string, jsonBody []byte) (*http.Response
 		fmt.Print("Problem with the new request")
 		return resp, err
 	}
-	requestBody = nil
-	if requestBody == nil {
-		fmt.Print()
-	}
 
 	req.Header.Set("Content-Type", "application/json")
 	if !strings.Contains(url, "login") {
